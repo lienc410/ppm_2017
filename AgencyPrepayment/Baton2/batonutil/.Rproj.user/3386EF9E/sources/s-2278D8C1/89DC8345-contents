@@ -1,0 +1,323 @@
+#' @title Track actual versus projected prepayments 
+#' 
+#' @description
+#'   \code{trackr} tracks actual versus projected prepayments based on user-specified cohorts
+#'  
+#' @param configData  List of configuration data for the fitting process
+#' @param ticker ticker for collateral  Examples: (\code{"FGLMC"}, \code{"FGT6"}, \code{"FGU6"}, \code{"FGU9"})
+#' @param ppdata Prepayment data frame
+#' 
+#' @return 
+#' Prepayment data frame
+#' 
+#' @examples
+#' \dontrun{
+#'  trackr(configData=configData, ppdata=ppdata)
+#'  }
+#'  
+#' @export
+
+trackr <- function(configData, ticker="", ppdata) {
+  
+  # #remove later
+  # remove(ppdata.imp)
+  # remove(ppdata.td)
+  # remove(ppdata.tf)
+  # # remove(ppdata.sub)
+  
+  coll        <- configData$FitParam$coll
+  submodel    <- configData$FitParam$submodel
+  gnmaProgram <- configData$FitParam$gnmaProgram
+  aggType     <- configData$FitParam$aggType
+  OutputDir   <- configData$Directory$Output
+  
+  trackKey         <- paste0(coll, ticker, submodel, gnmaProgram)
+  plotFileRschGrid <- paste(paste0(coll, ticker, submodel, gnmaProgram, "Tracking"), "_", 
+                         format(Sys.time(),'%d_%m_%H_%M'), ".pdf", sep="")
+  plotFileSpecPool <- paste("SpecPoolTracking", format(Sys.time(),'%d_%m_%H_%M'), ".pdf", sep="")
+  rmseFileSpecPool <- paste("SpecPoolRMSE", format(Sys.time(),'%d_%m_%H_%M'), ".txt", sep="")
+  
+  plotFileRschGrid <- paste(OutputDir, plotFileRschGrid, sep="/")
+  plotFileSpecPool <- paste(OutputDir, plotFileSpecPool, sep="/")
+  rmseFileSpecPool <- paste(OutputDir, rmseFileSpecPool, sep="/")
+  
+  if (coll == "conv30") {
+    kNewModelVersion <- configData$Version$newConv30
+    kOldModelVersion <- configData$Version$oldConv30
+  } else if (coll == "gnma30") {
+    kNewModelVersion <- configData$Version$newGNMA30
+    kOldModelVersion <- configData$Version$oldGNMA30
+  } else {
+    stop(paste0("Unsupported collateral type: ", coll, "\n"))
+  }
+
+  json   <- ParseModelJSON(configData, modelVersion=kNewModelVersion, combinedJSON = TRUE)
+  # ppdata <- ModelProj(configData, modelVersions=c(kOldModelVersion, kNewModelVersion), ppdata=ppdata)
+ 
+  ppdata <- ModelProj(configData, modelVersions=c(kNewModelVersion), json=json, ppdata=ppdata)
+  # ppdata <- PrepayComp(submodel=submodel, modelVersion=kNewModelVersion, ppdata=ppdata)
+  
+#   # Initialize so that we know what we want to track
+#   paramsNotFitted <- c("baselineConstant", "adjustmentFactor", "seasonalityMultipliers")
+#   if (submodel == "turn") {
+#     submdl.json     <- json$turn.mdl
+#     paramsFitted    <- names(submdl.json)[-match(paramsNotFitted, names(submdl.json))]
+#     ppdata$ppr      <- ppdata$turn.act
+#     ppdata$pred     <- ppdata[, paste(submodel, kNewModelVersion, sep="_")]
+#     ppdata$pred_old <- ppdata[, paste(submodel, kOldModelVersion, sep="_")]
+#   } else if (submodel == "cout") {
+#     submdl.json     <- json$cout.mdl
+#     paramsFitted    <- names(submdl.json)[-match(paramsNotFitted, names(submdl.json))]
+#     ppdata$ppr      <- ppdata$cout.act
+#     ppdata$pred     <- ppdata[, paste(submodel, kNewModelVersion, sep="_")]
+#     ppdata$pred_old <- ppdata[, paste(submodel, kOldModelVersion, sep="_")]
+#   } else if (submodel == "refi") {
+#     submdl.json     <- json$refi.mdl
+#     paramsFitted    <- names(submdl.json)[-match(paramsNotFitted, names(submdl.json))]
+#     ppdata$ppr      <- ppdata$refi.act
+#     ppdata$pred     <- ppdata[, paste(submodel, kNewModelVersion, sep="_")]
+#     ppdata$pred_old <- ppdata[, paste(submodel, kOldModelVersion, sep="_")]
+#   } else if (submodel == "dflt") {
+#     submdl.json     <- json$dfltcurr.mdl
+#     paramsFitted    <- names(submdl.json)[-match(paramsNotFitted, names(submdl.json))]
+#     ppdata$ppr      <- ppdata$dflt.act
+#     ppdata$pred     <- ppdata[, paste(c("dfltall"), kNewModelVersion, sep="_")]
+#     ppdata$pred_old <- ppdata[, paste(c("dfltall"), kOldModelVersion, sep="_")]
+#   } else if (submodel == "dfltcurr") {
+#     submdl.json     <- json$dfltcurr.mdl
+#     paramsFitted    <- names(submdl.json)[-match(paramsNotFitted, names(submdl.json))]
+#     ppdata$ppr      <- ppdata$dflt.act
+#     ppdata$pred     <- ppdata[, paste(submodel, kNewModelVersion, sep="_")]
+#     ppdata$pred_old <- ppdata[, paste(submodel, kOldModelVersion, sep="_")]
+#     
+#   } else if (submodel == "dfltdelq") {
+#     submdl.json     <- json$dfltdelq.mdl
+#     paramsFitted    <- names(submdl.json)[-match(paramsNotFitted, names(submdl.json))]
+#     ppdata$ppr      <- ppdata$dflt.act
+#     ppdata$pred     <- ppdata[, paste(submodel, kNewModelVersion, sep="_")]
+#     ppdata$pred_old <- ppdata[, paste(submodel, kOldModelVersion, sep="_")]
+#     ppdata$incentive <- ppdata$incentive.store # Look at default tracking versus unadjusted incentive
+#   } else if (submodel == "all") {
+#       submdl.json      <- json$refi.mdl
+#       paramsFittedRefi <- names(submdl.json)[-match(paramsNotFitted, names(submdl.json))]
+#       submdl.json      <- json$turn.mdl
+#       paramsFittedTurn <- names(submdl.json)[-match(paramsNotFitted, names(submdl.json))]
+#       paramsFitted     <- union(paramsFittedRefi, paramsFittedTurn)
+#       ppdata$ppr       <- ppdata$smm
+#       ppdata$pred      <- ppdata[, paste(c("modelSMM"), kNewModelVersion, sep="_")]
+#       ppdata$pred_old  <- ppdata[, paste(c("modelSMM"), kOldModelVersion, sep="_")]
+#   } else {
+#     stop("Don't know how to handle this submodel option currently\n")
+#   }
+#     
+#   colNames <- paramsFitted
+#   if ("asofdate" %in% colnames(ppdata)) {
+#     colNames <- append("asofdate", paramsFitted)
+#   }
+# 
+#   numCols <- length(colNames)
+#   tickers <- unique(ppdata$marketTicker)
+#   numTickers <- length(tickers)
+#   
+#   numPlots <- 100
+#   plot.list <- vector(mode="list", numPlots)
+#   
+#   plotCtr <- 1
+# 
+#   if (ticker != "") {
+#     if (ticker == "postHARP") {
+#       ppdata <- ppdata %>% dplyr::filter((ppdata$HARP_eligible < kHARPCutoffPct) & (ppdata$asofdate > kHARPCutoffDate))
+#     }
+#     else if (ticker == "preHARP") {
+#       ppdata <- ppdata %>% dplyr::filter(ppdata$HARP_eligible > (100 - kHARPCutoffPct))
+#     }
+#     else {
+#       ppdata <- ppdata %>% dplyr::filter(ppdata$marketTicker == ticker)
+#     }
+#   }
+# 
+#   cat("\n", "Tracking: ", trackKey, "\n")
+# 
+#   wt <- ppdata$bal/sum(ppdata$bal)
+#   rmse.new <- ModelErrorStats(actual = ppdata$ppr, pred = ppdata$pred, weights = wt)$rmse
+#   cat("\nAggregate RMSE:", kNewModelVersion, rmse.new, "\n")
+# 
+#   rmse.old <- ModelErrorStats(actual = ppdata$ppr, pred = ppdata$pred_old, weights = wt)$rmse
+#   cat("\nAggregate RMSE:", kOldModelVersion, rmse.old, "\n\n")
+# 
+#   # Look at tracking versus the unadjusted incentive
+#   ppdata$incentive <- ppdata$incentive.store
+# 
+#   for (i in 1:numCols) {
+#     col.name <- colNames[i]
+#     cat("Tracking Actual/Model for: ", col.name, "\n")
+# 
+#     aggPrepays <- AggregatePrepaymentData(data=ppdata, act=ppdata$ppr, pred=ppdata$pred, col.name=col.name,
+#                                           configData=configData)
+#     act.cpr    <- aggPrepays$act.cpr
+#     mdl.cpr    <- aggPrepays$mdl.cpr
+#     ratio.cpr  <- aggPrepays$ratio.cpr
+#     ratio.wt   <- aggPrepays$ratio.bal/sum(aggPrepays$ratio.bal)
+#     x          <- aggPrepays$col.x
+#     rmse       <- round(ModelErrorStats(actual=act.cpr, pred=mdl.cpr, weights=ratio.wt)$rmse, digits=4)
+# 
+#     aggPrepays   <- AggregatePrepaymentData(data=ppdata, act=ppdata$ppr, pred=ppdata$pred_old, col.name=col.name,
+#                                             configData=configData)
+#     oldmdl.cpr   <- aggPrepays$mdl.cpr
+#     oldratio.cpr <- aggPrepays$ratio.cpr
+#     oldratio.wt  <- aggPrepays$ratio.bal/sum(aggPrepays$ratio.bal)
+#     rmse.old     <- round(ModelErrorStats(actual=act.cpr, pred=oldmdl.cpr, weights=oldratio.wt)$rmse, digits=4)
+# 
+#     # X and Y axis limits for plots
+#     min.x <- min(x)
+#     max.x <- max(x)
+#     kMaxCPR <- round(1.25 * max(act.cpr, mdl.cpr, oldmdl.cpr))
+#     kMinCPR <- 0.0
+# 
+#     plot(x, y = act.cpr, type='l', col = 'green',
+#          main=paste(coll, ticker, gnmaProgram, submodel, col.name, "\n", "new = ", rmse,
+#                     "old = ", rmse.old),
+#          xlab=col.name, ylab="CPR(%)",
+#          ylim = c(kMinCPR, kMaxCPR), xlim=c(min.x, max.x))
+#     points(x, y = mdl.cpr, type='l', col = 'red')
+#     points(x, y = oldmdl.cpr, type='l', col = 'blue')
+#     legend(legend=c("Act", kNewModelVersion, kOldModelVersion), lty=1, 'topleft', col=c('green', 'red', 'blue'))
+# 
+#     plot.list[[plotCtr]] <- recordPlot()
+#     plotCtr <- plotCtr + 1
+# 
+#     # Perform analysis on Actual/Model ratios
+#     idx          <- (ratio.cpr < 0) | (oldratio.cpr < 0) | is.na(ratio.cpr) | is.na(oldratio.cpr) | is.nan(ratio.cpr) | is.nan(oldratio.cpr) | is.infinite(ratio.cpr) | is.infinite(oldratio.cpr)
+#     x            <- x[!idx]
+#     ratio.cpr    <- ratio.cpr[!idx]
+#     oldratio.cpr <- oldratio.cpr[!idx]
+#     ratio.wt     <- ratio.wt[!idx]
+#     oldratio.wt  <- oldratio.wt[!idx]
+# 
+#     if (col.name != "asofdate") {
+#       col.idx <- match(col.name, names(submdl.json))
+# 
+#       #Knot points for spline corresponding to x
+#       x.init <- submdl.json[col.idx][[1]][,1]
+# 
+#       kQuantileSize <- configData$FitParam$quantileSize
+#       x.fin <- Hmisc::wtd.quantile(x, weights=ratio.wt, probs=seq(0,1, by=kQuantileSize), normwt=TRUE)
+# 
+#       fit <- lm(ratio.cpr ~ x, weights=ratio.wt)
+#       fit.old <- lm(oldratio.cpr ~ x, weights=oldratio.wt)
+#       y.lm <- fit$coefficients[1] +  x.fin * fit$coefficients[2]
+#       y.lm.old <- fit.old$coefficients[1] + x.fin * fit.old$coefficients[2]
+# 
+#       fit.spl <- BuildSpline(a=x, b=ratio.cpr, x=x.fin, weights=ratio.wt, method="smooth")
+#       cat("Smooth Spline: Quantile Points", "\n")
+#       cat(paste0(col.name, ".x"), x.fin, "\n")
+#       cat(paste0(col.name, ".y"), round(fit.spl$y, digits=2), "\n")
+# 
+#       fit.spl2 <- BuildSpline(a=x, b=ratio.cpr, x=x.init, weights=ratio.wt, method="smooth")
+#       cat("Smooth Spline: Knot Points", "\n")
+#       cat(paste0(col.name, ".x"), x.init, "\n")
+#       cat(paste0(col.name, ".y"), round(fit.spl2$y, digits=2), "\n")
+# 
+#       ratio.min <- min(ratio.cpr) * 0.75
+#       ratio.max <- max(ratio.cpr) * 1.25
+# 
+#       plot(x, y = ratio.cpr, type='l', col = 'red',
+#              main=paste(coll, ticker, gnmaProgram, submodel, col.name, "ratios"),
+#              xlab=col.name, ylab="Act/Mod Ratio",
+#              ylim = c(ratio.min, ratio.max), xlim=c(min.x, max.x))
+#       points(x, y = oldratio.cpr, type='l', col = 'blue')
+#       if (length(x) > 1) {
+#         abline(fit, lwd=3, col="red")
+#         abline(fit.old, lwd=3, col="blue")
+#       }
+# 
+#       abline(h=1, col="green")
+#       legend(legend=c("ratio=1", kNewModelVersion, kOldModelVersion), lty=1, 'topright',
+#              col=c('green', 'red', 'blue'))
+# 
+#       cf <- round(coef(fit), 4)
+# 
+#       ## sign check to avoid having plus followed by minus for negative coefficients
+#       eq <- paste0("ratio.cpr = ", cf[1],
+#                    ifelse(sign(cf[2])==1, " + ", " - "), abs(cf[2]), col.name)
+# 
+#       ## printing of the equation
+#       mtext(eq, side=3, line=-2)
+# 
+#       plot.list[[plotCtr]] <- recordPlot()
+#       plotCtr <- plotCtr + 1
+#     }
+# 
+#   }
+# 
+#   graphics.off()
+#   pdf(plotFileRschGrid, onefile=TRUE)
+#   for (j in 1:(plotCtr-1)) {
+#      replayPlot(plot.list[[j]])
+#   }
+#   graphics.off()
+#   
+#   
+# # TRACKING 2: Tracking on Specified Pool Cohorts
+# # Get pool types
+# if (aggType == "SpecPool") {
+#   cat("Tracking Spec Pool Cohorts\n")
+#   keys <- sort(unique(ppdata$poolListName))
+#   latestFactorDate <- max(ppdata$factorDate)
+#   
+#   numPlots <- length(keys)
+#   plot.list <- vector(mode="list", numPlots)
+#   plotCtr <- 1
+#   
+#   pdf(plotFileSpecPool, onefile=TRUE)
+#   par(mfrow = c(2,2), oma = c(0, 0, 1, 0))
+#   col.name <- "asofdate"
+#   
+#   for (key in keys){
+#     ppdata.co <- subset(ppdata, ppdata$poolListName == key)
+#     ppdata.co <- ppdata.co[order(ppdata.co[, "factorDate"]), ]
+#     
+#     currBal <- round(ppdata.co$bal[length(ppdata.co$bal)]/kSpecPoolCutOffBal, digits=1) # In billions
+#     cat("Tracking: ", key, currBal, "\n")
+#     
+#     if (currBal < 1) {
+#       cat("Small outstanding balance; skipping\n")
+#       next
+#     }
+#     
+#     xval <- ppdata.co$factorDate
+#     yval.act <- ppdata.co$cpr
+#     yval.mdl <- ppdata.co$cpr.newmdl
+#     yval.oldmdl <- ppdata.co$cpr.oldmdl
+#     
+#     rmse <- round(ModelErrorStats(actual=yval.act, pred=yval.mdl)$rmse, digits=4)
+#     rmse.old <- round(ModelErrorStats(actual=yval.act, pred=yval.oldmdl)$rmse, digits=4)
+#     
+#     minCPR <- 0
+#     maxCPR <- round(max(yval.act, yval.mdl, yval.oldmdl) + 5)
+#     
+#     line <- paste(key, rmse, rmse.old, currBal, sep=",")
+#     write(line, file=kRMSEFileSpecPool, append=TRUE, sep=",")
+#     
+#     plot(xval, y = yval.act, type='l', col = 'green', 
+#          main=paste(key, " ", currBal, "bb", "\n", kNewModelVersion, rmse, 
+#                     kOldModelVersion, rmse.old), cex.main=0.9,
+#          xlab=col.name, ylab="CPR(%)", 
+#          ylim = c(minCPR, maxCPR), xlim=c(min(xval), max(xval)))
+#     points(xval, y = yval.mdl, type='l', col = 'red')
+#     points(xval, y = yval.oldmdl, type='l', col = 'blue')
+#     legend(legend=c("Act", kNewModelVersion, kOldModelVersion), lty=1, 'topleft', col=c('green', 'red', 'blue'), cex=0.9)
+#     plot.list[[plotCtr]] <- recordPlot()
+#     plotCtr <- plotCtr + 1
+#     
+#   }
+#   
+#   for (j in 1:(plotCtr-1)) {
+#     replayPlot(plot.list[[j]])
+#   }
+#   
+#   graphics.off()
+# }
+
+  return(ppdata)
+}

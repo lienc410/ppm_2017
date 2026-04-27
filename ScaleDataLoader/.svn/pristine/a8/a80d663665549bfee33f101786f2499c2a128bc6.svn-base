@@ -1,0 +1,337 @@
+import random
+import sys
+import datetime
+import os
+from datetime import datetime
+import EmailUtil
+
+def hpa_mdl_check_2(argv):
+    #Input user argument Year, Month, Date
+    date_str_hpa_2 = argv[1] + argv[2] + argv[3];
+    #Setting Directory for target file
+    try:
+        filepath_n_2 = os.path.join('S:', 'IT', 'Dev', 'Scale', 'HpaModel', date_str_hpa_2, 'hpa_2.0.txt')
+        file_hpa_N_2 = open(filepath_n_2, 'r')
+    except:
+        print("File not Found!")
+
+    #Converting the string input into datetime
+    date_n_hpa_2 = datetime.strptime(date_str_hpa_2, '%Y%m%d');
+    #print(date_n);
+
+    #Using user input to calculate the previous file
+    if argv[2] != 1:
+        if int(argv[2]) <= 10:
+            date_str_pre_hpa_2 = argv[1] + '0' + str(int(argv[2]) - 1) + argv[3];
+            #print(date_str_pre);
+        elif int(argv[2]) > 10:
+            date_str_pre_hpa_2 = argv[1] + str(int(argv[2]) - 1) + argv[3];
+            #print(date_str_pre);
+    elif argv[2] == 1:
+        date_str_pre_hpa_2 = str(int(argv[1]) - 1) + '12' + argv[3];
+    #print("date_str_pre = " + date_str_pre);
+
+    #Using the result string of the above calculation, seeting the directory for the previous file
+    try:
+        filepath_o_2 = os.path.join('S:', 'IT', 'Dev', 'Scale', 'HpaModel', date_str_pre_hpa_2, 'hpa_2.0.txt');
+        file_hpa_O_2 = open(filepath_o_2, 'r');
+    except:
+        print("File not Found!")
+
+    #Read in lines of  files, select asOf of the last row in each file
+    line_hpa_n_2 = file_hpa_N_2.readlines();
+    line_hpa_o_2 = file_hpa_O_2.readlines();
+    len_cur_2 = len(line_hpa_n_2);
+    len_pre_2 = len(line_hpa_o_2);
+    len_diff_2 = len_cur_2 - len_pre_2;
+
+    #Compare row number difference and report if they are different
+    if len_diff_2 > 0:
+        print("Error in HPA Model Check 2.0 with current file of " + date_str_hpa_2 + "! It has " + str(len_diff_2) + " more rows than the previous file.");
+        body_hpa_2 = """<body_hpa_2>
+                  Greetings:
+                  <br/>
+                  <br/>
+                  Error in HPA Model 2.0 Check with current file of  """ + date_str_hpa_2 + """! It has """ + str(len_diff_2) + """ more rows than the previous file.
+                  </body_hpa_2>""";
+        em_hpa_2 = EmailUtil.EmailUtil();
+        em_hpa_2.sendMessage('john.xiong@cellocapital.com', "Error Found in HPA_Mdl_2.0_Check with File " + date_str_hpa_2, body_hpa_2);
+    elif len_diff_2 < 0:
+        print("Error in HPA Model 2.0 Check with current file of " + date_str_hpa_2 + "! It has " + str(abs(len_diff_2)) + " fewer rows than the previous file.");
+        body_hpa_2 = """<body_hpa_2>
+                  Greetings:
+                  <br/>
+                  <br/>
+                  Error in HPA Model 2.0 Check with current file of  """ + date_str_hpa_2 + """! It has """ + str(abs(len_diff_2)) + """ fewer rows than the previous file.
+                  </body_hpa_2>""";
+        em_hpa_2 = EmailUtil.EmailUtil();
+        em_hpa_2.sendMessage('john.xiong@cellocapital.com', "Error Found in HPA_Mdl_2.0_Check with File " + date_str_hpa_2, body_hpa_2);
+
+    for an_hpa_2 in range(3):
+        rand_hpa_2 = random.randint(1,len_cur_2);
+        asOf_hpa_2, index_hpa_2, hpa_2YR_2 = line_hpa_n_2[rand_hpa_2].split(",");
+        if line_hpa_n_2[rand_hpa_2] != line_hpa_o_2[rand_hpa_2]:
+            print("Error in HPA Model 2.0 Check with record(s) asOf " + asOf_hpa_2 + " and index " + index_hpa_2 + " and HPA_2YR " + hpa_2YR_2);
+            body_hpa_2 = """<body_hpa_2>
+                      Greetings:
+                      <br/>
+                      <br/>
+                      Error found in HPA Model 2.0 Check with record(s) asOf """ + asOf_hpa_2 + """ and index """ + index_hpa_2 + """ and HPA_2YR """ + hpa_2YR_2 + """
+                      </body_hpa_2>""";
+            em_hpa_2 = EmailUtil.EmailUtil();
+            em_hpa_2.sendMessage('john.xiong@cellocapital.com', "Error Found in HPA_Mdl_2.0_Check with File " + date_str_hpa_2, body_hpa_2);
+
+
+def hpa_mdl_check_3(argv):
+    #Input user argument Year, Month, Date
+    date_str_hpa_3 = argv[1] + argv[2] + argv[3];
+    #Setting Directory for target file
+    try:
+        filepath_n_3 = os.path.join('S:', 'IT', 'Dev', 'Scale', 'HpaModel', date_str_hpa_3, 'hpa_3.0.txt')
+        file_hpa_N_3 = open(filepath_n_3, 'r')
+    except:
+        print("File not Found!")
+
+    #Converting the string input into datetime
+    date_n_hpa_3 = datetime.strptime(date_str_hpa_3, '%Y%m%d');
+    #print(date_n);
+
+    #Using user input to calculate the previous file
+    if argv[2] != 1:
+        if int(argv[2]) <= 10:
+            date_str_pre_hpa_3 = argv[1] + '0' + str(int(argv[2]) - 1) + argv[3];
+            #print(date_str_pre);
+        elif int(argv[2]) > 10:
+            date_str_pre_hpa_3 = argv[1] + str(int(argv[2]) - 1) + argv[3];
+            #print(date_str_pre);
+    elif argv[2] == 1:
+        date_str_pre_hpa_3 = str(int(argv[1]) - 1) + '12' + argv[3];
+    #print("date_str_pre = " + date_str_pre);
+
+    #Using the result string of the above calculation, seeting the directory for the previous file
+    try:
+        filepath_o_3 = os.path.join('S:', 'IT', 'Dev', 'Scale', 'HpaModel', date_str_pre_hpa_3, 'hpa_3.0.txt');
+        file_hpa_O_3 = open(filepath_o_3, 'r');
+    except:
+        print("File not Found!")
+
+    #Read in lines of  files, select asOf of the last row in each file
+    line_hpa_n_3 = file_hpa_N_3.readlines();
+    line_hpa_o_3 = file_hpa_O_3.readlines();
+    len_cur_3 = len(line_hpa_n_3);
+    len_pre_3 = len(line_hpa_o_3);
+    len_diff_3 = len_cur_3 - len_pre_3;
+
+    #Compare row number difference and report if they are different
+    if len_diff_3 > 0:
+        print("Error in HPA Model 3.0 Check with current file of " + date_str_hpa_3 + "! It has " + str(len_diff_3) + " more rows than the previous file.");
+        body_hpa_3 = """<body_hpa_3>
+                  Greetings:
+                  <br/>
+                  <br/>
+                  Error in HPA Model 3.0 Check with current file of  """ + date_str_hpa_3 + """! It has """ + str(len_diff_3) + """ more rows than the previous file.
+                  </body_hpa_3>""";
+        em_hpa_3 = EmailUtil.EmailUtil();
+        em_hpa_3.sendMessage('john.xiong@cellocapital.com', "Error Found in HPA_Mdl_3.0_Check with File " + date_str_hpa_3, body_hpa_3);
+    elif len_diff_3 < 0:
+        print("Error in HPA Model 3.0 Check with current file of " + date_str_hpa_3 + "! It has " + str(abs(len_diff_3)) + " fewer rows than the previous file.");
+        body_hpa_3 = """<body_hpa_3>
+                  Greetings:
+                  <br/>
+                  <br/>
+                  Error in HPA Model 3.0 Check with current file of  """ + date_str_hpa_3 + """! It has """ + str(abs(len_diff_3)) + """ fewer rows than the previous file.
+                  </body_hpa_3>""";
+        em_hpa_3 = EmailUtil.EmailUtil();
+        em_hpa_3.sendMessage('john.xiong@cellocapital.com', "Error Found in HPA_Mdl_3.0_Check with File " + date_str_hpa_3, body_hpa_3);
+
+    for an_hpa_3 in range(3):
+        rand_hpa_3 = random.randint(1,len_cur_3);
+        asOf_hpa_3, index_hpa_3, hpa_2YR_3, YN_hpa_3 = line_hpa_n_3[rand_hpa_3].split(",");
+        if line_hpa_n_3[rand_hpa_3] != line_hpa_o_3[rand_hpa_3]:
+            print("Error in HPA Model 3.0 Check with record(s) with asOf " + asOf_hpa_3 + " and index " + index_hpa_3 + " and HPA_2YR " + hpa_2YR_3 + " and YN status as " + YN_hpa_3);
+            body_hpa_3 = """<body_hpa_3>
+                      Greetings:
+                      <br/>
+                      <br/>
+                      Error(s) found in HPA Model 3.0 Check with record(s) asOf """ + asOf_hpa_3 + """ and index """ + index_hpa_3 + """ and HPA_2YR """ + hpa_2YR_3 + """ and YN status as """ + YN_hpa_3 + """
+                      </body_hpa_3>""";
+            em_hpa_3 = EmailUtil.EmailUtil();
+            em_hpa_3.sendMessage('john.xiong@cellocapital.com', "Error Found in HPA_Mdl_3.0_Check with File " + date_str_hpa_3, body_hpa_3);
+
+def prepay_media_efc(argv):
+    #Input user argument Year, Month, Date
+    date_str_prepay = argv[1] + argv[2] + argv[3];
+    #Setting Directory for target file
+    try:
+        filepath_n_prepay = os.path.join('S:', 'IT', 'Dev', 'Scale', 'PrepayModel', 'MediaEffect', date_str_prepay, 'media_4.0.txt')
+        file_prep_med_N = open(filepath_n_prepay, 'r')
+    except:
+        print("File not Found!")
+
+    #Converting the string input into datetime
+    date_n_prepay = datetime.strptime(date_str_prepay, '%Y%m%d');
+    #print (date_n);
+
+    #Using user input to calculate the previous file
+    #global date_str_pre;
+    if argv[2] != 1:
+        if int(argv[2]) <= 10:
+            date_str_pre_prepay = argv[1] + '0' + str(int(argv[2]) - 1) + argv[3];
+            #print(date_str_pre);
+        elif int(argv[2]) > 10:
+            date_str_pre_prepay = argv[1] + str(int(argv[2]) - 1) + argv[3];
+            #print(date_str_pre);
+    elif argv[2] == 1:
+        date_str_pre_prepay = str(int(argv[1]) - 1) + '12' + argv[3];
+    #print("date_str_pre = " + date_str_pre_prepay);
+
+    #Using the result string of the above calculation, seeting the directory for the previous file
+    try:
+        filepath_o_prepay = os.path.join('S:', 'IT', 'Dev', 'Scale', 'PrepayModel', 'MediaEffect', date_str_pre_prepay, 'media_4.0.txt');
+        file_prep_med_O = open(filepath_o_prepay, 'r');
+    except:
+        print("File not Found!")
+
+    #Read in lines of  files, select asOf of the last row in each file
+    line_prep_med_n = file_prep_med_N.readlines();
+    line_prep_med_o = file_prep_med_O.readlines();
+    lastline_n_prepay = line_prep_med_n[-1];
+    lastline_o_prepay = line_prep_med_o[-1];
+    asOf_n_prepay, index_n_prepay = lastline_n_prepay.split(",");
+    asOf_o_prepay, index_o_prepay = lastline_o_prepay.split(",");
+
+    #Calculating the predicted last asOf of the previous file
+    asOf_cur_str_prepay = date_str_prepay;
+    asOf_pre_str_prepay = date_str_pre_prepay;
+
+    #Converting the asOf string in files to the format of the strings calculated above
+    n_year_prepay, n_month_prepay, n_date_prepay = asOf_n_prepay.split("-");
+    asOf_N_file_prepay = n_year_prepay + n_month_prepay + n_date_prepay;
+    #print("asOf_N = " + asOf_N_file_prepay);
+
+    #Comparing the asOf in files with the asOf calculated, and print error message
+    if asOf_N_file_prepay != asOf_cur_str_prepay:
+        print("Error in Prepay Media Effect Check with last row in " + asOf_n_prepay + " Data not updated!");
+        body_prepay = """<body_prepay>
+                  Greetings:
+                  <br/>
+                  <br/>
+                  Error found in Prepay Media Effect Check with the last row with asOf """ + asOf_n_prepay + """ Data not updated!
+                  </body_prepay>"""
+        em_prepay = EmailUtil.EmailUtil();
+        em_prepay.sendMessage('john.xiong@cellocapital.com', "Error Found in prepay_media_efc_check with File " + date_str_prepay, body_prepay);
+
+    for an_prepay in range(3):
+        rand_prepay = random.randint(1,len(line_prep_med_o));
+        asOf_prepay, index_prepay = line_prep_med_n[rand_prepay].split(",");
+        if line_prep_med_n[rand_prepay] != line_prep_med_o[rand_prepay]:
+            print("Error in Prepay Media Effect Check with record(s) with asOf " + asOf_prepay + " and index " + index_prepay);
+            body_prepay = """<body_prepay>
+                      Greetings:
+                      <br/>
+                      <br/>
+                      Error(s) found in Prepay Media Effect Check with record(s) asOf """ + asOf_prepay + """ and index """ + index_prepay + """
+                      </body_prepay>""";
+            em_prepay = EmailUtil.EmailUtil();
+            em_prepay.sendMessage('john.xiong@cellocapital.com', "Error Found in prepay_media_efc_check with File " + date_str_prepay, body_prepay);
+
+
+def cre_ava_mdl_check(argv):
+    #Input user argument Year, Month, Date
+    date_str_cre_ava = argv[1] + argv[2] + argv[3];
+    #Setting Directory for target file
+    try:
+        filepath_n_cre_ava = os.path.join('S:', 'IT', 'Dev', 'Scale', 'CreditAvailabilityModel', date_str_cre_ava, 'mcai_2.0.txt')
+        file_CAM_N_cre_ava = open(filepath_n_cre_ava, 'r')
+    except:
+        print("File not Found!")
+
+    #Converting the string input into datetime
+    date_n_cre_ava = datetime.strptime(date_str_cre_ava, '%Y%m%d');
+    #print (date_n_cre_ava);
+
+    #Using user input to calculate the previous file
+    if argv[2] != 1:
+        if int(argv[2]) <= 10:
+            date_str_pre_cre_ava = argv[1] + '0' + str(int(argv[2]) - 1) + argv[3];
+            #print(date_str_pre);
+        elif int(argv[2]) > 10:
+            date_str_pre_cre_ava = argv[1] + str(int(argv[2]) - 1) + argv[3];
+            #print(date_str_pre);
+    elif argv[2] == 1:
+        date_str_pre_cre_ava = str(int(argv[1]) - 1) + '12' + argv[3];
+
+    asOf_cur_str_cre_ava = date_str_pre_cre_ava;
+    #print("asOf_cur_str = " + asOf_cur_str_cre_ava);
+
+    #Using the result string of the above calculation, seeting the directory for the previous file
+    try:
+        filepath_o_cre_ava = os.path.join('S:', 'IT', 'Dev', 'Scale', 'CreditAvailabilityModel', date_str_pre_cre_ava, 'mcai_2.0.txt');
+        file_CAM_O_cre_ava = open(filepath_o_cre_ava, 'r');
+    except:
+        print("File not Found!")
+
+    #Read in lines of  files, select asOf of the last row in each file
+    line_cam_n_cre_ava = file_CAM_N_cre_ava.readlines();
+    line_cam_o_cre_ava = file_CAM_O_cre_ava.readlines();
+    lastline_n_cre_ava = line_cam_n_cre_ava[-1];
+    lastline_o_cre_ava = line_cam_o_cre_ava[-1];
+    asOf_n_cre_ava, index_n_cre_ava = lastline_n_cre_ava.split(",");
+    asOf_o_cre_ava, index_o_cre_ava = lastline_o_cre_ava.split(",");
+
+    #Calculating the predicted last asOf of the previous file
+    if argv[2] != 1 and argv[2] != 2:
+        if int(argv[2]) <= 11:
+            asOf_pre_str_cre_ava = argv[1] + '0' + str(int(argv[2]) - 2) + argv[3];
+            #print(asOf_pre_str);
+        elif int(argv[2]) == 12:
+            asOf_pre_str_cre_ava = argv[1] + str(int(argv[2]) - 2) + argv[3];
+            #print(asOf_pre);
+    elif argv[2] == 1:
+        asOf_pre_str_cre_ava = str(int(argv[1]) - 1) + '12' + argv[3];
+    elif argv[2] == 2:
+        asOf_pre_str_cre_ava = str(int(argv[1]) - 1) + '11' + argv[3];
+    #print("asOf_pre_str = " + asOf_pre_str_cre_ava);
+
+    #Converting the asOf string in files to the format of the strings calculated above
+    n_year_cre_ava, n_month_cre_ava, n_date_cre_ava = asOf_n_cre_ava.split("-");
+    asOf_N_file_cre_ava = n_year_cre_ava + n_month_cre_ava + n_date_cre_ava;
+    #print("asOf_N = " + asOf_N_file_cre_ava);
+    o_year_cre_ava, o_month_cre_ava, o_date_cre_ava = asOf_o_cre_ava.split("-");
+    asOf_O_file_cre_ava = o_year_cre_ava + o_month_cre_ava + o_date_cre_ava;
+    #print("asOf_O = " + asOf_O_file_cre_ava);
+
+    #Comparing the asOf in files with the asOf calculated, and print error message
+    if asOf_N_file_cre_ava != asOf_cur_str_cre_ava:
+        print("Error in Credit Avalability Model Check with last row in " + asOf_n_cre_ava + " Data not updated!");
+        body_cre_ava = """<body_cre_ava>
+                  Greetings:
+                  <br/>
+                  <br/>
+                  Error found in Credit Avalability Model Check with the last row with asOf """ + asOf_n_cre_ava + """ Data not updated!
+                  </body_cre_ava>"""
+        em_cre_ava = EmailUtil.EmailUtil();
+        em_cre_ava.sendMessage('john.xiong@cellocapital.com', "Error Found in Cre_Ava_Mdl_Check in File " + date_str_cre_ava, body_cre_ava);
+
+    for an in range(3):
+        rand_cre_ava = random.randint(1,len(line_cam_o_cre_ava));
+        asOf_cre_ava, index_cre_ava = line_cam_n_cre_ava[rand_cre_ava].split(",");
+        if line_cam_n_cre_ava[rand_cre_ava] != line_cam_o_cre_ava[rand_cre_ava]:
+            print("Error in record(s) with asOf " + asOf_cre_ava + " and index " + index_cre_ava);
+            body_cre_ava = """<body_cre_ava>
+                      Greetings:
+                      <br/>
+                      <br/>
+                      Error(s) found in Credit Avalability Model Check with record(s) asOf """ + asOf_cre_ava + """ and index """ + index_cre_ava + """
+                      </body_cre_ava>""";
+            em_cre_ava = EmailUtil.EmailUtil();
+            em_cre_ava.sendMessage('john.xiong@cellocapital.com', "Error Found in Cre_Ava_Mdl_Check in File " + date_str_cre_ava, body_cre_ava);
+
+def main(argv):
+    cre_ava_mdl_check(argv);
+    prepay_media_efc(argv);
+    hpa_mdl_check_2(argv);
+    hpa_mdl_check_3(argv);
+
+if __name__ == "__main__":
+    main(sys.argv[0:])

@@ -1,0 +1,38 @@
+Chart #1:
+
+Starting date = January 2013
+Conventional Loans:
+All 30-year loans pooled in FNMA/FHLMC MBS including CLs, CQ, CR, CK, U6, U9 etc.
+Loan Purpose = Refi
+Have PMI
+Government Loans:
+All 30-year FHA loans pooled in GNMA I and GNMA II MBS
+Loan Purpose = Refi
+Track the ratio: Govt/(Govt + Conv) on a month-by-month basis
+
+Goal: Changes in the ratio point to either shifts in Conv-to-FHA refis or from FHA-to-Conv refis. This is a crude metric because there may be internal cancellations or reinforcements - changes in one trend may correspond to changes with the other.
+
+Chart #2:
+Starting date = January 2013
+
+Take Conv-FHA Refi applications for each month and translate them to volumes by looking at the average loan size for GNMA loans with a Refi Purpose for that month
+
+Calculate Conv. Refi volumes for a month by calculating the aggregate CPR for the conventional universe, subtracting 6% from it, and then multiplying the residual (aggregate - 6%) by the outstanding volume of Agency 30-year MBS to get a sense for refi volumes
+
+Plot the ratio Conv-FHA refi app. volumes/Conv. Refi Volumes
+[There should be be a 1-month offset in the ratio -- applications take about one month to show up as actual refis]
+
+Goal: Tracks changes in the rate at which conventional loans refinance into FHAs.
+
+Chart #3:
+Starting date = January 2013
+Take FHA-FHA Refi applications for each month (Non-Streamline + Streamline Standard MIP + Streamline Low MIP) and convert them to Refi volumes as above.
+
+Calculate FHA Refi volumes for a month by calculating the aggregate CPR for the FHA 30-year universe, subtracting 6% from it, and then multiplying the residual (aggregate - 6%) by the outstanding volume of FHA 30-year loans to get a sense for refi volumes.
+
+Plot the ratio 1 - (FHA-FHA refi app. volumes/FHA. Refi Volumes)
+[There should be be a 1-month offset in the ratio -- applications take about one month to show up as actual refis]
+
+
+Goal: Tracks changes in the rate at which FHA loans refinance into conventionals.
+

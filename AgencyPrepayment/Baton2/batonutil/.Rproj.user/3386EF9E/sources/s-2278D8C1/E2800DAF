@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1528920466229.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "E2800DAF",
+    "lastKnownWriteTime" : 1528926208,
+    "last_content_update" : 1528926208,
+    "path" : "C:/Cello/cello-it-dev/trunk/Research/AgencyPrepayment/Baton2/batonutil/R/PredictSubmodel.R",
+    "project_path" : "R/PredictSubmodel.R",
+    "properties" : {
+        "cursorPosition" : "55,18",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

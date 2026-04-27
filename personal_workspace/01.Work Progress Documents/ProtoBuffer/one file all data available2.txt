@@ -1,0 +1,140 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Configuration;
+
+using ccm.quantlib.input;
+using log4net;
+
+namespace CCMUtilDatabaseToProtoBuffer
+{
+    class Program
+    {
+        private static readonly ILog log = LogManager.GetLogger(typeof(Program));
+        static int Main(string[] args)
+        {
+            log4net.Config.BasicConfigurator.Configure();
+
+            log.Info("Main(....)");
+  /*          
+            if (args.Length != 1 || args[0].Length !=10)
+            {
+                Console.WriteLine("Please enter the input date in mm/dd/yyyy!");
+                return 1;
+            }
+   */         
+            string conMs = "user id=report;password=gm4SJDw4;server=50.28.74.235\\PIV-MSSQL,1433;Trusted_Connection=false;database=PIV;connection timeout=30";
+            string conIQ = "Data Source=Agency;UID=report;PWD=gm4SJDw4";
+            //string conIQ = "Data Source=Agency Dev;UID=dev;PWD=ufmg71dkiw";
+            string inputPath = "S:\\IT\\Production\\CCMQuantLib\\";
+
+            
+//            DateTime inputDate = DateTime.Parse(args[0]);
+            DateTime inputDate = DateTime.Parse("07/12/2014");
+            string dateString = inputDate.ToString("yyyyMMdd");
+
+            //Get curve data input
+            string inputPath1 = inputPath + "Curve\\" + dateString + "\\";
+            if (!System.IO.Directory.Exists(inputPath1))
+                System.IO.Directory.CreateDirectory(inputPath1);
+            string inputFile1 = inputPath1 + "curveData_" + dateString + ".bin";
+
+            CurveDataGen curveDataGen = new CurveDataGen(inputDate, inputFile1, conMs, conIQ);
+            curveDataGen.setCurveData();
+            curveDataGen.genPBCurveData();
+
+            curveDataGen.print();
+            curveDataGen.cleanUp();
+
+            //Get swaption vol surface data input
+            string inputPath2 = inputPath + "SwaptionVolSurface\\" + dateString + "\\";
+            if (!System.IO.Directory.Exists(inputPath2))
+                System.IO.Directory.CreateDirectory(inputPath2);
+            string inputFile2 = inputPath2 + "swaptionVolSurface_" + dateString + ".csv";
+
+            SwaptionVolSurfaceGen swaptionVolSurfaceGen = new SwaptionVolSurfaceGen(inputDate, inputFile2, conMs, conIQ);
+
+            swaptionVolSurfaceGen.setVolSurface();
+            swaptionVolSurfaceGen.genPBVolSurfaceData();
+            swaptionVolSurfaceGen.printVolSurface();
+            swaptionVolSurfaceGen.cleanUp();
+            swaptionVolSurfaceGen.printToFile();
+
+            //Get cap vol data input
+            string inputPath3 = inputPath + "CapVol\\" + dateString + "\\";
+            if (!System.IO.Directory.Exists(inputPath3))
+                System.IO.Directory.CreateDirectory(inputPath3);
+            string inputFile3 = inputPath3 + "capVol_" + dateString + ".bin";
+
+            CapVolGen capVolGen = new CapVolGen(inputDate, inputFile3, conMs, conIQ);
+
+            capVolGen.setCapVol();
+            capVolGen.genPBCapVol();
+            capVolGen.printCapVol();
+            capVolGen.cleanUp();
+
+            //Get CQCR bonds input
+            string inputPath4 = inputPath + "CQCR\\" + dateString + "\\";
+            if (!System.IO.Directory.Exists(inputPath4))
+                System.IO.Directory.CreateDirectory(inputPath4);
+            string inputFile4 = inputPath4 + "pricingInput_" + dateString + ".bin";
+
+            CQCRBondsGen cqcrBondsGen = new CQCRBondsGen(inputDate, inputFile4, conMs, conIQ);
+
+            cqcrBondsGen.setCQCRBonds();
+            cqcrBondsGen.genPBCQCRBonds();
+            cqcrBondsGen.print();
+            cqcrBondsGen.cleanUp();
+    
+            //Get historical rate input
+            int year = inputDate.Year;
+            int month = inputDate.Month;
+            string histRatesDateString = (year * 10000 + month * 100 + 1).ToString();
+            string inputPath5 = inputPath + "HistoricalRates\\" + histRatesDateString + "\\";
+            if (!System.IO.Directory.Exists(inputPath5)) 
+                System.IO.Directory.CreateDirectory(inputPath5);
+            string inputFile5 = inputPath5 + "historicalRates_" + histRatesDateString + ".bin";
+            string inputFile5ForMortgageRate30Yr = inputPath5 + "historicalRates_MortgageRate30Yr_" + histRatesDateString + ".bin";
+
+//            if (!System.IO.File.Exists(inputFile5))
+            if(1>0)
+            {
+                //HistoricalRatesGen historicalRatesGen = new HistoricalRatesGen(inputDate, inputFile5, inputFile5ForMortgageRate30Yr, conMs, conIQ);
+                HistoricalRatesGen historicalRatesGen = new HistoricalRatesGen(inputDate, inputFile5, conMs, conIQ);
+
+                historicalRatesGen.getRawData();
+                historicalRatesGen.setMonthlyDates();
+                historicalRatesGen.setHistoricalRate();
+                historicalRatesGen.printHistoricalRate();
+                historicalRatesGen.genHistoicalRates();
+                //historicalRatesGen.genHistoicalRatesForMortgageRate30Yr();
+                historicalRatesGen.cleanUp();
+            }
+            else
+                Console.WriteLine("The PB file " + inputFile5 + " already exists. No need to generate historical rates!");
+
+            //Get current rate input
+            string inputPath6 = inputPath + "CurrentRates\\" + dateString + "\\";
+            if (!System.IO.Directory.Exists(inputPath6))
+                System.IO.Directory.CreateDirectory(inputPath6);
+            string inputFile6 = inputPath6 + "currentRates_" + dateString + ".bin";
+
+            CurrentRatesGen currentRatesGen = new CurrentRatesGen(inputDate, inputFile6, conMs, conIQ);
+
+            currentRatesGen.getRawData();
+            currentRatesGen.setAvgCurrentRates();
+            currentRatesGen.printCurrentRates();
+            currentRatesGen.genCurrentRates();
+            currentRatesGen.cleanUp();
+           
+            //create path for Hull White Model Param
+            string outputPath = inputPath + "HullWhiteModelParam\\" + dateString + "\\";
+            if (!System.IO.Directory.Exists(outputPath))
+                System.IO.Directory.CreateDirectory(outputPath);
+
+            return 0;
+
+        }
+    }
+}

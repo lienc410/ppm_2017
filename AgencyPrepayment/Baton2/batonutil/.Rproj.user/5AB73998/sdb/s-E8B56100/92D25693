@@ -1,0 +1,16 @@
+{
+    "contents" : "# Workflow for typical prepayment modeling session. \n\nmain <- function() {\n  \n  # Step 0: Read in JSON with configuration values. \n  configData <- jsonlite::fromJSON(config())\n  \n  coll        <- configData$FitParam$coll\n  submodel    <- configData$FitParam$submodel\n  gnmaProgram <- configData$FitParam$gnmaProgram\n  aggType     <- configData$FitParam$aggType\n  \n  cat(\"Collateral=\", coll, \"Submodel=\", submodel, \"GNMA Program=\", gnmaProgram,  \"aggType=\", aggType, \"\\n\")\n\n  if (aggType == \"RschGrid\") {\n    ppdataFile <- configData$Datafiles$RschGrid\n  } else {\n    ppdataFile <- configData$Datafiles$SpecPool\n  }\n  \n  # Step 1: Import prepayment data into R from flat file\n  ppdata.imp <- imprtr(infile=ppdataFile)\n   \n  # Step 2: Transform R data (add any new columns if necessary); filter data if necessary\n  ppdata.tf <- tfrmr(configData=configData, ppdata=ppdata.imp)\n  \n  # Step 3: Estimate submodel (This step is optional. Go directly to Step 4 for a more iterative & visual fitting process.)\n  # This step produces a json file that can be inspected and copied into the appropriate folder.\n  json <- estimatr(configData=configData, ppdata=ppdata.tf)$json\n  \n  # Step 4: Filter data and track prepayment model on various aggregations of this data set\n  ppdata.sub <- ppdata.tf %>% dplyr::filter((ppdata.tf$bal >  configData$FitParam$minBal))\n  #ppdata.sub$refi_elig_pct <- rep(100, nrow(ppdata.sub))\n  #ppdata.sub$pct_tpo       <- rep(40, nrow(ppdata.sub))\n  #ppdata.sub <- ppdata.sub %>% dplyr::filter(\n  #                                             (ppdata.sub$asofdate > as.Date(c(\"2006-05-01\"))))\n  #ppdata.sub <- ppdata.sub %>% dplyr::filter((ppdata.sub$media_effect > 84.0))\n  #ppdata.sub <- ppdata.sub %>% dplyr::filter((ppdata.sub$wala > 0) & (ppdata.sub$wala < 60))\n  ppdata.sub  <- ppdata.sub %>% dplyr::filter(ppdata.sub$marketTicker == \"FGLMC\")\n  ppdata.fin <- trackr(configData=configData, ticker=\"\", ppdata=ppdata.sub)\n  \n  #visualizr(configData=configData, ppdata=ppdata.fin)\n   \n  #if (coll == \"conv30\") {\n  #  tickers <- c(unique(ppdata.sub$marketTicker), \"preHARP\", \"postHARP\")\n  #  \n  #} else {\n  #    tickers <- unique(ppdata.sub$marketTicker)\n  #}\n  \n  #for (tick in tickers) {\n  #  trackr(configData=configData, ticker=tick, ppdata = ppdata.sub)\n  #}\n  \n  \n}\n",
+    "created" : 1520279789395.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "890011118",
+    "id" : "92D25693",
+    "lastKnownWriteTime" : 1521236056,
+    "path" : "C:/Cello/cello-it-dev/trunk/Research/AgencyPrepayment/Baton2/batonutil/R/main.R",
+    "project_path" : "R/main.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

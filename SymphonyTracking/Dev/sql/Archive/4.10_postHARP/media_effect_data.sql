@@ -1,0 +1,30 @@
+-- Create Media Effect Series for  for Symphony Tracking
+
+-- Combined Loan and Pool Percent Refinanceable Percent
+-- Lag of 1 Month is Assumed
+DROP TABLE IF EXISTS #MediaEffect_Step1;
+SELECT
+    convert(date, dateadd(month, +1, AsOfDate)) as asOf_lag1,
+    convert(date, dateadd(month, +2, AsOfDate)) as asOf_lag2,
+    convert(numeric(6,2), 100.0 * SeriesNumValue) as media_effect
+INTO #MediaEffect_Step1
+FROM report.TimeSeries
+WHERE 1=1
+    AND TimeSeriesMetaId = (SELECT TimeSeriesMetaId FROM report.TimeSeriesMeta WHERE Source = 'PIV' AND TickerName = 'CONVENTIONAL_30YR_COMBINED' AND SeriesType = 'MONTHLY_PCT_REFI' AND ModelType = 'ScaleMediaEffectModel v4.0')
+;
+COMMIT;
+
+DROP TABLE IF EXISTS #MediaEffect;
+-- one and half month lagged
+SELECT
+asof = lag1.asOf_lag1,
+media_effect = lag1.media_effect * 0.5 + lag2.media_effect * 0.5
+INTO #MediaEffect
+FROM #MediaEffect_Step1 lag1
+JOIN #MediaEffect_Step1 lag2 ON lag1.asOf_lag1 = lag2.asOf_lag2
+;
+COMMIT;
+
+CREATE INDEX asOf_idx ON #MediaEffect(asOf);
+COMMIT;
+

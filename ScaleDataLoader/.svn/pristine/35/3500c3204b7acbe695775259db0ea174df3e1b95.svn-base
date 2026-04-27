@@ -1,0 +1,289 @@
+-- Fannie Conventional
+-- Loan Level
+-- Part 3 of 7
+-- Script to update origination PMI
+-- Updates origPMI
+
+-- Before execute the script, need to set the appType to run for
+DROP TABLE IF EXISTS #tmp_appType;
+SELECT '#####APPTYPE#####' AS appType INTO #tmp_appType
+--SELECT '9.98' AS appType INTO #tmp_appType
+;
+
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+)
+;
+INSERT #ticker SELECT 'FNCL', 'CONVENTIONAL_30YR';    --Conventional Fannie
+INSERT #ticker SELECT 'FNCK', 'JUMBO_30YR';           --Jumbo Fannie
+INSERT #ticker SELECT 'FNCQ30', 'CONVENTIONAL_30YR';  --CQ Fannie High LTV[105-125]
+INSERT #ticker SELECT 'FNCR', 'CONVENTIONAL_30YR';    --CR Fannie High LTV[125-150]
+--INSERT #ticker SELECT 'FNCT', 'CONVENTIONAL_20YR';    --20 Yr Conventional Fannie
+--INSERT #ticker SELECT 'FNCI', 'CONVENTIONAL_15YR';    --15 Yr Conventional Fannie
+COMMIT;
+
+CREATE LF INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT mvc.tickerName, mvc.appType, mvc.originationVersion_LL as originationVersion 
+INTO #tmp_version
+FROM scale.ModelVersionConfig mvc
+JOIN #tmp_appType tat
+     ON mvc.appType = tat.appType
+JOIN #ticker tk
+     ON mvc.tickerName = tk.tickerName
+;
+COMMIT;
+
+-- MiLevel Clean-up
+DROP TABLE IF EXISTS #MILevel;
+SELECT
+	lh.loanseqnum,
+	min(lh.asOf) as first_asof,
+	CAST(NULL as int) as pctMtgIns
+INTO #MILevel
+FROM scale.fnm_loanhist lh
+JOIN scale.fnm_loan_dev sl ON lh.loanseqnum=sl.loanseqnum
+WHERE sl.version in (select originationVersion from #tmp_version)
+GROUP BY lh.loanseqnum;
+COMMIT;
+
+UPDATE #MILevel m SET m.pctMtgIns=lh.pctMtgIns
+FROM scale.fnm_loanhist lh WHERE m.loanseqnum=lh.loanseqnum AND m.first_asof=lh.asof;
+COMMIT;
+
+--Calculate miLevel
+UPDATE scale.fnm_loan_dev sl SET sl.miLevel=NULL WHERE sl.version in (select originationVersion from #tmp_version);
+COMMIT;
+
+UPDATE scale.fnm_loan_dev sl SET sl.miLevel = CASE
+WHEN m.pctMtgIns > 0 THEN m.pctMtgIns ELSE 0 END
+FROM #MILevel m WHERE sl.loanseqnum=m.loanseqnum AND m.pctMtgIns IS NOT NULL
+AND sl.version in (select originationVersion from #tmp_version);
+COMMIT;
+
+-- For miLevel for seasoned loans, get the pctMtgIns from Cello_Loan table. Greater to convert -999 to 0.
+UPDATE scale.fnm_loan_dev sl SET sl.miLevel = CASE
+WHEN cl.pctMtgIns > 0 THEN cl.pctMtgIns ELSE 0 END
+FROM FNM.Cello_Loan cl WHERE sl.loanSeqNum = cl.loanSeqNum AND sl.miLevel is NULL
+AND sl.version in (select originationVersion from #tmp_version);
+COMMIT;
+
+-- Deal with outliers
+DROP TABLE IF EXISTS #mi_temp;
+select d.loanSeqNum, d.miLevel
+into #mi_temp
+from scale.fnm_loan_dev d
+where originationDate >= '20090701'
+and d.version in (select originationVersion from #tmp_version);
+COMMIT;
+
+DROP TABLE IF EXISTS #tempMaxCov;
+select t.loanSeqNum, cov = max(h.pctMtgIns)
+into #tempMaxCov
+from #mi_temp t,  fnm.cello_loanHist h, fnm.cello_loan l
+where t.loanSeqNum = h.loanSeqNum
+and t.loanSeqNum = l.loanSeqNum
+and t.miLevel = 0
+and h.pctMtgIns > 0
+and h.schamBalance > 0.01
+and l.origLTV > 80
+group by t.loanSeqNum;
+COMMIT;
+
+update scale.fnm_loan_dev l set l.milevel=t.cov
+from #tempMaxCov t where l.loanseqnum=t.loanseqnum and l.version in (select originationVersion from #tmp_version);
+COMMIT;
+
+-- Create Loan Origination Data
+DROP TABLE IF EXISTS #FNM_OrigPMI;
+SELECT
+    cl.loanSeqNum ,
+    cl.marketTicker,
+    sl.originationDate,
+    sl.origLoanSize,
+    sl.origFICO,
+    sl.origLTV,
+    sl.miLevel,
+    sl.percentHARPed,
+    cl.occType as occupancyStatus,
+    cl.loanPurposeType,
+	cl.origTerm,
+    
+    cast(NULL as numeric(8, 4)) as pmi_begin_base,
+    cast(NULL as numeric(8, 4)) as pmi_begin_occ,
+    cast(NULL as numeric(8, 4)) as pmi_begin_size,
+    cast(NULL as numeric(8, 4)) as pmi_begin  
+INTO #FNM_OrigPMI
+FROM fnm.Cello_Loan cl
+JOIN #ticker tk
+    ON cl.marketTicker = tk.tickerName
+JOIN scale.FNM_Loan_dev sl
+    ON cl.loanSeqNum = sl.loanSeqNum
+WHERE 1=1
+    AND sl.origLoanSize > 0.01
+    AND sl.version in (select originationVersion from #tmp_version)
+;
+
+COMMIT;
+CREATE HG INDEX loan_id_idx ON #FNM_OrigPMI(loanSeqNum);
+CREATE LF INDEX ticker_idx ON #FNM_OrigPMI(marketTicker);
+CREATE LF INDEX origination_date_idx ON #FNM_OrigPMI(originationDate);
+CREATE HG INDEX bal_idx ON #FNM_OrigPMI(origLoanSize);
+CREATE LF INDEX occ_idx ON #FNM_OrigPMI(occupancyStatus);
+CREATE LF INDEX fico_idx ON #FNM_OrigPMI(origFICO);
+CREATE LF INDEX ltv_idx ON #FNM_OrigPMI(origLTV);
+COMMIT;
+
+
+-- Update pmi_begin_base
+UPDATE #FNM_OrigPMI inc SET inc.pmi_begin_base = pmi.PMI
+FROM report.Cello_PMI_BASE pmi
+WHERE 1=1
+    AND pmi.LoanPurpose = CASE WHEN inc.loanPurposeType = 'PURCH' THEN 'PURCH' ELSE 'REFI' END
+    AND inc.originationDate >= pmi.startDate and inc.originationDate < pmi.endDate 
+    AND inc.origFICO >= pmi.FICObucketStart and inc.origFICO < pmi.FICObucketEnd
+    AND inc.origLTV > pmi.LTVBucketStart and inc.origLTV <= pmi.LTVBucketEnd
+	AND pmi.RateType = 'Fixed'
+    AND inc.origTerm > pmi.TermBucketStart AND inc.origTerm <= pmi.TermBucketEnd
+;
+UPDATE #FNM_OrigPMI inc SET inc.pmi_begin_base = pmi.PMI
+FROM report.Cello_PMI_BASE pmi
+WHERE 1=1
+    AND pmi.LoanPurpose = CASE WHEN inc.loanPurposeType = 'PURCH' THEN 'PURCH' ELSE 'REFI' END
+    AND inc.originationDate >= pmi.startDate and inc.originationDate < pmi.endDate 
+    AND pmi.FICObucketStart  <= 700 and   pmi.FICObucketEnd > 700
+    AND inc.origLTV > pmi.LTVBucketStart and inc.origLTV <= pmi.LTVBucketEnd
+	AND pmi.RateType = 'Fixed'
+    AND inc.origTerm > pmi.TermBucketStart AND inc.origTerm <= pmi.TermBucketEnd
+    AND inc.pmi_begin_base IS NULL
+;
+UPDATE #FNM_OrigPMI inc SET inc.pmi_begin_base = 0 WHERE inc.pmi_begin_base IS NULL;
+
+-- Update pmi_begin_occ
+UPDATE #FNM_OrigPMI inc SET inc.pmi_begin_occ = pmi.PMI
+FROM report.Cello_PMI_Occupancy pmi
+WHERE 1=1
+    AND inc.occupancyStatus = pmi.OccType
+    AND inc.originationDate >= pmi.startDate and inc.originationDate < pmi.endDate 
+    AND inc.origFICO >= pmi.FICObucketStart and inc.origFICO < pmi.FICObucketEnd
+    AND inc.origLTV > pmi.LTVBucketStart and inc.origLTV <= pmi.LTVBucketEnd
+;
+UPDATE #FNM_OrigPMI inc SET inc.pmi_begin_occ = pmi.PMI
+FROM report.Cello_PMI_Occupancy pmi
+WHERE 1=1
+    AND inc.occupancyStatus = pmi.OccType
+    AND inc.originationDate >= pmi.startDate and inc.originationDate < pmi.endDate 
+    AND pmi.FICObucketStart <= 700 and   pmi.FICObucketEnd > 700
+    AND inc.origLTV > pmi.LTVBucketStart and inc.origLTV <= pmi.LTVBucketEnd
+    AND inc.pmi_begin_occ IS NULL
+;
+UPDATE #FNM_OrigPMI inc SET inc.pmi_begin_occ = 0 WHERE inc.pmi_begin_occ IS NULL;
+
+-- Update pmi_begin_size
+UPDATE #FNM_OrigPMI inc SET inc.pmi_begin_size = pmi.PMI
+FROM report.Cello_PMI_LoanSize pmi
+WHERE 1=1
+    AND inc.origLoanSize > pmi.LoanSizeStart and inc.origLoanSize <= LoanSizeEnd
+    AND inc.originationDate >= pmi.startDate and inc.originationDate < pmi.endDate 
+    AND inc.origFICO >= pmi.FICObucketStart and inc.origFICO < pmi.FICObucketEnd
+    AND inc.origLTV > pmi.LTVBucketStart and inc.origLTV <= pmi.LTVBucketEnd
+;
+UPDATE #FNM_OrigPMI inc SET inc.pmi_begin_size = pmi.PMI
+FROM report.Cello_PMI_LoanSize pmi
+WHERE 1=1
+    AND inc.origLoanSize > pmi.LoanSizeStart and inc.origLoanSize <= LoanSizeEnd
+    AND inc.originationDate >= pmi.startDate and inc.originationDate < pmi.endDate 
+    AND pmi.FICObucketStart <= 700 and  pmi.FICObucketEnd > 700
+    AND inc.origLTV > pmi.LTVBucketStart and inc.origLTV <= pmi.LTVBucketEnd
+    AND inc.pmi_begin_size IS NULL
+;
+UPDATE #FNM_OrigPMI inc SET inc.pmi_begin_size = 0 WHERE inc.pmi_begin_size IS NULL;
+COMMIT;
+
+-- Update PMI
+UPDATE #FNM_OrigPMI inc SET
+pmi_begin = (CASE
+                when miLevel > 0 then (pmi_begin_base + pmi_begin_occ + pmi_begin_size) / 100 
+                else 0 
+            END)
+;
+
+-- Update origPMI based on HARP Percent
+UPDATE #FNM_OrigPMI
+SET pmi_begin = ((100-percentHARPed)*pmi_begin+percentHARPed*m.PMI)/100
+FROM report.Cello_PMI_HARP_MtgIns_Map m
+WHERE 1=1
+    AND miLevel > pctMtgInsLow
+    AND miLevel <= pctMtgInsHigh
+;
+COMMIT;
+
+-- Tests
+
+--SELECT marketTicker, originationDate, count(1), sum(origLoanSize), sum(origLoanSize * pmi_begin) / sum(origLoanSize) as wavg_orig_pmi FROM #FNM_OrigPMI GROUP BY marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+--SELECT l.marketTicker, asOf, count(1), sum(balance), sum(balance * pmi_begin) / sum(balance) as wavg_orig_pmi FROM #FNM_OrigPMI l JOIN #FNM_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum GROUP BY l.marketTicker, asOf HAVING count(1) > 10 ORDER BY asOf
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  NULL pmi_begin
+----------------------------------------------------------------------------------------------
+        declare   @cnt int
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_OrigPMI  WHERE pmi_begin IS NULL
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of FNM Loans with NULL VALUE for beginning pmi: %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if pmi_begin is in valid range
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_OrigPMI  WHERE pmi_begin < 0.0 OR pmi_begin > 5
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of FNM Loans with INVALID VALUE for beginning pmi: %1!', @cnt
+            RETURN
+        END
+        
+----------------------------------------------------------------------------------------------
+-- Check to see if miLevel is NULL in Loan Dev table
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM fnm_loan_dev  WHERE miLevel is NULL
+        AND version in (SELECT originationVersion from #tmp_version) 
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of FNM Loans with NULL miLevel VALUE in Loan Dev table: %1!', @cnt
+            RETURN
+        END
+
+-- End Tests
+
+
+
+-- Update Scale Loan Table
+UPDATE scale.FNM_Loan_Dev
+SET origPMI = NULL
+WHERE marketTicker IN (SELECT tickerName FROM #ticker)
+	AND version in (SELECT originationVersion from #tmp_version)
+;
+
+UPDATE scale.FNM_Loan_Dev l
+SET l.origPMI = i.pmi_begin * 100.0
+FROM #FNM_OrigPMI i
+WHERE i.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND l.loanSeqNum = i.loanSeqNum
+	AND version in (SELECT originationVersion from #tmp_version)
+;

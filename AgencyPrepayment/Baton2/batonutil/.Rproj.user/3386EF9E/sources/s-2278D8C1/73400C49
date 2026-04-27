@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1530554288735.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "73400C49",
+    "lastKnownWriteTime" : 1530554269,
+    "last_content_update" : 1530554269,
+    "path" : "C:/Cello/cello-it-dev/trunk/Research/AgencyPrepayment/Baton2/batonutil/TrackingAnalysis.R",
+    "project_path" : "TrackingAnalysis.R",
+    "properties" : {
+        "cursorPosition" : "257,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

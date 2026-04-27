@@ -1,0 +1,169 @@
+#' Instantiate variables that parameterize batonutil workflows 
+#' 
+#'  \code{config} creates a JSON file that stores key variables that are used in batonutil.
+#'  
+#'  @param writeJSON Option to write configuration JSON to a file
+#'  
+#'  @return JSON object with configuration parameters
+#'  
+#'  @examples
+#'  \dontrun{
+#'  config()
+#'  config(writeJSON=TRUE)
+#'  }
+#'    
+#' @export
+#' 
+config <- function(writeJSON=FALSE) {
+  
+  # Model versions
+  newConv30 <- c("v4.20")
+  oldConv30 <- c("v3.00")
+  newGNMA30 <- c("dev")
+  oldGNMA30 <- c("v3.00")
+  
+  # Key directories
+  Conv30Data     <- c("../data/conv30")
+  GNMA30Data     <- c("../data/gnma30")
+  Conv30JSON     <- c("../JSON/conv30")
+  GNMA30JSON     <- c("../JSON/gnma30")
+  configJSON     <- c("../JSON/config")
+  Output         <- c("../output")
+  
+  #Key fitting data files
+  #ConvRschGrid    <- paste(Conv30Data, "FHL_Refi_199402_201802_FIT_POOL.csv", sep = "/")
+  ConvRschGrid     <- paste(Conv30Data, "FHL_Refi_200609_201803_FIT_LOAN.csv", sep = "/")
+  ConvDfltRschGrid <- paste(Conv30Data, "FHL_Dflt_199402_201802_FIT_POOL.csv", sep = "/")
+  GNMARschGrid     <- paste(GNMA30Data, "GNM_Refi_201308_201801_FIT_LOAN.csv", sep = "/")
+  GNMADfltRschGrid <- paste(GNMA30Data, "GNM_Dflt_201308_201801_FIT_LOAN.csv", sep = "/") 
+  ConvSpecPool     <- paste(Conv30Data, "tmp", sep = "/")
+  GNMASpecPool     <- paste(GNMA30Data, "tmp", sep = "/")
+  
+  # Key fitting assumptions
+  coll            <- "conv30"
+  submodel        <- "all"
+  gnmaProgram     <- ""
+  aggType         <- "RschGrid"
+  HARPCutoffPct   <- 10
+  HARPCutoffDate  <- as.Date(c("2009-06-01"))
+  lomedia         <- 30.0  # Level below which the Media Effect multiplier is nearly 0
+  himedia         <- 84.0  # Level above which the Media Effect multiplier is nearly 1
+  bucketSize      <- 5 # Grid size for aggregating prepayment data
+  minBal          <- 1e0   # Filter out all observations that have less than this balance
+  minWt           <- 1   # Filter out all observations that have less than this weight (in percentage terms)
+  cashoutCutoff   <- 25  # Cutoff for OTM Cash-out Refinancings (in bps)
+  refiCutoff      <- -30 # Cutoff for Rate Refinancings (in bps)
+  quantileSize    <- 0.10 # How many knots to have for Act/Proj ratios
+  useAltDfltFile  <- FALSE # Default file without asofdate and various values of monthsSince
+  fitTol          <- 1e-10 # minimum RMSE difference between two different iterations of model fitting 
+  
+  # Prepayment Model assumptions
+  Conv30RefiLag  <- 1.5 #in months
+  GNMA30RefiLag  <- 1.5 #in months
+  pct2ndRefiCost <- 0
+  pctInvRefiCost <- 0
+  conversionFact <- -10000/5 * 1   # Conversion factor from price to yield (dollars to basis points)
+  conv30WACLS    <- 460  # In $000s
+  gnma30WACLS    <- 150  # In $000s
+  minWACLS       <- 1    # In $000s
+  fixedRefiCosts <- 2 # In $000s. Generally independent of loan program.
+  # conversionFact <- -10000/4 * 1   # Conversion factor from price to yield (dollars to basis points)
+  # conv30WACLS    <- 175  # In $000s
+  # gnma30WACLS    <- 150  # In $000s
+  # minWACLS       <- 1    # In $000s
+  # fixedRefiCosts <- 1 # In $000s. Generally independent of loan program.
+  
+  if (coll == "conv30") {
+    if (useAltDfltFile) {
+      RschGrid <- ConvDfltRschGrid
+    } else {
+        RschGrid <- ConvRschGrid
+    }
+    SpecPool <- ConvSpecPool
+  } else if (coll == "gnma30") {
+      if (useAltDfltFile) {
+        RschGrid <- GNMADfltRschGrid
+      } else {
+          RschGrid <- GNMARschGrid
+      }
+      SpecPool <- GNMASpecPool
+  } else {
+      stop(paste("Unknown collateral type:", coll, "\n"))
+  }
+  
+  # Packages  
+  # Attach dplyr to the search path so that we can use the pipe symbol: %>%
+  if ("dplyr" %in% (.packages())) {
+    # do nothing
+  } else {
+    require(dplyr)
+  }
+  
+  version.mdl <- list("newConv30"=newConv30,
+                      "oldConv30"=oldConv30,
+                      "newGNMA30"=newGNMA30,
+                      "oldGNMA30"=oldGNMA30)
+  
+  directory.mdl <- list("Output"=Output,
+                       "Conv30Data"=Conv30Data,
+                       "GNMA30Data"=GNMA30Data,
+                       "Conv30JSON"=Conv30JSON,
+                       "GNMA30JSON"=GNMA30JSON,
+                       "configJSON"=configJSON)
+
+  datafiles.mdl <- list("RschGrid"=RschGrid,
+                        "SpecPool"=SpecPool)
+  
+  fitparam.mdl <- list("coll"=coll,
+                       "submodel"=submodel,
+                       "gnmaProgram"=gnmaProgram,
+                       "aggType"=aggType,
+                       "HARPCutoffPct"=HARPCutoffPct,
+                       "HARPCutoffDate"=HARPCutoffDate,
+                       "lomedia"=lomedia,
+                       "himedia"=himedia,
+                       "bucketSize"=bucketSize,
+                       "minBal"=minBal,
+                       "minWt"=minWt,
+                       "cashoutCutoff"=cashoutCutoff,
+                       "refiCutoff"=refiCutoff,
+                       "quantileSize"=quantileSize,
+                       "useAltDfltFile"=useAltDfltFile,
+                       "fitTol"=fitTol)
+  
+  # # Prepayment Model assumptions
+  # Conv30RefiLag  <- 1.5 #in months
+  # GNMA30RefiLag  <- 1.5 #in months
+  # pct2ndRefiCost <- 0
+  # pctInvRefiCost <- 0
+  # conversionFact <- -10000/4 * 1   # Conversion factor from price to yield (dollars to basis points)
+  # conv30WACLS    <- 175  # In $000s
+  # gnma30WACLS    <- 150  # In $000s
+  # minWACLS       <- 1    # In $000s
+  # fixedRefiCosts <- 1 # In $000s. Generally independent of loan program.
+  
+  assump.mdl <- list("Conv30RefiLag"=Conv30RefiLag,
+                     "GNMA30RefiLag"=GNMA30RefiLag,
+                     "pct2ndRefiCost"=pct2ndRefiCost,
+                     "pctInvRefiCost"=pctInvRefiCost,
+                     "conversionFact"=conversionFact,
+                     "conv30WACLS"=conv30WACLS,
+                     "gnma30WACLS"=gnma30WACLS,
+                     "minWACLS"=minWACLS,
+                     "fixedRefiCosts"=fixedRefiCosts)
+  
+  baton  <- list("Version"=version.mdl,
+                 "Directory"=directory.mdl,
+                 "Datafiles"=datafiles.mdl,
+                 "FitParam"=fitparam.mdl,
+                 "Model"=assump.mdl)
+  
+  config.json <- jsonlite::toJSON(baton, digits=10, pretty=TRUE)
+  
+  if (writeJSON) {
+    ConfigJSON  <- paste(configJSONDir, "config.json", sep="/")
+    write(config.json, file=ConfigJSON)
+  }
+  
+  return(config.json)
+}

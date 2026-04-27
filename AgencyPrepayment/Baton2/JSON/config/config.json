@@ -1,0 +1,35 @@
+{
+  "Version": {
+    "newConv30Version": ["v4.00"],
+    "oldConv30Version": ["v3.00"],
+    "newGNMA30Version": ["dev"],
+    "oldGNMA30Version": ["v3.00"]
+  },
+  "Directory": {
+    "Conv30DataDir": ["../data/conv30"],
+    "GNMA30DataDir": ["../data/gnma30"],
+    "Conv30JSONDir": ["../JSON/conv30"],
+    "GNMA30JSONDir": ["../JSON/gnma30"],
+    "configJSONDir": ["../JSON/config"]
+  },
+  "Datafiles": {
+    "RschGridFile": ["../data/conv30/FHL_Refi_200609_201801_FIT_LOAN.csv"],
+    "SpecPoolFile": ["../data/conv30/"]
+  },
+  "FitParam": {
+    "coll": ["conv30"],
+    "submodel": ["refi"],
+    "gnmaProgram": [""],
+    "aggType": ["RschGrid"],
+    "HARPCutoffPct": [10],
+    "HARPCutoffDate": ["2009-06-01"],
+    "lomedia": [30],
+    "himedia": [84],
+    "bucketSize": [5],
+    "minBal": [1]
+  },
+  "Lag": {
+    "Conv30RefiLag": [1.5],
+    "GNMA30RefiLag": [1.5]
+  }
+}

@@ -1,0 +1,16 @@
+1.Daily Originator Mortgage Rates/1,Black,notBold,notItalic,open,FitPage
+2.FHLMC Survey Rate and Implied Servicing Spread/2,Black,notBold,notItalic,open,FitPage
+3.Effective Guarantee Fees/3,Black,notBold,notItalic,open,FitPage
+4.FHA Insurance Premiums/6,Black,notBold,notItalic,open,FitPage
+5.Time from Refinancing Application to Funding/7,Black,notBold,notItalic,open,FitPage
+6.Proxy for Pipeline Hedging Costs/8,Black,notBold,notItalic,open,FitPage
+7.Origination Market Concentration/9,Black,notBold,notItalic,open,FitPage
+8.Trends In Specified Pool Issuance/12,Black,notBold,notItalic,open,FitPage
+9.FHA Single-Family Application Activity/16,Black,notBold,notItalic,open,FitPage
+10.Average Closing Cost/17,Black,notBold,notItalic,open,FitPage
+11.Employment in the Mortgage Banking/18,Black,notBold,notItalic,open,FitPage
+12.Refinancible Universe/19,Black,notBold,notItalic,open,FitPage
+13.Mortgage Rate Differences Between Large and Small Lenders/21,Black,notBold,notItalic,open,FitPage
+14.Credit Availability/22,Black,notBold,notItalic,open,FitPage
+Assumptions Page/25,Black,notBold,notItalic,open,FitPage
+

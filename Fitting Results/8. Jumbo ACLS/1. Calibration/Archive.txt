@@ -1,0 +1,92 @@
+Prod:
+
+      "wacls": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.32
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.78
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 0.74
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.69
+        }
+      ],
+
+Dev in step 3:
+      "acls": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.744
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.199389862
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.17978
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1.04304
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.96621
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.7788744
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.7788744
+        }
+      ],
+
+New Dev:
+      "acls": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.744
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.199389862
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.17978
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1.04304
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.96621
+        },
+        {
+          "Knots": 450,
+          "KnotValues": 0.695794464
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.591944544
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.591944544
+        }
+      ],

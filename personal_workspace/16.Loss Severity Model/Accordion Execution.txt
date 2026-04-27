@@ -1,0 +1,98 @@
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-359.32   -16.39     0.29    19.96   534.60  
+
+Coefficients:
+                                         Estimate Std. Error  t value Pr(>|t|)    
+(Intercept)                            -2.714e-02  5.299e-03   -5.121 3.03e-07 ***
+beginCoupon                             3.656e-02  4.200e-04   87.045  < 2e-16 ***
+pmin(pmax(mtm_cltv, 50), 140)           5.145e-03  1.954e-05  263.233  < 2e-16 ***
+occupancyStatus_factorINV               8.769e-02  1.786e-03   49.095  < 2e-16 ***
+occupancyStatus_factor2ND               3.260e-02  1.980e-03   16.464  < 2e-16 ***
+loanPurpose_factorRE-FI-NCO             7.056e-02  1.072e-03   65.789  < 2e-16 ***
+loanPurpose_factorRE-FI-CO              7.413e-02  9.566e-04   77.498  < 2e-16 ***
+loanAge_bucketloanAge_25_48            -5.268e-02  4.199e-03  -12.544  < 2e-16 ***
+loanAge_bucketloanAge_gt_48            -6.683e-02  4.089e-03  -16.344  < 2e-16 ***
+pmin(pmax(origBalance/1000, 50), 1000) -1.026e-03  4.653e-06 -220.444  < 2e-16 ***
+ageSinceLastCurrent                     5.279e-03  3.117e-05  169.348  < 2e-16 ***
+judicialFlag_factor1                    7.934e-02  8.985e-04   88.300  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for gaussian family taken to be 1565.594)
+
+    Null deviance: 705236492  on 266732  degrees of freedom
+Residual deviance: 417576693  on 266721  degrees of freedom
+
+
+fhl.multinom.medium.stochastic.v6
+fnm.multinom.medium.stochastic.v2
+
+
+write.csv(rbind(model.environment$historical.metrics, model.environment$projection.metrics), './output/result 10-9v1.csv')
+summary(model.environment$measure.regression[['BaseHaircutFC']])
+               Length Class Mode
+BaseHaircutFC  30     glm   list
+BaseHaircutREO 30     glm   list
+ExpensesFC     29     glm   list
+ExpensesREO    29     glm   list
+
+
+
+Browse[1]> summary(model.environment$ll.data)
+    loanID             vintage      origBalance       origCoupon        origTerm      origLTV          origCLTV        origValue            lien   secondBalance   
+ Length:435999      Min.   :1999   Min.   :  6000   Min.   : 3.125   Min.   :301   Min.   :  6.00   Min.   :  6.00   Min.   :   6667   Min.   :1   Min.   :     0  
+ Class :character   1st Qu.:2003   1st Qu.: 98000   1st Qu.: 5.875   1st Qu.:360   1st Qu.: 76.00   1st Qu.: 77.00   1st Qu.: 120000   1st Qu.:1   1st Qu.:     0  
+ Mode  :character   Median :2006   Median :150000   Median : 6.375   Median :360   Median : 80.00   Median : 80.00   Median : 184615   Median :1   Median :     0  
+                    Mean   :2005   Mean   :168626   Mean   : 6.457   Mean   :360   Mean   : 81.16   Mean   : 82.85   Mean   : 212586   Mean   :1   Mean   :  4474  
+                    3rd Qu.:2007   3rd Qu.:223000   3rd Qu.: 6.875   3rd Qu.:360   3rd Qu.: 90.00   3rd Qu.: 91.00   3rd Qu.: 280000   3rd Qu.:1   3rd Qu.:     0  
+                    Max.   :2013   Max.   :802000   Max.   :13.500   Max.   :411   Max.   :104.00   Max.   :182.00   Max.   :3475000   Max.   :1   Max.   :655286  
+                                                                                                                                                                   
+    origDTI         origFICO         miFlag          miLevel       numberBorrowers  numberUnits    judicialFlag        beginDate          from_period     beginLoanAge   
+ Min.   : 0.00   Min.   :301.0   Min.   :0.0000   Min.   : 0.000   Min.   :1.000   Min.   :1.000   Length:435999      Length:435999      Min.   :132.0   Min.   :  3.00  
+ 1st Qu.:31.00   1st Qu.:651.0   1st Qu.:0.0000   1st Qu.: 0.000   1st Qu.:1.000   1st Qu.:1.000   Class :character   Class :character   1st Qu.:251.0   1st Qu.: 43.00  
+ Median :39.00   Median :688.0   Median :0.0000   Median : 0.000   Median :1.000   Median :1.000   Mode  :character   Mode  :character   Median :270.0   Median : 61.00  
+ Mean   :38.93   Mean   :690.6   Mean   :0.3767   Mean   : 9.724   Mean   :1.409   Mean   :1.029                                         Mean   :263.1   Mean   : 64.23  
+ 3rd Qu.:47.00   3rd Qu.:730.0   3rd Qu.:1.0000   3rd Qu.:25.000   3rd Qu.:2.000   3rd Qu.:1.000                                         3rd Qu.:286.0   3rd Qu.: 82.00  
+ Max.   :65.00   Max.   :850.0   Max.   :1.0000   Max.   :55.000   Max.   :2.000   Max.   :4.000                                         Max.   :308.0   Max.   :186.00  
+ NA's   :9710                                                                                                                                                            
+ beginStatus         endStatus          beginCoupon       diffCoupon          beginBalance     diffBalance      beginScheduledPayment diffScheduledPayment beginRemainingTerm
+ Length:435999      Length:435999      Min.   : 0.000   Min.   :-10.500000   Min.   :     0   Min.   :-790929   Min.   :   0.0        Min.   :-71.32000    Min.   :-28.0     
+ Class :character   Class :character   1st Qu.: 5.875   1st Qu.:  0.000000   1st Qu.: 92142   1st Qu.:-213182   1st Qu.: 612.8        1st Qu.:  0.00000    1st Qu.:280.0     
+ Mode  :character   Mode  :character   Median : 6.375   Median :  0.000000   Median :142407   Median :-142407   Median : 920.9        Median :  0.00000    Median :302.0     
+                                       Mean   : 6.338   Mean   : -0.004186   Mean   :160936   Mean   :-160936   Mean   :1034.6        Mean   : -0.00016    Mean   :302.8     
+                                       3rd Qu.: 6.875   3rd Qu.:  0.000000   3rd Qu.:213182   3rd Qu.: -92142   3rd Qu.:1353.5        3rd Qu.:  0.00000    3rd Qu.:321.0     
+                                       Max.   :41.250   Max.   :  0.000000   Max.   :790929   Max.   :      0   Max.   :7356.3        Max.   :  0.00000    Max.   :480.0     
+                                                                                                                                                                             
+ diffRemainingTerm  scheduledPrincipal modificationCount monthsInModification      HPA            mtm_cltv           fhl30_lag2      fhl30_chg      countNonCurrent 
+ Min.   :-466.000   Min.   :-417.3     Min.   :0.00000   Min.   :  0.000      Min.   :0.3535   Min.   :  0.00003   Min.   :3.270   Min.   :-5.245   Min.   :  0.00  
+ 1st Qu.:  -1.000   1st Qu.: 111.7     1st Qu.:0.00000   1st Qu.:  0.000      1st Qu.:0.7269   1st Qu.: 74.31658   1st Qu.:3.911   1st Qu.:-2.198   1st Qu.: 12.00  
+ Median :  -1.000   Median : 178.9     Median :0.00000   Median :  0.000      Median :0.8860   Median : 87.74048   Median :4.404   Median :-1.646   Median : 19.00  
+ Mean   :  -1.196   Mean   : 203.6     Mean   :0.09186   Mean   :  2.735      Mean   :0.8857   Mean   : 92.96852   Mean   :4.537   Mean   :-1.603   Mean   : 23.34  
+ 3rd Qu.:  -1.000   3rd Qu.: 271.7     3rd Qu.:0.00000   3rd Qu.:  0.000      3rd Qu.:1.0442   3rd Qu.:106.82747   3rd Qu.:4.949   3rd Qu.:-1.111   3rd Qu.: 30.00  
+ Max.   :  10.000   Max.   :1824.9     Max.   :5.00000   Max.   :153.000      Max.   :2.8367   Max.   :289.80240   Max.   :8.515   Max.   : 1.787   Max.   :156.00  
+                                                                                                                                                                    
+ ageSinceLastCurrent ageSinceLastDelinquent loanPurpose        propertyType       occupancyStatus      channel             state           monthsAccrued   
+ Min.   :  0.00      Min.   : 0.00000       Length:435999      Length:435999      Length:435999      Length:435999      Length:435999      Min.   :  2.00  
+ 1st Qu.: 11.00      1st Qu.: 0.00000       Class :character   Class :character   Class :character   Class :character   Class :character   1st Qu.: 12.00  
+ Median : 16.00      Median : 0.00000       Mode  :character   Mode  :character   Mode  :character   Mode  :character   Mode  :character   Median : 17.00  
+ Mean   : 19.28      Mean   : 0.00987                                                                                                      Mean   : 19.62  
+ 3rd Qu.: 25.00      3rd Qu.: 0.00000                                                                                                      3rd Qu.: 24.00  
+ Max.   :142.00      Max.   :82.00000                                                                                                      Max.   :131.00  
+                                                                                                                                                           
+ accruedInterest       expenses       netSaleProceeds     lossClaim      actualLoss_noMI     from_dq             to_dq           vintage_factor  loanPurpose_factor
+ Min.   :  -409.8   Min.   :-133206   Min.   :-138600   Min.   :-67626   Min.   :-168888   Length:435999      Length:435999      2007   :85489   PURCH    :171670  
+ 1st Qu.:  6718.4   1st Qu.:   5874   1st Qu.:  44900   1st Qu.:112682   1st Qu.:  44882   Class :character   Class :character   2006   :78345   RE-FI-NCO:116288  
+ Median : 11530.8   Median :  11383   Median :  88100   Median :170823   Median :  76868   Mode  :character   Mode  :character   2005   :65661   RE-FI-CO :148041  
+ Mean   : 15789.8   Mean   :  14622   Mean   : 102289   Mean   :191348   Mean   :  89060                                         2008   :51883                     
+ 3rd Qu.: 19946.6   3rd Qu.:  19511   3rd Qu.: 144300   3rd Qu.:250705   3rd Qu.: 121085                                         2003   :37056                     
+ Max.   :221586.2   Max.   : 230386   Max.   : 750506   Max.   :886666   Max.   : 741583                                         2004   :32979                     
+                                                                                                                                 (Other):84586                     
+ propertyType_factor occupancyStatus_factor channel_factor    state_factor    judicialFlag_factor from_dq_factor to_dq_factor
+ SFR      :331593    OWNER:383965           RETAIL :151895   FL     : 53671   0:260518            AC :  1048     X:435999    
+ PUD      : 57354    INV  : 34079           CORRES :  8598   CA     : 42349   1:175481            C  :   369                 
+ CONDO    : 38827    2ND  : 17955           BROKER :  7212   MI     : 34826                       ED :  2789                 
+ MH       :  7820                           UNKNOWN:268294   AZ     : 28122                       FC :117405                 
+ CO-OP    :   191                                            GA     : 23858                       LD : 29631                 
+ LEASEHOLD:   211                                            OH     : 23527                       REO:284757                 
+ UNKNOWN  :     3                                            (Other):229646                                              

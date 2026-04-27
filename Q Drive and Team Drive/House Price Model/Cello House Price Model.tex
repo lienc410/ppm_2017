@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage{C:/texlive/texmf-local/mystyle}
+\begin{document}
+\title{PIV House Price Model}
+\author{PIV Research}
+\maketitle
+\section{Introduction}
+PIV's initial house price model is a simplified deterministic implementation of a house price model first discussed in \cite{Stoll13}. The full-scale model in the paper has two primary components:  (1) A process for simulating the fundamental value of house prices and (2) A process for simulating the manner in which actual house prices move relative to that fundamental value through time. For modeling fundamental values, the original paper uses variables such as bond prices and market rental rates. This approach is used to capture a ``no-arbitrage" condition with respect to interest rates and captures the relation between houses prices and interest rates. Specifically, quarterly changes in house prices ($\Delta P_t$) are modeled to follow the process:
+\begin{equation}\label{eq:home-price-model}
+\Delta P_{t} = \alpha P_t + \sum^{n}_{i=0} \beta_i (P_{t-i} - P_{t-i-1}) + \gamma (P^{*}_{t} - P_t) + \epsilon_t
+\end{equation}
+where
+\begin{itemize}
+\item[] $\Delta P_{t}$ equals the quarterly house price change from time $t$ to $t + 1$,
+\item[] $P_t$ equals house prices at time $t$,
+\item[] $P^{*}_{t}$ is a stochastic variable that represents the fundamental value of house prices at time $t$,
+\item[] $\alpha$, $\beta_i$, and $\gamma$ are model parameters to be estimated, and
+\item[] $\epsilon_{t}$ is the random error term distributed $N[0, (\sigma_{p} P_t)^2]$, where $\sigma_p$ is the volatility of the residual percentage price changes.
+\end{itemize}
+The model contains four terms that describe the behavior of house prices. The first term, $\alpha P_t$, applies a constant percentage price change to $P_t$, net of other model factors. The second term, $\sum^{n}_{i=0} \beta_i (P_{t-i} - P_{t - i - 1})$, introduces serial correlation in house price changes, a dynamic that is well documented in literature. This term is presented in general form in which serial correlation exists over $n$ periods. In the estimation, there is evidence of serial correlation over three quarters. The third term, $\gamma (P^{*}_{t} - P_t)$, imposes mean reversion in which prices move towards their fundamental value at a rate of $\gamma$ per quarter. The fourth term, $\epsilon_t$, represents the random component of house price changes.
+
+\section{PIV's Implementation}
+By dividing both sides of the equation by $P_t$, equation \eqref{eq:home-price-model} can be restated to model the relative (or percentage) change in house prices. PIV's initial model will make several simplifying assumptions with the goal of developing a better model over time. The simplifed model retains the serial correlation structure of equation \eqref{eq:home-price-model} and also assumes that there exists a long-range relative rate of quarterly home prices changes, $\overline{\% \Delta P}$, that price changes eventually converge to.  
+\begin{equation}\label{eq:PIV-home-price-model}
+\%\Delta P_{t} = \beta_0 \cdot \%\Delta P_{t-1} + \beta_1 \cdot \%\Delta P_{t-2} +  \beta_2 \cdot \%\Delta P_{t-2} + \gamma \cdot \overline{\% \Delta P}
+\end{equation}
+The model parameters for serial correlation (the $\beta_i$) are taken from \cite{Stoll13}. We set $\alpha = 0$ and rescale $\gamma$ from the paper so that the weights $\beta_i$ and $\gamma$ add up to 1. $\overline{\% \Delta P}$ is estimated by taking the average of quarterly home prices changes for the purchase-only index from Q1 1991 to Q3 2015. This gives us: $\overline{\% \Delta P} = 0.80\%$. With the coefficients written out we have:
+\begin{equation}\label{eq:PIV-home-price-model2}
+\%\Delta P_{t} = 0.402 \cdot \%\Delta P_{t-1} + 0.313 \cdot \%\Delta P_{t-2} +  0.259 \cdot \%\Delta P_{t-2} + 0.026 \cdot 0.80\%
+\end{equation}
+
+The model fit is plotted in the figure below. 
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=1.00\textwidth]{HousePriceModel.pdf}
+\caption{Tracking for the PIV House Price Model}
+\end{figure}
+
+
+\begin{thebibliography}{99}
+\bibitem{Stoll13} Stoll, Kevin J. 2013. ``A Stochastic U.S. House Price Model for Valuing Residential Mortgages and Other House Price-Dependent Assets," \textsl{Journal of Fixed Income}, Winter 2013.
+
+\end{thebibliography}
+\end{document}

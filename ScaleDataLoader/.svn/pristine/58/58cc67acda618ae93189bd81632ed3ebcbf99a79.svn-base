@@ -1,0 +1,712 @@
+-- Ginnie
+-- Loan Level
+-- Part 1 of 6
+-- Script to update the origination metric
+-- Detail information can be find in
+-- https://docs.google.com/document/d/1eawGJ_R24HpQkE_Ujej7HjkV-AdJLJBP-sFgDjYR5Kc/edit
+
+
+-- Before execute the script, need to set the dates to run for
+DROP TABLE IF EXISTS #tmp_asOf;
+SELECT CAST('#####ASOF#####' AS DATE) asOf INTO #tmp_asOf
+--SELECT CAST ('1979-05-01' AS DATE) asOf INTO #tmp_asOf
+;
+
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+)
+;
+INSERT #ticker SELECT 'GNSF', 'GINNIE_30YR';   -- Ginnie 1
+INSERT #ticker SELECT 'G2SF', 'GINNIE_30YR';   -- Ginnie 2
+INSERT #ticker SELECT 'G2SF-JM', 'GINNIE_30YR';-- Ginnie Jumbo
+COMMIT;
+
+CREATE LF INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+
+-- Create Loan Origination Data
+DROP TABLE IF EXISTS #GNM_Loan;
+SELECT
+    l.loanSeqNum,
+    l.marketTicker,
+    l.loanType,
+	origNoteRateBucket = case 
+                    when origNoteRate < 0.5 THEN 0.5
+                    when origNoteRate >= 15 THEN 15
+                    else convert(numeric(6, 3), origNoteRate / 0.125) * 0.125 + 0.125
+                    end,
+	origLoanSizeBucket = case 
+                    when origLoanSize  < 50000 THEN 50000
+                    when origLoanSize  >= 2850000 THEN 500000
+                    else convert(int, origLoanSize  / 50000) * 50000 + 50000
+                    end,
+    origLTVBucket = case 
+                    when origLTV  < 10 THEN 10
+                    when origLTV  >= 125 THEN 125
+                    else convert(int, origLTV  / 1) * 1 + 1
+                    end,
+    origFICOBucket = case 
+                    when origFICO  < 300 THEN 300
+                    when origFICO  >= 850 THEN 850
+                    else convert(int, origFICO  / 20) * 20 + 20
+                    end,
+    CASE WHEN calcOrigMonth_LL IS NULL THEN convert(date, l.firstPaymtDt - day(l.firstPaymtDt) + 1) ELSE convert(date, convert(char(8), calcOrigMonth_LL * 100 + 1)) END as originationDate,
+    CASE WHEN originalLoanAmount = -999 THEN NULL ELSE originalLoanAmount END as origLoanSize,
+    CASE WHEN cs = -999 THEN NULL ELSE cs END as origFICO,
+    CASE WHEN origLTV = -999 THEN NULL ELSE origLTV END as origLTV,
+    CASE WHEN dti = -999 THEN NULL ELSE dti END as dti,
+    CASE WHEN origNoteRate = -999 THEN NULL ELSE origNoteRate END as origNoteRate,
+    CASE WHEN loanPurposeType = 'N/A' THEN NULL ELSE loanPurposeType END as loanPurposeType,   
+    CASE WHEN tpoType = 'N/A' THEN NULL ELSE tpoType END as tpoType,
+    CASE WHEN firstTimeHomeBuyerFlag = '#' THEN NULL ELSE firstTimeHomeBuyerFlag END as firstTimeHomeBuyerFlag,
+    CASE WHEN reperformingStatus = 'NONE' THEN NULL ELSE reperformingStatus END as reperformingStatus,
+    cast(NULL as numeric(10, 4)) as HPI_orig
+INTO #GNM_Loan
+FROM gnm.Cello_Loan l
+JOIN #ticker tk
+    ON l.marketTicker = tk.tickerName
+WHERE 1=1
+    AND originalLoanAmount > 0.01
+;
+COMMIT;
+
+CREATE HG INDEX loan_id_idx ON #GNM_Loan(loanSeqNum);
+CREATE LF INDEX orig_date_idx ON #GNM_Loan(originationDate);
+CREATE LF INDEX ticker_idx ON #GNM_Loan(marketTicker);
+COMMIT;
+select origLoanSize from #GNM_Loan order by origLoanSize desc
+-- The following columns are well populated (no NULLs):
+--  1.loanSeqNum
+--  2.marketTicker
+--  3.loanType
+--  4.originationDate
+--  5.origLoanSize
+
+-- Do not fill missing values for any variables (for now) that have more than 30% of the data missing. In scale.gnm_loan these are:
+--  1. dti
+--  2. tpoType
+--  3. firstTimeHomeBuyerFlat
+
+-- Fill missing values for the following variables in scale.gnm_loanOrig:
+--  1. origFICO
+--  2. origLTV
+--  3. loanPurposeType
+
+-- Calculate the following variables using other information (derived variables):
+--  1. HPI_orig
+
+
+--------------------------------------
+-- origFICO
+--------------------------------------
+--  only handle the case where FICO is missing but OLTV is not missing. Will handle the case where both of FICO and OLTV are missing later.
+--  time concern: it takes too long to run the second case above.
+
+-- Step 1:
+-- Create mapping grid for missing FICO loans
+DROP TABLE IF EXISTS #FICO_Buckets;
+SELECT 
+    loanType,
+    originationDate,
+	origNoteRateBucket = case 
+                    when origNoteRate < 0.5 THEN 0.5
+                    when origNoteRate >= 15 THEN 15
+                    else convert(numeric(6, 3), origNoteRate / 0.125) * 0.125 + 0.125
+                    end,
+	origLoanSizeBucket = case 
+                    when origLoanSize  < 50000 THEN 50000
+                    when origLoanSize  >= 200000 THEN 500000
+                    else convert(int, origLoanSize  / 50000) * 50000 + 50000
+                    end,
+    origLTVBucket = case 
+                    when origLTV  < 10 THEN 10
+                    when origLTV  >= 125 THEN 125
+                    else convert(int, origLTV  / 1) * 1 + 1
+                    end,
+    sum(origLoanSize) as bal,
+    sum(origFICO * origLoanSize) / sum(origLoanSize) as avg_origFICO
+INTO #FICO_Buckets
+FROM #GNM_Loan l
+WHERE origFICO IS NOT NULL
+    AND origLTV IS NOT NULL
+GROUP BY loanType, originationDate, origNoteRateBucket, origLoanSizeBucket, origLTVBucket
+ORDER BY loanType, originationDate, origNoteRateBucket, origLoanSizeBucket, origLTVBucket
+;
+COMMIT;
+
+-- Update the missing FICO from the bucketing table
+UPDATE #GNM_Loan l SET 
+    l.origFICO = fb.avg_origFICO
+FROM #FICO_Buckets fb
+WHERE l.loanType = fb.loanType
+    AND l.originationDate = fb.originationDate
+    AND l.origNoteRateBucket = fb.origNoteRateBucket
+    AND l.origLoanSizeBucket = fb.origLoanSizeBucket
+    AND l.origLTVBucket = fb.origLTVBucket
+    AND l.origFICO IS NULL
+;
+COMMIT;
+
+
+-- Step 2:
+-- If a loan doesn't fit into one of the buckets in the original bucketing scheme, 
+-- then we map the loan to the closest bucket as calculated by the Gower distance function
+
+--  Normalize origNoteRate, origLoanSize, and origLTV and originationDate
+DROP TABLE IF EXISTS #data_range;
+SELECT 
+    max(origNoteRate) - min(origNoteRate) as origNoteRate_range,
+    max(origLoanSize) - min(origLoanSize) as origLoanSize_range,
+    max(origLTV) - min(origLTV) as origLTV_range,
+    max(origFICO) - min(origFICO) as origFICO_range,
+    CONVERT(NUMERIC(5, 1), datediff(month, min(originationDate), max(originationDate))) as originationDate_range
+INTO #data_range
+FROM #GNM_Loan
+;
+COMMIT;
+
+-- Create mapping grid for Gower distance
+DROP TABLE IF EXISTS #gower_distance_grid;
+SELECT 
+    loanType,
+    originationDate,
+    sum(origNoteRate * origLoanSize) / sum(origLoanSize) as avg_origNoteRate,
+    avg(origLoanSize) as avg_origLoanSize,
+    sum(origFICO * origLoanSize) / sum(origLoanSize) as avg_origFICO,
+    sum(origLTV * origLoanSize) / sum(origLoanSize) as avg_origLTV,
+    sum(origLoanSize) as bal
+INTO #gower_distance_Grid
+FROM #GNM_Loan l
+WHERE origLTV IS NOT NULL
+    AND origFICO IS NOT NULL
+GROUP BY loanType, originationDate
+ORDER BY loanType, originationDate
+;
+COMMIT;
+
+-- Calculate closest Gower distance
+--  target loan list
+DROP TABLE IF EXISTS #FICO_gower_distance_target_list;
+SELECT
+    l.loanSeqNum,
+    l.loanType,
+    l.origNoteRate,
+    l.origLoanSize,
+    l.origLTV,
+    l.originationDate,
+    origNoteRate_range,
+    origLoanSize_range,
+    origLTV_range,
+    originationDate_range
+INTO #FICO_gower_distance_target_list
+FROM #GNM_Loan l
+CROSS JOIN #data_range r
+WHERE l.origFICO IS NULL
+    AND originationDate >= (select asOf from #tmp_asOf)
+;
+
+
+-- full mapping list:
+--      calculate the distance between each target point and potential mapping point
+DROP TABLE IF EXISTS #FICO_gower_distance_full_list;
+SELECT
+    l.loanSeqNum,
+    Gower_Distance = abs(l.origNoteRate - fb.avg_origNoteRate) / origNoteRate_range
+                   + abs(l.origLoanSize - fb.avg_origLoanSize) / origLoanSize_range
+                   + CASE WHEN l.origLTV IS NULL THEN 0.0 ELSE abs(l.origLTV - fb.avg_origLTV) END / origLTV_range
+                   + CONVERT(NUMERIC(5, 1), abs(datediff(month, l.originationDate, fb.originationDate))) / originationDate_range,
+    fb.avg_origFICO
+INTO #FICO_gower_distance_full_list
+FROM #FICO_gower_distance_target_list l
+JOIN #gower_distance_grid fb
+    ON l.loanType = fb.loanType
+;
+
+-- find the closet mapping
+DROP TABLE IF EXISTS #FICO_gower_distance_mapped_list;
+SELECT
+    loanSeqNum, 
+    min(Gower_Distance) as min_distance
+INTO #FICO_gower_distance_mapped_list
+FROM #FICO_gower_distance_full_list 
+GROUP BY loanSeqNum
+;
+
+DROP TABLE IF EXISTS #FICO_gower_distance_result;
+SELECT
+    f.loanSeqNum, 
+    f.avg_origFICO
+INTO #FICO_gower_distance_result
+FROM #FICO_gower_distance_full_list f
+JOIN #FICO_gower_distance_mapped_list m
+    ON f.loanSeqNum = m.loanSeqNum
+    AND f.Gower_Distance = m.min_distance
+;
+COMMIT;
+
+-- Update the missing FICO from the bucketing table
+UPDATE #GNM_Loan l SET 
+    l.origFICO = d.avg_origFICO
+FROM #FICO_gower_distance_result d
+WHERE l.loanSeqNum = d.loanSeqNum
+    AND l.origFICO IS NULL
+;
+COMMIT;
+
+
+--------------------------------------
+-- origLTV
+--------------------------------------
+
+-- Step 1:
+-- Create mapping grid for missing OrigLTV loans
+DROP TABLE IF EXISTS #OrigLTV_Buckets;
+SELECT 
+    loanType,
+    originationDate,
+	origNoteRateBucket = case 
+                    when origNoteRate < 0.5 THEN 0.5
+                    when origNoteRate >= 15 THEN 15
+                    else convert(numeric(6, 3), origNoteRate / 0.125) * 0.125 + 0.125
+                    end,
+	origLoanSizeBucket = case 
+                    when origLoanSize  < 50000 THEN 50000
+                    when origLoanSize  >= 200000 THEN 500000
+                    else convert(int, origLoanSize  / 50000) * 50000 + 50000
+                    end,
+    origFICOBucket = case 
+                    when origFICO  < 300 THEN 300
+                    when origFICO  >= 850 THEN 850
+                    else convert(int, origFICO  / 20) * 20 + 20
+                    end,
+    sum(origLoanSize) as bal,
+    sum(origLTV * origLoanSize) / sum(origLoanSize) as avg_origLTV
+INTO #OrigLTV_Buckets
+FROM #GNM_Loan l
+WHERE origLTV IS NOT NULL
+    AND origFICO IS NOT NULL
+GROUP BY loanType, originationDate, origNoteRateBucket, origLoanSizeBucket, origFICOBucket
+ORDER BY loanType, originationDate, origNoteRateBucket, origLoanSizeBucket, origFICOBucket
+;
+COMMIT;
+
+-- Update the missing FICO from the bucketing table
+UPDATE #GNM_Loan l SET 
+    l.origLTV = fb.avg_origLTV
+FROM #origLTV_Buckets fb
+WHERE l.loanType = fb.loanType
+    AND l.originationDate = fb.originationDate
+    AND l.origNoteRateBucket = fb.origNoteRateBucket
+    AND l.origLoanSizeBucket = fb.origLoanSizeBucket
+    AND l.origFICOBucket = fb.origFICOBucket
+    AND l.origLTV IS NULL
+;
+COMMIT;
+
+
+
+-- Step 2:
+-- If a loan doesn't fit into one of the buckets in the original bucketing scheme, 
+-- then we map the loan to the closest bucket as calculated by the Gower distance function
+
+-- Calculate closest Gower distance
+--  target loan list
+DROP TABLE IF EXISTS #OLTV_gower_distance_target_list;
+SELECT
+    l.loanSeqNum,
+    l.loanType,
+    l.origNoteRate,
+    l.origLoanSize,
+    l.origFICO,
+    l.originationDate,
+    origNoteRate_range,
+    origLoanSize_range,
+    origFICO_range,
+    originationDate_range
+INTO #OLTV_gower_distance_target_list
+FROM #GNM_Loan l
+CROSS JOIN #data_range r
+WHERE l.origLTV IS NULL
+    AND originationDate >= (select asOf from #tmp_asOf)
+;
+
+
+-- full mapping list:
+--      calculate the distance between each target point and potential mapping point
+DROP TABLE IF EXISTS #OLTV_gower_distance_full_list;
+SELECT
+    l.loanSeqNum,
+    Gower_Distance = abs(l.origNoteRate - fb.avg_origNoteRate) / origNoteRate_range
+                   + abs(l.origLoanSize - fb.avg_origLoanSize) / origLoanSize_range
+                   + CASE WHEN l.origFICO IS NULL THEN 0.0 ELSE abs(l.origFICO - fb.avg_origFICO) END / origFICO_range
+                   + CONVERT(NUMERIC(5, 1), abs(datediff(month, l.originationDate, fb.originationDate))) / originationDate_range,
+    fb.avg_origLTV
+INTO #OLTV_gower_distance_full_list
+FROM #OLTV_gower_distance_target_list l
+JOIN #gower_distance_grid fb
+    ON l.loanType = fb.loanType
+;
+
+-- find the closet mapping
+DROP TABLE IF EXISTS #OLTV_gower_distance_mapped_list;
+SELECT
+    loanSeqNum, 
+    min(Gower_Distance) as min_distance
+INTO #OLTV_gower_distance_mapped_list
+FROM #OLTV_gower_distance_full_list 
+GROUP BY loanSeqNum
+;
+
+DROP TABLE IF EXISTS #OLTV_gower_distance_result;
+SELECT
+    f.loanSeqNum, 
+    f.avg_origLTV
+INTO #OLTV_gower_distance_result
+FROM #OLTV_gower_distance_full_list f
+JOIN #OLTV_gower_distance_mapped_list m
+    ON f.loanSeqNum = m.loanSeqNum
+    AND f.Gower_Distance = m.min_distance
+;
+COMMIT;
+
+-- Update the missing LTV from the bucketing table
+UPDATE #GNM_Loan l SET 
+    l.origLTV = d.avg_origLTV
+FROM #OLTV_gower_distance_result d
+WHERE l.loanSeqNum = d.loanSeqNum
+    AND l.origLTV IS NULL
+;
+COMMIT;
+
+
+--------------------------------------
+-- loanPurposeType
+--------------------------------------
+-- -- Create mapping grid for Gower distance
+DROP TABLE IF EXISTS #gower_distance_grid;
+SELECT 
+    loanType,
+    originationDate,
+    sum(origNoteRate * origLoanSize) / sum(origLoanSize) as avg_origNoteRate,
+    avg(origLoanSize) as avg_origLoanSize,
+    sum(origFICO * origLoanSize) / sum(origLoanSize) as avg_origFICO,
+    sum(origLTV * origLoanSize) / sum(origLoanSize) as avg_origLTV,
+    loanPurposeType,
+    sum(origLoanSize) as bal
+INTO #gower_distance_Grid
+FROM #GNM_Loan l
+WHERE origLTV IS NOT NULL
+    AND origFICO IS NOT NULL
+    AND loanPurposeType IS NOT NULL
+GROUP BY loanType, originationDate, loanPurposeType
+ORDER BY loanType, originationDate, loanPurposeType
+;
+COMMIT;
+
+
+-- Calculate closest Gower distance
+--  target loan list
+DROP TABLE IF EXISTS #loanPurpose_gower_distance_target_list;
+SELECT
+    l.loanSeqNum,
+    l.loanType,
+    l.origNoteRate,
+    l.origLoanSize,
+    l.origFICO,
+    l.origLTV,
+    l.originationDate,
+    origNoteRate_range,
+    origLoanSize_range,
+    origFICO_range,
+    origLTV_range,
+    originationDate_range
+INTO #loanPurpose_gower_distance_target_list
+FROM #GNM_Loan l
+CROSS JOIN #data_range r
+WHERE l.loanPurposeType IS NULL
+    AND originationDate >= (select asOf from #tmp_asOf)
+;
+
+-- full mapping list:
+--      calculate the distance between each target point and potential mapping point
+DROP TABLE IF EXISTS #loanPurpose_gower_distance_full_list;
+SELECT
+    l.loanSeqNum,
+    Gower_Distance = abs(l.origNoteRate - fb.avg_origNoteRate) / origNoteRate_range
+                   + abs(l.origLoanSize - fb.avg_origLoanSize) / origLoanSize_range
+                    + CASE WHEN l.origFICO IS NULL THEN 0.0 ELSE abs(l.origFICO - fb.avg_origFICO) END / origFICO_range
+                    + CASE WHEN l.origLTV IS NULL THEN 0.0 ELSE abs(l.origLTV - fb.avg_origLTV) END / origLTV_range
+                    + CONVERT(NUMERIC(5, 1), abs(datediff(month, l.originationDate, fb.originationDate))) / originationDate_range,
+    loanPurposeType
+INTO #loanPurpose_gower_distance_full_list
+FROM #loanPurpose_gower_distance_target_list l
+JOIN #gower_distance_grid fb
+    ON l.loanType = fb.loanType
+;
+
+-- find the closet mapping
+DROP TABLE IF EXISTS #loanPurpose_gower_distance_mapped_list;
+SELECT
+    loanSeqNum, 
+    min(Gower_Distance) as min_distance
+INTO #loanPurpose_gower_distance_mapped_list
+FROM #loanPurpose_gower_distance_full_list 
+GROUP BY loanSeqNum
+;
+
+DROP TABLE IF EXISTS #loanPurpose_gower_distance_result;
+SELECT
+    f.loanSeqNum, 
+    f.loanPurposeType
+INTO #loanPurpose_gower_distance_result
+FROM #loanPurpose_gower_distance_full_list f
+JOIN #loanPurpose_gower_distance_mapped_list m
+    ON f.loanSeqNum = m.loanSeqNum
+    AND f.Gower_Distance = m.min_distance
+;
+COMMIT;
+
+-- Update the missing LTV from the bucketing table
+UPDATE #GNM_Loan l SET 
+    l.loanPurposeType = d.loanPurposeType
+FROM #loanPurpose_gower_distance_result d
+WHERE l.loanSeqNum = d.loanSeqNum
+    AND l.loanPurposeType IS NULL
+;
+COMMIT;
+
+
+--------------------------------------
+-- HPI_orig
+--------------------------------------
+-- Create Monthly HPI data
+-- Requires Extending the Time Series to the latest factor date using an assumption of 3% HPA
+DROP TABLE IF EXISTS #t;
+CREATE TABLE #t(
+    projected_month int
+)
+;    
+INSERT #t SELECT 1;
+INSERT #t SELECT 2;
+INSERT #t SELECT 3;
+INSERT #t SELECT 4;
+INSERT #t SELECT 5;
+INSERT #t SELECT 6;
+COMMIT;
+
+DROP TABLE IF EXISTS #HPI_Latest_Date;
+SELECT
+    TimeSeriesMetaId,
+    max(AsOfDate) as latest_asOf
+INTO #HPI_Latest_Date
+FROM report.TimeSeries
+WHERE TimeSeriesMetaId = (SELECT TimeSeriesMetaId FROM report.TimeSeriesMeta WHERE Source = 'CELLO' AND TickerName = 'HPI_USA_ALL_TRANSACTIONS' AND Category = 'HPI' AND SeriesType = 'HPIndex')
+GROUP BY TimeSeriesMetaId
+;
+COMMIT;
+
+DROP TABLE IF EXISTS #HomePriceIndex_projected;
+SELECT
+    dateadd(MONTH, t.projected_month, ts.AsOfDate) as asOf,
+    ts.SeriesNumValue * power(1.0 + 3.0 / 100.0, t.projected_month / 12.0) as HPIndex
+INTO #HomePriceIndex_projected
+FROM report.TimeSeries ts
+JOIN #HPI_Latest_Date ld
+    ON ts.AsOfDate = ld.latest_asOf
+    AND ts.TimeSeriesMetaId = ld.TimeSeriesMetaId
+CROSS JOIN #t t
+;
+COMMIT;
+
+DROP TABLE IF EXISTS #HomePriceIndex_monthly;
+SELECT
+    t.asOf,
+    t.HPIndex
+INTO #HomePriceIndex_monthly
+FROM(
+    SELECT asOfDate as asOf, SeriesNumValue as HPIndex FROM report.TimeSeries WHERE TimeSeriesMetaId = (SELECT TimeSeriesMetaId FROM #HPI_Latest_Date)
+    
+    UNION
+    
+    SELECT asOf, HPIndex FROM #HomePriceIndex_projected
+) t
+;
+COMMIT;
+
+DROP TABLE IF EXISTS #HPA_MA;
+SELECT
+    'USA' as Region,
+    t1.asOf,
+    t1.HPIndex as HPIndex,
+    t2.HPIndex as HPIndex_1YR,
+    t3.HPIndex as HPIndex_2YR,
+    CASE WHEN t2.HPIndex IS NULL THEN NULL ELSE t1.HPIndex / t2.HPIndex END as HPA_1YR,
+    CASE WHEN t3.HPIndex IS NULL THEN NULL ELSE t1.HPIndex / t3.HPIndex END as HPA_2YR
+INTO #HPA_MA
+FROM #HomePriceIndex_monthly t1
+LEFT JOIN #HomePriceIndex_monthly t2
+    ON t1.asOf = dateadd(month, 12, t2.asOf)
+LEFT JOIN #HomePriceIndex_monthly t3
+    ON t1.asOf = dateadd(month, 24, t3.asOf)
+;
+COMMIT;
+
+CREATE LF INDEX asOf_idx ON #HPA_MA(asOf);
+COMMIT;
+
+DELETE FROM #HPA_MA WHERE HPA_1YR IS NULL;
+COMMIT;
+
+DELETE FROM #HPA_MA WHERE HPA_2YR IS NULL;
+COMMIT;
+
+DROP TABLE IF EXISTS #HPI_Earliest;
+SELECT
+    min(asOf) as hpi_earliest_date,
+    cast(NULL as numeric(8, 4)) as hpi_earliest_value
+INTO #HPI_Earliest
+FROM #HPA_MA
+WHERE Region = 'USA'
+;
+COMMIT;
+
+UPDATE #HPI_Earliest he SET he.hpi_earliest_value = hpi.HPIndex
+FROM #HPA_MA hpi
+WHERE he.hpi_earliest_date = hpi.asOf
+    AND Region = 'USA'
+;
+COMMIT;
+
+
+-- Update HPI at Origination
+UPDATE #GNM_Loan l SET l.HPI_orig = hpi.HPIndex
+FROM #HPA_MA hpi
+WHERE l.originationDate = hpi.asOf
+    AND hpi.Region = 'USA'
+;
+
+UPDATE #GNM_Loan l SET l.HPI_orig = he.hpi_earliest_value * power(1 + 3.0 / 100.0, -(datediff(MONTH, l.originationDate, he.hpi_earliest_date) / 12.0))
+FROM #HPI_Earliest he
+WHERE l.HPI_orig IS NULL
+;
+COMMIT;
+
+
+
+
+
+-- Tests
+--SELECT marketTicker, originationDate, count(1), sum(origLoanSize), avg(origLoanSize) as avg_ols FROM #GNM_Loan GROUP BY marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+--SELECT marketTicker, originationDate, count(1), sum(origLoanSize), sum(origLoanSize * origFICO) / sum(origLoanSize) as wavg_fico FROM #GNM_Loan GROUP BY marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+--SELECT marketTicker, originationDate, count(1), sum(origLoanSize), sum(origLoanSize * origLTV) / sum(origLoanSize) as wavg_oltv FROM #GNM_Loan GROUP BY marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+--SELECT marketTicker, originationDate, count(1), sum(origLoanSize), sum(origLoanSize * origNoteRate) / sum(origLoanSize) as wavg_note_rate FROM #GNM_Loan GROUP BY marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+--SELECT marketTicker, originationDate, count(1), sum(origLoanSize), sum(origLoanSize * HPI_orig) / sum(origLoanSize) as wavg_orig_hpi FROM #GNM_Loan GROUP BY marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  origLoanSize IS NULL OR origLoanSize <= 0.0 OR origLoanSize > 10000000
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_Loan  WHERE origLoanSize IS NULL OR origLoanSize <= 0.0 OR origLoanSize > 10000000
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'GNM Loans with INVALID VALUE for origLoanSize LoanCount : %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have   origFICO IS NULL OR origFICO <= 0.0 OR origFICO > 900
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_Loan  WHERE   origFICO IS NULL OR origFICO <= 0.0 OR origFICO > 900
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'GNM Loans with INVALID VALUE for origFICO LoanCount : %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have   origLTV IS NULL OR origLTV <= 0.0 OR origLTV > 200
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_Loan  WHERE   origLTV IS NULL OR origLTV <= 0.0 OR origLTV > 200
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'GNM Loans with INVALID VALUE for origLTV LoanCount : %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have   loanPurposeType IS NULL OR loanPurposeType <= 0.0 OR loanPurposeType > 200
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_Loan  WHERE   loanPurposeType IS NULL
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'GNM Loans with INVALID VALUE for loanPurposeType LoanCount : %1!', @cnt
+            RETURN
+        END        
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have    origNoteRate IS NULL OR origNoteRate <= 0.0 OR origNoteRate > 20
+----------------------------------------------------------------------------------------------
+        SELECT
+           @cnt =  count(1)
+        FROM #GNM_Loan  WHERE    origNoteRate IS NULL OR origNoteRate <= 0.0 OR origNoteRate > 20
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'GNM Loans with INVALID VALUE for origNoteRate LoanCount : %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  HPI_orig IS NULL OR HPI_orig < 0.0 OR HPI_orig > 1000
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_Loan  WHERE  HPI_orig IS NULL OR HPI_orig < 0.0 OR HPI_orig > 1000
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'GNM Loans with INVALID VALUE for HPI_orig LoanCount : %1!', @cnt
+            RETURN
+        END
+
+
+
+
+-- Load Data into Scale Tables
+DELETE FROM scale.GNM_Loan_dev
+WHERE marketTicker IN (SELECT tickerName FROM #ticker)
+    AND version = (select version from #tmp_version)
+;
+DECLARE @version varchar(5)
+SELECT @version = (select * from #tmp_version)
+;
+INSERT INTO scale.GNM_Loan_dev (loanSeqNum, marketTicker, originationDate, origLoanSize, origFICO, origLTV, dti, origNoteRate, HPI_orig, loanPurposeType, tpoType, loanType, firstTimeHomeBuyerFlag, reperformingStatus,version)
+SELECT
+    loanSeqNum,
+    marketTicker,
+    originationDate,
+    origLoanSize,
+    origFICO,
+    origLTV,
+    dti,
+    origNoteRate,
+    HPI_orig,
+    loanPurposeType,   
+    tpoType,
+    loanType,
+    firstTimeHomeBuyerFlag,
+    reperformingStatus,
+	@version
+FROM #GNM_Loan
+WHERE marketTicker IN (SELECT tickerName FROM #ticker)
+;

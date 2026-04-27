@@ -1,0 +1,111 @@
+Pro:
+
+"burnout": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 1000,
+          "KnotValues": 0.9512
+        },
+        {
+          "Knots": 2000,
+          "KnotValues": 0.8776
+        },
+        {
+          "Knots": 4000,
+          "KnotValues": 0.6976
+        },
+        {
+          "Knots": 8000,
+          "KnotValues": 0.5984
+        },
+        {
+          "Knots": 16000,
+          "KnotValues": 0.4712
+        },
+        {
+          "Knots": 32000,
+          "KnotValues": 0.2
+        }
+      ],
+
+
+Interp:
+
+"burnout": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 1000,
+          "KnotValues": 0.9512
+        },
+        {
+          "Knots": 2000,
+          "KnotValues": 0.8776
+        },
+        {
+          "Knots": 4000,
+          "KnotValues": 0.6976
+        },
+	{
+          "Knots": 6000,
+          "KnotValues": 0.629475
+        },
+        {
+          "Knots": 8000,
+          "KnotValues":  0.5984
+        },
+	{
+          "Knots": 10000,
+          "KnotValues":  0.561790625
+        },
+        {
+          "Knots": 16000,
+          "KnotValues": 0.4712
+        },
+        {
+          "Knots": 32000,
+          "KnotValues": 0.2
+        }
+      ],
+
+Dev:
+
+"burnout": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 1000,
+          "KnotValues": 0.9512
+        },
+        {
+          "Knots": 2000,
+          "KnotValues": 0.8776
+        },
+        {
+          "Knots": 4000,
+          "KnotValues": 0.60864
+        },
+        {
+          "Knots": 8000,
+          "KnotValues":  0.528
+        },
+	    {
+          "Knots": 10000,
+          "KnotValues":  0.527
+        },
+        {
+          "Knots": 16000,
+          "KnotValues": 0.4712
+        },
+        {
+          "Knots": 32000,
+          "KnotValues": 0.2
+        }
+      ],

@@ -1,0 +1,1 @@
+C:/Sybase/IQ-16_0/Bin32/dbisql.exe  -datasource  ReportAgencyPool  -nogui  %1  -onerror  exit

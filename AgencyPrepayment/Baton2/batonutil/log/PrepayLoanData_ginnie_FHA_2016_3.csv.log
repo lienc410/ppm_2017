@@ -1,0 +1,182 @@
+WARNING: unknown option '--4.70'
+
+WARNING: unknown option '--GINNIE'
+
+WARNING: unknown option '--PrepayLoanData_ginnie_FHA_2016_3.csv'
+
+WARNING: unknown option '--H:/tempExtract/PrepayLoanData/GINNIE/Model_4.70/20190401/model_input_split/'
+
+WARNING: unknown option '--H:/tempExtract/PrepayLoanData/GINNIE/Model_4.70/20190401/model_output/'
+
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 248598 13.3     608334 32.5   406898 21.8
+Vcells 401280  3.1    8388608 64.0  1604079 12.3
+Loading required package: data.table
+Loading required package: lubridate
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:data.table':
+
+    hour, isoweek, mday, minute, month, quarter, second, wday, week,
+    yday, year
+
+The following object is masked from 'package:base':
+
+    date
+
+Loading required package: jsonlite
+Loading required package: dplyr
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:lubridate':
+
+    intersect, setdiff, union
+
+The following objects are masked from 'package:data.table':
+
+    between, first, last
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+AddMonths.R :
+AggregateData.R :
+AggregatePrepayData.R :
+BuildSpline.R :
+BuildSpline_cdr.R :
+CalculateEQLODMultiplier.R :
+CalculateNewBurnout.R :
+CalculateRefiCosts.R :
+CheckMontone.R :
+config.R :
+CreateCombJSON.R :
+glf.R :
+ImportData.R :
+isMonotonic.R :
+lis.R :
+main.R :
+ManageNAs.R :
+ModelErrorStats.R :
+ModelEstimator.R :
+ModelProjections.R :
+ModelProjectionsDriver.R :
+ModelSplineDiff.R :
+ParseModelJSON.R :
+PredictDflt.R :
+PredictDflt_2.R :
+PredictDflt_cdr.R :
+PredictDflt_conv.R :
+PredictSubmodel_4_50_interpolation.R :
+PredictSubmodel_4_60_interpolation.R :
+PredictSubmodel_4_60_interpolation_VA.R :
+PredictSubmodel_4_70_interpolation.R :
+PredictSubmodel_4_70_interpolation_VA.R :
+PrepayComponents.R :
+PrepayConversion.R :
+SeasonalAdjustment.R :
+SplineToGLF.R :
+TidyData.R :
+trackr.R :
+TransformData.R :
+tuner.R :
+Visualize.R :
+Model.version:  v4.70 
+input.file:  PrepayLoanData_ginnie_FHA_2016_3.csv 
+output.file PrepayLoanData_ginnie_FHA_2016_3.out 
+data.input H:/tempExtract/PrepayLoanData/GINNIE/Model_4.70/20190401/model_input_split//PrepayLoanData_ginnie_FHA_2016_3.csv 
+data.output H:/tempExtract/PrepayLoanData/GINNIE/Model_4.70/20190401/model_output//PrepayLoanData_ginnie_FHA_2016_3.out 
+[1] "using GNMandolin_v4.70.json"
+input data: Start 
+Using FHA Model 
+input data: Done 
+Cleaning data: Start 
+Cleaning data: Done 
+
+ Calculate Curtailment: Start 
+Calculate Curtailment: Done 
+ 
+
+ Calculate Default: Start 
+running d0 mdl 
+d0  1.578646 
+running d30 mdl 
+d30  1.459896 
+running d60 mdl 
+d60  1.423698 
+running cure mdl
+running buyout mdl
+buyout  0.04687472 
+Calculate Default: Done 
+ 
+
+ Calculate Cashout: Start 
+running cout mdl step 1 
+cout mdl step1: burnout S curves  2.010677 
+running cout mdl step 2 
+cout mdl step2: monthsSinceIssued  0.04140592 
+running cout mdl step 3 
+cout mdl step3: wacls(tpo)  0.02291722 
+running cout mdl step 4 
+cout mdl step4: wacls(purpose)  2.330729 
+running cout mdl step 5 
+cout mdl step5: geo(purpose)  0.1098956 
+running cout mdl step 3 
+cout mdl step6: results  0.003645933 
+Calculate Cashout: Done 
+ 
+
+ Calculate Turnover: Start 
+running turn mdl 
+turn mdl finish  4.224999 
+Calculate Turnover: Done 
+ 
+
+ Calculate Refinance: Start 
+running refi mdl step 1 
+refi mdl step1: fico  0.03776112 
+running refi mdl step 2 
+refi mdl step2: sato  0.03151007 
+running refi mdl step 3 
+refi mdl step3: tpo  0.2 
+running refi mdl step 4 
+refi mdl step4: loanpurpose  0.3031253 
+running refi mdl step 5 
+refi mdl step5: burnout S curves  1.415105 
+running refi mdl step 6 
+refi mdl step6: media effect interpolation  0.236718 
+running refi mdl step 7 
+refi mdl step7: monthsSinceIssued  0.04539567 
+running refi mdl step 8 
+refi mdl step8: geo(purpose)  0.0872396 
+running refi mdl step 9 
+refi mdl step9: results  0.002306501 
+Calculate Refinance: Done 
+ 
+
+ Calculate Credit Curing: Start 
+running cc mdl 
+cc mdl finish  0.1567711 
+Calculate Credit Curing: Done 
+ 
+
+ Calculate Fixed To ARM: Start 
+running fta mdl 
+fta mdl finish  0.1479168 
+Calculate Fixed To ARM: Done 
+ 
+
+ Calculate Model SMM: Start 
+Calculate Model SMM: Done 
+ 
+Storing Results: Start 
+Storing Results: Done 
+> proc.time()
+   user  system elapsed 
+1082.25  242.43 1387.31 

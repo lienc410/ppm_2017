@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1531325182443.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3786862636",
+    "id" : "4BBEA0EE",
+    "lastKnownWriteTime" : 1531426249,
+    "last_content_update" : 1531426249790,
+    "path" : "C:/Cello/cello-it-dev/trunk/Research/AgencyPrepayment/Baton2/batonutil/GenSymphonyTracking.R",
+    "project_path" : "GenSymphonyTracking.R",
+    "properties" : {
+        "cursorPosition" : "6,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

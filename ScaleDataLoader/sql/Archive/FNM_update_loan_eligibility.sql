@@ -1,0 +1,358 @@
+-- Fannie Conventional
+-- Loan Level
+-- Part 4 of 7
+-- Script to update the eligibility metrics
+-- Updates HARP_eligible, conventional_eligible and fha_eligible
+
+-- Before execute the script, need to set the dates to run for
+DROP TABLE IF EXISTS #tmp_asOf;
+SELECT CAST('#####ASOF#####' AS DATE) asOf INTO #tmp_asOf
+--SELECT CAST ('1994-02-01' AS DATE) asOf INTO #tmp_asOf
+;
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT CAST ('2.50' AS varchar(5)) version INTO #tmp_version
+;
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+)
+;
+INSERT #ticker SELECT 'FNCL', 'CONVENTIONAL_30YR';    --Conventional Fannie
+INSERT #ticker SELECT 'FNCK', 'JUMBO_30YR';           --Jumbo Fannie
+INSERT #ticker SELECT 'FNCQ30', 'CONVENTIONAL_30YR';  --CQ Fannie High LTV[105-125]
+INSERT #ticker SELECT 'FNCR', 'CONVENTIONAL_30YR';    --CR Fannie High LTV[125-150]
+COMMIT;
+
+CREATE LF INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+
+-- Update HARP Eligibility
+DROP TABLE IF EXISTS #FNM_harp_eligibility;
+SELECT
+    sl.marketTicker,
+    sl.loanSeqNum,
+    slh.asOf,
+    CASE
+        WHEN sl.percentHARPed = 100.0 THEN 0
+        WHEN sl.originationDate > '2009-06-01' THEN 0
+        WHEN slh.asOf < '2009-06-01' THEN 0
+        WHEN slh.asOf > '2017-09-01' THEN 0
+        ELSE 1
+    END as HARP_eligible
+INTO #FNM_harp_eligibility
+FROM scale.FNM_Loan_Dev sl
+JOIN #ticker tk
+    ON sl.marketTicker = tk.tickerName
+JOIN scale.FNM_LoanHist slh
+    ON sl.loanSeqNum = slh.loanSeqNum
+WHERE 1=1
+    AND slh.asOf >= (select asOf from #tmp_asOf)
+    AND sl.version = (select version from #tmp_version)
+;
+COMMIT;
+CREATE HG INDEX loan_id_idx ON #FNM_harp_eligibility(loanSeqNum);
+CREATE LF INDEX asof_date_idx ON #FNM_harp_eligibility(asOf);
+CREATE LF INDEX ticker_idx ON #FNM_harp_eligibility(marketTicker);
+COMMIT;
+
+
+-- Update Conventional Eligibility
+DROP TABLE IF EXISTS #FNM_conventional_eligibility;
+SELECT distinct 
+    sl.marketTicker,
+    sl.loanSeqNum,
+    slh.asOf,
+    ConvCost = pmi_base.PMI + pmi_occ.PMI + pmi_size.PMI + llpa_base.LLPA + llpa_ltv.LLPA + llpa_admc.LLPA + llpa_occ.LLPA + llpa_unit.LLPA + llpa_size.LLPA,
+    ConvCostValidility = CASE WHEN sl.origFICO IS NULL OR slh.cltv IS NULL OR cl.occType IS NULL OR sl.numberUnits IS NULL OR clh.currentRPB IS NULL THEN 'N' ELSE 'Y' END,
+    CASE 
+        WHEN ConvCostValidility = 'Y' THEN 
+            CASE 
+                WHEN ConvCost IS NULL THEN 0
+                ELSE 1
+            END
+        ELSE NULL 
+    END as conventional_eligible
+INTO #FNM_conventional_eligibility
+FROM fnm.PIV_Loan cl
+JOIN scale.FNM_Loan_Dev sl
+    ON cl.loanSeqNum = sl.loanSeqNum
+JOIN
+(
+    SELECT loanSeqNum, asOf, currentRPB FROM fnm.PIV_LoanHist WHERE asOf >= '20140101'
+    
+    UNION ALL
+    
+    SELECT loanSeqNum, asOf, currentRPB FROM fnm.PIV_Derived_LoanHist
+) clh
+    ON cl.loanSeqNum = clh.loanSeqNum
+JOIN scale.FNM_LoanHist slh
+    ON clh.loanSeqNum = slh.loanSeqNum
+    AND clh.asOf = slh.asOf
+    AND sl.version = (select version from #tmp_version)
+    
+-- LLPAs
+LEFT OUTER JOIN report.PIV_LLPA_Base_Raw llpa_base
+            ON slh.asOf >= llpa_base.startDate AND slh.asOf < llpa_base.endDate
+            AND sl.origFICO >= llpa_base.FicoStart AND sl.origFICO < llpa_base.FicoEnd
+            AND slh.cltv > llpa_base.LtvStart AND slh.cltv <= llpa_base.LtvEnd
+LEFT OUTER JOIN report.PIV_LLPA_LTV_Raw llpa_ltv 
+            ON slh.asOf >= llpa_ltv.startDate AND slh.asOf < llpa_ltv.endDate
+            AND slh.cltv > llpa_ltv.LtvStart AND slh.cltv <= llpa_ltv.LtvEnd
+LEFT OUTER JOIN report.PIV_LLPA_ADMC_Raw llpa_admc
+            ON slh.asOf >= llpa_admc.startDate AND slh.asOf < llpa_admc.endDate
+LEFT OUTER JOIN report.PIV_LLPA_Occupancy_Raw llpa_occ
+            ON slh.asOf >= llpa_occ.startDate AND slh.asOf < llpa_occ.endDate
+            AND cl.occType = llpa_occ.occType
+            AND slh.cltv > llpa_occ.LtvStart AND slh.cltv <= llpa_occ.LtvEnd
+LEFT OUTER JOIN report.PIV_LLPA_Units_Raw llpa_unit
+            ON slh.asOf >= llpa_unit.startDate AND slh.asOf < llpa_unit.endDate
+            AND sl.numberUnits = llpa_unit.numUnits
+            AND slh.cltv > llpa_unit.LtvStart AND slh.cltv <= llpa_unit.LtvEnd
+LEFT OUTER JOIN report.PIV_LLPA_LoanSize_Raw llpa_size
+            ON slh.asOf >= llpa_size.startDate AND slh.asOf < llpa_size.endDate
+            AND clh.currentRPB >= llpa_size.LoanSizeStart AND clh.currentRPB < llpa_size.LoanSizeEnd
+            AND slh.cltv > llpa_size.LtvStart AND slh.cltv <= llpa_size.LtvEnd
+            
+-- PMIs
+LEFT OUTER JOIN report.PIV_PMI_Base_Raw pmi_base
+            ON slh.asOf >= pmi_base.startDate AND slh.asOf < pmi_base.endDate
+            AND sl.origFICO >= pmi_base.FICOBucketStart AND sl.origFICO < pmi_base.FICOBucketEnd
+            AND slh.cltv > pmi_base.LTVBucketStart AND slh.cltv <= pmi_base.LTVBucketEnd	
+            AND pmi_base.LoanPurpose = 'REFI'	
+LEFT OUTER JOIN report.PIV_PMI_Occupancy_Raw pmi_occ
+            ON slh.asOf >= pmi_occ.startDate AND slh.asOf < pmi_occ.endDate
+            AND cl.occType = pmi_occ.occType
+            AND sl.origFICO >= pmi_occ.FICOBucketStart AND sl.origFICO < pmi_occ.FICOBucketEnd
+            AND slh.cltv > pmi_occ.LTVStart AND slh.cltv <= pmi_occ.LTVEnd	
+LEFT OUTER JOIN report.PIV_PMI_LoanSize_Raw pmi_size
+            ON slh.asOf >= pmi_size.startDate AND slh.asOf < pmi_size.endDate
+            AND sl.origFICO >= pmi_size.FICOBucketStart AND sl.origFICO < pmi_size.FICOBucketEnd
+            AND slh.cltv > pmi_size.LTVStart AND slh.cltv <= pmi_size.LTVEnd	
+            AND clh.currentRPB >= pmi_size.LoanSizeStart AND clh.currentRPB < pmi_size.LoanSizeEnd
+WHERE 1=1
+    AND slh.asOf >= (select asOf from #tmp_asOf)
+    AND sl.version = (select version from #tmp_version)
+;
+COMMIT;
+CREATE HG INDEX loan_id_idx ON #FNM_conventional_eligibility(loanSeqNum);
+CREATE LF INDEX asof_date_idx ON #FNM_conventional_eligibility(asOf);
+COMMIT;
+
+-- Update FHA Eligibility
+DROP TABLE IF EXISTS #FNM_fha_eligibility;
+SELECT
+    sl.marketTicker,
+    sl.loanSeqNum,
+    slh.asOf,
+    CASE 
+        WHEN sl.origFICO < 500 THEN 0
+        WHEN slh.cltv > 97.75 THEN 0
+        WHEN sl.origFICO >= 580 AND slh.cltv <= 97.75 THEN 1
+        WHEN sl.origFICO >= 500 AND slh.cltv <= 90.0 THEN 1
+        ELSE 0
+    END as fha_eligible
+INTO #FNM_fha_eligibility
+FROM scale.FNM_Loan_Dev sl
+JOIN #ticker tk
+    ON sl.marketTicker = tk.tickerName
+JOIN scale.FNM_LoanHist slh
+    ON sl.loanSeqNum = slh.loanSeqNum
+WHERE 1=1
+    AND slh.asOf >= (select asOf from #tmp_asOf)
+    AND sl.version = (select version from #tmp_version)
+;
+COMMIT;
+CREATE HG INDEX loan_id_idx ON #FNM_fha_eligibility(loanSeqNum);
+CREATE LF INDEX asof_date_idx ON #FNM_fha_eligibility(asOf);
+COMMIT;
+
+    -- update INVESTOR / 2ND as not eligible from conventional to FHA
+UPDATE #FNM_fha_eligibility e SET fha_eligible = 0
+FROM #FNM_fha_eligibility e, fnm.PIV_Loan cl
+WHERE e.loanSeqNum = cl.loanSeqNum
+AND cl.occType in ('2ND', 'INV')
+;
+COMMIT;
+
+-- Tests
+
+--SELECT l.marketTicker, sl.originationDate, count(1), sum(balance), sum(balance * HARP_eligible) / sum(CASE WHEN HARP_eligible IS NULL THEN 0.0 ELSE balance END) as wavg_pct_harp_eligible FROM #FNM_harp_eligibility l JOIN #FNM_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum AND l.asOf = lh.asOf JOIN scale.FNM_Loan sl ON sl.loanSeqNum = lh.loanSeqNum GROUP BY l.marketTicker, sl.originationDate ORDER BY sl.originationDate
+--SELECT l.marketTicker, l.asOf, count(1), sum(balance), sum(balance * HARP_eligible) / sum(CASE WHEN HARP_eligible IS NULL THEN 0.0 ELSE balance END) as wavg_pct_harp_eligible FROM #FNM_harp_eligibility l JOIN #FNM_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum AND l.asOf = lh.asOf GROUP BY l.marketTicker, l.asOf ORDER BY l.asOf
+
+--SELECT l.marketTicker, sl.originationDate, count(1), sum(balance), sum(balance * conventional_eligible) / sum(CASE WHEN conventional_eligible IS NULL THEN 0.0 ELSE balance END) as wavg_pct_conv_eligible FROM #FNM_conventional_eligibility l JOIN #FNM_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum AND l.asOf = lh.asOf JOIN scale.FNM_Loan sl ON sl.loanSeqNum = lh.loanSeqNum GROUP BY l.marketTicker, sl.originationDate ORDER BY sl.originationDate
+--SELECT l.marketTicker, l.asOf, count(1), sum(balance), sum(balance * conventional_eligible) / sum(CASE WHEN conventional_eligible IS NULL THEN 0.0 ELSE balance END) as wavg_pct_conv_eligible FROM #FNM_conventional_eligibility l JOIN #FNM_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum AND l.asOf = lh.asOf GROUP BY l.marketTicker, l.asOf ORDER BY l.asOf
+
+--SELECT l.marketTicker, sl.originationDate, count(1), sum(balance), sum(balance * fha_eligible) / sum(CASE WHEN fha_eligible IS NULL THEN 0.0 ELSE balance END) as wavg_pct_fha_eligible FROM #FNM_fha_eligibility l JOIN #FNM_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum AND l.asOf = lh.asOf JOIN scale.FNM_Loan sl ON sl.loanSeqNum = lh.loanSeqNum GROUP BY l.marketTicker, sl.originationDate ORDER BY sl.originationDate
+--SELECT l.marketTicker, l.asOf, count(1), sum(balance), sum(balance * fha_eligible) / sum(CASE WHEN fha_eligible IS NULL THEN 0.0 ELSE balance END) as wavg_pct_fha_eligible FROM #FNM_fha_eligibility l JOIN #FNM_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum AND l.asOf = lh.asOf GROUP BY l.marketTicker, l.asOf ORDER BY l.asOf
+
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have HARP Eligibility populated
+----------------------------------------------------------------------------------------------
+        declare   @cnt int 
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_harp_eligibility  WHERE HARP_eligible IS NULL 
+
+        if (@cnt > 0)  
+        BEGIN
+            RAISERROR 99999 'FNM Loans with NULL HARP Eligibility LoanCount : %1!', @cnt
+            RETURN
+        END  
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have Conventional Eligibility populated
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_conventional_eligibility  WHERE conventional_eligible IS NULL
+
+        if (@cnt > 0)  
+        BEGIN
+            RAISERROR 99999 'FNM Loans with NULL Conventional Eligibility LoanCount : %1!', @cnt
+            RETURN
+        END  
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have FHA Eligibility populated
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_fha_eligibility  WHERE fha_eligible IS NULL
+
+        if (@cnt > 0)  
+        BEGIN
+            RAISERROR 99999 'FNM Loans with NULL FHA Eligibility LoanCount : %1!', @cnt
+            RETURN
+		END  
+        
+----------------------------------------------------------------------------------------------
+-- Check to see if Conventional Eligible is updated for INVESTOR / 2ND
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM
+            #FNM_fha_eligibility e
+        JOIN 
+            fnm.PIV_Loan cl ON e.loanSeqNum = cl.loanSeqNum
+        WHERE
+            fha_eligible > 0.0
+        AND
+            cl.occType in ('2ND', 'INV')
+
+        if (@cnt > 0)  
+        BEGIN
+            RAISERROR 99999 'FNM Loans with Invalid FHA Eligible is updated for INVESTOR / 2ND Range LoanCount : %1!', @cnt
+            RETURN
+        END 
+        
+----------------------------------------------------------------------------------------------
+-- Check to see if HARP Eligible is in valid range
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM
+            #FNM_harp_eligibility
+        WHERE
+            HARP_eligible < 0.0 OR HARP_eligible > 1
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FNM Loans with Invalid HARP Eligibile Range LoanCount : %1!', @cnt
+            RETURN
+        END  
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Conventional Eligible is in valid range
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM
+            #FNM_conventional_eligibility
+        WHERE
+            conventional_eligible < 0.0 OR conventional_eligible > 1
+
+        if (@cnt > 0)  
+        BEGIN
+            RAISERROR 99999 'FNM Loans with Invalid Conventional Eligibile Range LoanCount : %1!', @cnt
+            RETURN
+        END 
+----------------------------------------------------------------------------------------------
+-- Check to see if FHA Eligible is in valid range
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM
+            #FNM_fha_eligibility
+        WHERE
+            fha_eligible < 0.0 OR fha_eligible > 1
+
+        if (@cnt > 0) 
+        BEGIN
+            RAISERROR 99999 'FNM Loans with Invalid FHA Eligibile Range LoanCount : %1!', @cnt
+            RETURN
+        END 
+----------------------------------------------------------------------------------------------
+-- Check no duplicates
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM
+            (SELECT loanSeqnum, asOf, count(1) as cnt FROM #FNM_conventional_eligibility GROUP BY loanSeqnum, asOf HAVING count(1) > 1) t
+
+        if (@cnt > 0) 
+        BEGIN
+            RAISERROR 99999 'FHL Loans with Invalid FHA Eligibile Range LoanCount : %1!', @cnt
+            RETURN
+        END 
+----------------------------------------------------------------------------------------------
+-- Check to see if count of current month changes in a noticeable amount compare with previous month
+----------------------------------------------------------------------------------------------
+        declare   @cnt_previous int
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_conventional_eligibility WHERE asof = (SELECT asOf FROM #tmp_asOf)
+
+        SELECT
+            @cnt_previous =  count(1)
+        FROM scale.FNM_LoanEligibility WHERE asof = (SELECT dateadd(month, -1, asOf) FROM #tmp_asOf)
+        
+        if (@cnt - @cnt_previous > 0.1 * @cnt_previous OR @cnt_previous - @cnt > 0.1 * @cnt_previous)
+        BEGIN
+            RAISERROR 99999 'FNM LoanEligibility with INVALID COUNT compare with previous month. Currnt: %1!; Previous: %2!', @cnt, @cnt_previous
+            RETURN
+        END         
+-- End Tests
+
+
+
+-- Load Data into Scale Incentive Table
+DELETE FROM scale.FNM_LoanEligibility
+FROM scale.FNM_LoanEligibility sle, #FNM_harp_eligibility he
+WHERE 1=1
+    AND sle.loanSeqNum = he.loanSeqNum
+    AND sle.asOf = he.asOf
+    AND he.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND sle.asOf >=  (select asOf from #tmp_asOf)
+ ;
+
+INSERT INTO scale.FNM_LoanEligibility (loanSeqNum, asOf, HARP_eligible, conventional_eligible, fha_eligible)
+SELECT
+    he.loanSeqNum,
+    he.asOf,
+    he.HARP_eligible,
+    ce.conventional_eligible,
+    fe.fha_eligible
+FROM #FNM_harp_eligibility he
+JOIN #FNM_conventional_eligibility ce
+    ON he.loanSeqNum = ce.loanSeqNum
+    AND he.asOf = ce.asOf
+JOIN #FNM_fha_eligibility fe
+    ON fe.loanSeqNum = ce.loanSeqNum
+    AND fe.asOf = ce.asOf
+WHERE he.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND he.asOf >=  (select asOf from #tmp_asOf)
+;
+

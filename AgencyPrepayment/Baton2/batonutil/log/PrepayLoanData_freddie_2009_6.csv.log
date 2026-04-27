@@ -1,0 +1,113 @@
+WARNING: unknown option '--4.70'
+
+WARNING: unknown option '--CONVENTIONAL'
+
+WARNING: unknown option '--PrepayLoanData_freddie_2009_6.csv'
+
+WARNING: unknown option '--H:/tempExtract/PrepayLoanData/CONVENTIONAL/Model_4.70/20190401/model_input_split/'
+
+WARNING: unknown option '--H:/tempExtract/PrepayLoanData/CONVENTIONAL/Model_4.70/20190401/model_output/'
+
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 248598 13.3     608334 32.5   406898 21.8
+Vcells 401280  3.1    8388608 64.0  1604079 12.3
+Loading required package: data.table
+Loading required package: lubridate
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:data.table':
+
+    hour, isoweek, mday, minute, month, quarter, second, wday, week,
+    yday, year
+
+The following object is masked from 'package:base':
+
+    date
+
+Loading required package: jsonlite
+Loading required package: dplyr
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:lubridate':
+
+    intersect, setdiff, union
+
+The following objects are masked from 'package:data.table':
+
+    between, first, last
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+AddMonths.R :
+AggregateData.R :
+AggregatePrepayData.R :
+BuildSpline.R :
+BuildSpline_cdr.R :
+CalculateEQLODMultiplier.R :
+CalculateNewBurnout.R :
+CalculateRefiCosts.R :
+CheckMontone.R :
+config.R :
+CreateCombJSON.R :
+glf.R :
+ImportData.R :
+isMonotonic.R :
+lis.R :
+main.R :
+ManageNAs.R :
+ModelErrorStats.R :
+ModelEstimator.R :
+ModelProjections.R :
+ModelProjectionsDriver.R :
+ModelSplineDiff.R :
+ParseModelJSON.R :
+PredictDflt.R :
+PredictDflt_2.R :
+PredictDflt_cdr.R :
+PredictDflt_conv.R :
+PredictSubmodel_4_50_interpolation.R :
+PredictSubmodel_4_60_interpolation.R :
+PredictSubmodel_4_60_interpolation_VA.R :
+PredictSubmodel_4_70_interpolation.R :
+PredictSubmodel_4_70_interpolation_VA.R :
+PrepayComponents.R :
+PrepayConversion.R :
+SeasonalAdjustment.R :
+SplineToGLF.R :
+TidyData.R :
+trackr.R :
+TransformData.R :
+tuner.R :
+Visualize.R :
+Model Version:  v4.70 
+input.file:  PrepayLoanData_freddie_2009_6.csv 
+output.file PrepayLoanData_freddie_2009_6.out 
+data.input H:/tempExtract/PrepayLoanData/CONVENTIONAL/Model_4.70/20190401/model_input_split//PrepayLoanData_freddie_2009_6.csv 
+data.output H:/tempExtract/PrepayLoanData/CONVENTIONAL/Model_4.70/20190401/model_output//PrepayLoanData_freddie_2009_6.out 
+input data: Start 
+input data: Done 
+Cleaning data: Start 
+Cleaning data: Done 
+Calculate Curtailment: Start 
+Calculate Curtailment: Done 
+Calculate Default: Start 
+Calculate Default: Done 
+Calculate Cashout: Start 
+Calculate Cashout: Done 
+Calculate Turnover: Start 
+Calculate Turnover: Done 
+Calculate Refinance: Start 
+Calculate Refinance: Done 
+Storing Results: Start 
+Storing Results: Done 
+> proc.time()
+   user  system elapsed 
+ 384.76   67.96  498.07 

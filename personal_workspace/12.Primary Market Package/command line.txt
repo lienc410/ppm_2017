@@ -1,0 +1,84 @@
+-------- reload mortgage rate ------------------------
+cd S:\IT\Production\Scripts\python\ccmUtilP\src
+python LoadMortgageRate.py 20180214
+
+-------- Check Data ------------------------
+S:\IT\Production\Scripts\python\ccmUtilP\src\PrimaryMarketReportDataCheck.py 02/16/2018
+
+-------- generate report ------------------------
+cd S:\IT\Production\Daily Reports\Primary Market
+RunPrimaryMarketReport.bat 02/16/2018 "S:\Analytics\Primary Market\2018\02" 
+
+
+-------- merge and print PDF report ------------------------
+PrimaryMarketMergePDFReports.bat 06/21/2017 "S:\IT\Production\Daily Reports\Primary Market\2017-06\" "S:\Analytics\Primary Market\2017\06"
+
+
+
+
+
+-------- Current Coupon ------------------------
+cd S:\IT\Production\Current Coupon
+CurrentCouponDailyBatch.bat 10/11/2016
+
+
+CurrentCouponInput.exe 10/11/2016
+CurrentCoupon.exe 10/11/2016
+CurrentCouponResult.exe 10/11/2016
+
+
+
+
+-------- Symphony Tracking ------------------------
+172.16.74.135
+678XCuf2
+
+50.28.48.110
+PIVLoader
+
+cd S:\IT\Production\Scripts\python\Scale\SymphonyTracking\dev
+python Symphony_Tracking_Generator.py --new_model --model 4.10 --factor_date 20171101 -S
+python Symphony_Tracking_Generator.py --factor_update --factor_date 20180101 -S
+
+G:\tempExtract\PrepayPoolData\Model_2.10\20160501\model_output
+
+G:\SymphonyTracking\Dev
+Symphony_Tracking_Generator_MultipleVersion_withR.py --new_model --model 4.20 --factor_date 20180601 -R
+
+select  count(1),modelId from scale.PoolPrepayTracking p, fhl.Sec b  where b.issueId=p.issueId
+group by modelId
+
+
+SELECT * FROM scale.ModelVersionConfig 
+C:\PIV\PIV-it-dev\trunk\ScaleDataLoader_dev\sql\Update_ModelVersionConfig.sql
+
+-------- Update Scale Table ------------------------
+cd C:/PIV/PIV-it-dev/trunk/ScaleDataLoader/bin/
+python ScaleValidation.py LOAN_SCALE_DB FHL 19940201
+
+
+
+
+-------- Change R Default Library ------------------------
+.libPaths("C:/Rpackages")
+setwd("C:/PIV/PIV-it-dev/trunk/Research/AgencyPrepayment/Baton2/batonutil")
+setwd("C:/PIV/PIV-it-dev/trunk/Research/AgencyPrepayment/Baton")
+
+
+set option Scale.iqgovern_priority=3
+S:\IT\Production\Scripts\python\ScaleDataLoader\sql
+
+
+
+select * from report.CollateralAnalysis_PoolList
+where poolListName in (select poolListName from report.CollateralAnalysis_TrancheStructView where ybName='F3828(B)')
+
+grep -rnm 'C:\PIV\PIV-it-dev\trunk\Research\GSELoanLevelCredit\Accordion' -e "raw.ll.data"
+
+
+
+-------- C++ Setting ------------------------
+C:\PIV\PIV-it-dev\trunk\Research\Scale\ScaleFacade\input_json\symphony_tracking_testCopy.json C:\PIV\PIV-it-dev\trunk\Research\Scale\ScaleFacade\output_json\symphony_tracking_testCopy.json
+
+PATH=%PATH%;$(SolutionDir)\..\..\ReplineParserPB\Debug;S:\IT\Intex\Vcmowrap_v34a
+$(LocalDebuggerEnvironment)

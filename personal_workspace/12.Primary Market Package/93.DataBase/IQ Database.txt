@@ -1,0 +1,6 @@
+Host: 50.28.74.209
+Port: 2340
+Server: Agency
+
+UID: report
+pass: gm4SJDw4

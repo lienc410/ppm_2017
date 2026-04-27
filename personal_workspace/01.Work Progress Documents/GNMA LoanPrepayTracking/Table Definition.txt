@@ -1,0 +1,18 @@
+
+DROP TABLE IF EXISTS "scale"."LoanPrepayTracking";
+CREATE TABLE "scale"."LoanPrepayTracking" (
+	"loanSeqNum" VARCHAR(12) NULL,
+	"asOf" DATE NULL,
+    "modelId" VARCHAR(20) NULL,
+	"smmCurtail" NUMERIC(30,15) NULL,
+    "smmDefault" NUMERIC(30,15) NULL,
+    "smmTurnover" NUMERIC(30,15) NULL,
+    "smmRefinance" NUMERIC(30,15) NULL,
+	"smmTotal" NUMERIC(30,15) NULL
+) IN "IQ_USER_MAIN";
+
+COMMIT;
+CREATE HG INDEX "LoanPrepayTracking_loanSeqNum_HG" ON "scale"."LoanPrepayTracking" ("loanSeqNum"  ) IN "IQ_USER_MAIN";
+CREATE LF INDEX "LoanPrepayTracking_asof_LF" ON "scale"."LoanPrepayTracking" ("asOf" ) IN "IQ_USER_MAIN";
+CREATE LF INDEX "LoanPrepayTracking_version_LF" ON "scale"."LoanPrepayTracking" ("modelId" ) IN "IQ_USER_MAIN";
+COMMIT;

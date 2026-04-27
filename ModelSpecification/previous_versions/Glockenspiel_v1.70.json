@@ -1,0 +1,524 @@
+{
+  "Version": ["1.70"],
+  "BaseModel": ["ProjectLoan"],
+  "ProjectLoan": {
+    "MortgageRateLag": [3],
+    "DefaultModule": {
+      "DefaultModuleCurrent": {
+        "baselineConstant": [0.00046965565443],
+        "adjustmentFactor": [1],
+        "monthsSinceCurrent": [
+          {
+            "Knots": 1,
+            "KnotValues": 0.028235352582
+          },
+          {
+            "Knots": 2,
+            "KnotValues": 0.025604723133
+          },
+          {
+            "Knots": 3,
+            "KnotValues": 0.06265871398
+          },
+          {
+            "Knots": 4,
+            "KnotValues": 0.17452018459
+          },
+          {
+            "Knots": 5,
+            "KnotValues": 0.22622298414
+          },
+          {
+            "Knots": 6,
+            "KnotValues": 0.31953471012
+          },
+          {
+            "Knots": 9.4231595502,
+            "KnotValues": 0.57842748653
+          },
+          {
+            "Knots": 18.1409623777,
+            "KnotValues": 0.8944204728
+          },
+          {
+            "Knots": 34.6865072783,
+            "KnotValues": 1.4154394346
+          },
+          {
+            "Knots": 58.2834971585,
+            "KnotValues": 1.88039882
+          },
+          {
+            "Knots": 86.8002383506,
+            "KnotValues": 1.9919184237
+          },
+          {
+            "Knots": 124.7471627945,
+            "KnotValues": 1.5903660911
+          },
+          {
+            "Knots": 140,
+            "KnotValues": 1.1
+          },
+          {
+            "Knots": 160,
+            "KnotValues": 0.650681
+          },
+          {
+            "Knots": 170,
+            "KnotValues": 0.506395
+          },
+          {
+            "Knots": 180,
+            "KnotValues": 0.444096
+          },
+          {
+            "Knots": 200,
+            "KnotValues": 0.444096
+          },
+          {
+            "Knots": 250,
+            "KnotValues": 0.444096
+          }
+        ],
+        "waolsSpline": [
+          {
+            "Knots": 0.83309909115,
+            "KnotValues": 0.55492382819
+          },
+          {
+            "Knots": 1.6661981823,
+            "KnotValues": 0.55603589999
+          },
+          {
+            "Knots": 3.7667457864,
+            "KnotValues": 0.7101898799
+          },
+          {
+            "Knots": 9.3327458925,
+            "KnotValues": 1.0643728559
+          },
+          {
+            "Knots": 27.3731220435,
+            "KnotValues": 1.2190712316
+          },
+          {
+            "Knots": 41.0596830652,
+            "KnotValues": 1.221509374
+          }
+        ]
+      },
+      "DefaultModuleDQ30": {
+        "baselineConstant": [0.010073011681],
+        "adjustmentFactor": [1],
+        "monthsSinceDQ30": [
+          {
+            "Knots": 0,
+            "KnotValues": 0
+          },
+          {
+            "Knots": 1,
+            "KnotValues": 0.056363868007
+          },
+          {
+            "Knots": 2,
+            "KnotValues": 0.28500004752
+          },
+          {
+            "Knots": 3,
+            "KnotValues": 1.0975091107
+          },
+          {
+            "Knots": 4,
+            "KnotValues": 1.2434996959
+          },
+          {
+            "Knots": 5.4921095369,
+            "KnotValues": 1.5217522656
+          },
+          {
+            "Knots": 14.6847945971,
+            "KnotValues": 1.20398942
+          },
+          {
+            "Knots": 34.7774929053,
+            "KnotValues": 1.0775752442
+          },
+          {
+            "Knots": 67.795139405,
+            "KnotValues": 0.4435945821
+          },
+          {
+            "Knots": 140,
+            "KnotValues": 0.062118193805
+          },
+          {
+            "Knots": 180,
+            "KnotValues": 0.022776671062
+          },
+          {
+            "Knots": 250,
+            "KnotValues": 0.020706064602
+          }
+        ],
+        "waolsSpline": [
+          {
+            "Knots": 0.84947333851,
+            "KnotValues": 0.57096423236
+          },
+          {
+            "Knots": 1.698946677,
+            "KnotValues": 0.57210844926
+          },
+          {
+            "Knots": 3.8328630919,
+            "KnotValues": 0.69401376766
+          },
+          {
+            "Knots": 7.3195805574,
+            "KnotValues": 0.9847446279
+          },
+          {
+            "Knots": 12.0551909215,
+            "KnotValues": 1.0604600576
+          },
+          {
+            "Knots": 26.0801732039,
+            "KnotValues": 1.2192630851
+          },
+          {
+            "Knots": 39.1202598058,
+            "KnotValues": 1.2217016113
+          }
+        ]
+      },
+      "DefaultModuleDQ60": {
+        "baselineConstant": [0.028176184252],
+        "adjustmentFactor": [1],
+        "monthsSinceDQ60": [
+          {
+            "Knots": 0,
+            "KnotValues": 0
+          },
+          {
+            "Knots": 1,
+            "KnotValues": 0.33368244906
+          },
+          {
+            "Knots": 2,
+            "KnotValues": 1.7940354526
+          },
+          {
+            "Knots": 3,
+            "KnotValues": 1.698388965
+          },
+          {
+            "Knots": 4,
+            "KnotValues": 1.6049303445
+          },
+          {
+            "Knots": 5.4838702593,
+            "KnotValues": 1.5099191415
+          },
+          {
+            "Knots": 9.3410410332,
+            "KnotValues": 1.2350115276
+          },
+          {
+            "Knots": 17.9248006998,
+            "KnotValues": 0.94954015196
+          },
+          {
+            "Knots": 39.533658095,
+            "KnotValues": 0.57275434576
+          },
+          {
+            "Knots": 87.0924450005,
+            "KnotValues": 0.22992924458
+          },
+          {
+            "Knots": 124.5839933402,
+            "KnotValues": 0.074024370627
+          },
+          {
+            "Knots": 180,
+            "KnotValues": 0.0074024370627
+          },
+          {
+            "Knots": 250,
+            "KnotValues": 0.0074024370627
+          }
+        ],
+        "waolsSpline": [
+          {
+            "Knots": 0.90941196834,
+            "KnotValues": 0.62465159281
+          },
+          {
+            "Knots": 1.8188239367,
+            "KnotValues": 0.62590339961
+          },
+          {
+            "Knots": 3.6990918987,
+            "KnotValues": 0.68579450245
+          },
+          {
+            "Knots": 7.6964127125,
+            "KnotValues": 0.7916479799
+          },
+          {
+            "Knots": 12.4107033439,
+            "KnotValues": 1.1301878874
+          },
+          {
+            "Knots": 25.5548239756,
+            "KnotValues": 1.3759074494
+          },
+          {
+            "Knots": 38.3322359635,
+            "KnotValues": 1.3786592643
+          }
+        ]
+      },
+      "DefaultModuleDQ90": {
+        "baselineConstant": [0.049145128512],
+        "adjustmentFactor": [1],
+        "monthsSinceDQ90": [
+          {
+            "Knots": 1,
+            "KnotValues": 2.3636393344
+          },
+          {
+            "Knots": 2,
+            "KnotValues": 1.7056736065
+          },
+          {
+            "Knots": 3,
+            "KnotValues": 1.5005296926
+          },
+          {
+            "Knots": 4,
+            "KnotValues": 1.3684703973
+          },
+          {
+            "Knots": 5,
+            "KnotValues": 1.2699091684
+          },
+          {
+            "Knots": 8.7117752944,
+            "KnotValues": 1.070306369
+          },
+          {
+            "Knots": 17.6896049036,
+            "KnotValues": 0.80367011598
+          },
+          {
+            "Knots": 41.4326616599,
+            "KnotValues": 0.47577884126
+          },
+          {
+            "Knots": 100,
+            "KnotValues": 0.12732030838
+          },
+          {
+            "Knots": 180,
+            "KnotValues": 0.0042440102794
+          },
+          {
+            "Knots": 250,
+            "KnotValues": 0.0042440102794
+          }
+        ],
+        "waolsSpline": [
+          {
+            "Knots": 0.88750371859,
+            "KnotValues": 0.62890521188
+          },
+          {
+            "Knots": 1.7750074372,
+            "KnotValues": 0.62976474136
+          },
+          {
+            "Knots": 3.9511628225,
+            "KnotValues": 0.80863745966
+          },
+          {
+            "Knots": 7.4381321518,
+            "KnotValues": 0.99241380057
+          },
+          {
+            "Knots": 20.4015671075,
+            "KnotValues": 1.2
+          },
+          {
+            "Knots": 30.6023506612,
+            "KnotValues": 1.202
+          }
+        ]
+      }
+    },
+    "TurnoverModule": {
+      "baselineConstant": [0.0016294096384],
+      "adjustmentFactor": [1],
+      "walaSpline": [
+        {
+          "Knots": 1.7648334381,
+          "KnotValues": 0.0084562318535
+        },
+        {
+          "Knots": 3.5296668762,
+          "KnotValues": 0.0084731782099
+        },
+        {
+          "Knots": 9.4210085541,
+          "KnotValues": 0.011370694935
+        },
+        {
+          "Knots": 18.4214368509,
+          "KnotValues": 0.18380387464
+        },
+        {
+          "Knots": 30.5839880529,
+          "KnotValues": 0.48992394938
+        },
+        {
+          "Knots": 41.79075704,
+          "KnotValues": 0.66979391439
+        },
+        {
+          "Knots": 52.2922125667,
+          "KnotValues": 0.8951068979
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 0.99800399202
+        },
+        {
+          "Knots": 90,
+          "KnotValues": 1
+        }
+      ],
+      "incentiveSpline": [
+        {
+          "Knots": -300,
+          "KnotValues": 1.2481019315
+        },
+        {
+          "Knots": -168.64927683,
+          "KnotValues": 1.2735733995
+        },
+        {
+          "Knots": -137.17970614,
+          "KnotValues": 1.849981327
+        },
+        {
+          "Knots": -97.952971854,
+          "KnotValues": 2.7627290193
+        },
+        {
+          "Knots": -62.021776756,
+          "KnotValues": 3.0997085141
+        },
+        {
+          "Knots": -37.252185504,
+          "KnotValues": 3.2075521818
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 3.2717032255
+        }
+      ]
+    },
+    "RefinanceModule": {
+      "baselineConstant": [1],
+      "adjustmentFactor": [1],
+      "incentiveGLF": [
+        {
+          "A": -0.013081252721,
+          "K": 0.0071821504185,
+          "B": 0.019571838666,
+          "NU": 1,
+          "Q": 1,
+          "C": 0.14752446994,
+          "M": -0.075330044248,
+          "_row": "A"
+        }
+      ],
+      "incentive_mediaGLF": [
+        {
+          "A": -0.00076925610386,
+          "K": 0.0021686686723,
+          "B": 0.056483980743,
+          "NU": 1,
+          "Q": 1,
+          "C": 0.019907755585,
+          "M": -0.077764543803,
+          "_row": "A"
+        }
+      ],
+      "waclsGLF": [
+        {
+          "min": 0.105,
+          "A": -0.53412811196,
+          "K": 1.7729455179,
+          "B": 0.15963277732,
+          "NU": 1,
+          "Q": 1,
+          "C": 1.1636828467,
+          "M": 6.630044592,
+          "_row": "A"
+        }
+      ],
+      "burnoutGLF": [
+        {
+          "max": 1,
+          "A": 6.318098,
+          "K": 0.960267,
+          "B": 0.000759531,
+          "NU": 0.661169,
+          "Q": 1,
+          "C": 0.951273,
+          "M": -2986.81,
+          "_row": "A"
+        }
+      ],
+      "burnout_waclsGLF": [
+        {
+          "A": -21.320629984,
+          "K": 42.0615570656,
+          "B": 0.086587686575,
+          "NU": 1,
+          "Q": 1,
+          "C": 2.7972157744,
+          "M": -18.971373982,
+          "_row": "A"
+        }
+      ],
+      "construction_burnoutGLF": [
+        {
+          "A": 1,
+          "K": 1.5091120332,
+          "B": -0.028571836037,
+          "NU": 1,
+          "Q": 1,
+          "C": 2.035399956,
+          "M": 2725.1305647596,
+          "_row": "A"
+        }
+      ],
+      "construction_incentiveGLF": [
+        {
+          "min": 1,
+          "A": -0.61722238804,
+          "K": -0.59196643814,
+          "B": 0.082286163741,
+          "NU": 1,
+          "Q": 1,
+          "C": 0.01346443272,
+          "M": -0.07140336065,
+          "_row": "A"
+        }
+      ]
+    }
+  }
+}

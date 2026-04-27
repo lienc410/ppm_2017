@@ -1,0 +1,39 @@
+'''
+Created on Oct 3rd, 2013
+@author: Henry
+'''
+
+import smtplib
+
+class EmailUtil(object):
+    def __init__(self):
+        self.setup()
+
+    def sendMessage(self, recipient, subject, body):
+        print ("sendMessage()")
+	recipientList = recipient.split(",")
+ 
+        headers = ["From: " + self.SENDER,
+            "Subject: " + subject,
+            "To: " + recipient,
+            "MIME-Version: 1.0",
+            "Content-Type: text/html"];
+        headers = "\r\n".join(headers);
+        self.SESSION.sendmail(self.SENDER, recipientList, headers + "\r\n\r\n" + body);
+                    
+    def setup(self):
+        print ("setup()");
+        
+        self.SMTP_SERVER = 'smtp.gmail.com';
+        self.SMTP_PORT = 587;
+        self.SENDER = 'it-processing@PIVcapital.com';
+        self.PWD = 'bwaqnjpdkafjfxqq';
+
+        self.SESSION = smtplib.SMTP(self.SMTP_SERVER, self.SMTP_PORT);
+        self.SESSION.ehlo();
+        self.SESSION.starttls();
+        self.SESSION.ehlo;
+        self.SESSION.login(self.SENDER, self.PWD);
+   
+    def __del__(self):
+        print ("EmailUtil->Destroying");

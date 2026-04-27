@@ -1,0 +1,315 @@
+-- Fannie Conventional
+-- Loan Level
+-- Part 7 of 7
+-- Script to update Burnout
+-- Updates Burnout
+
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT CAST ('2.60' AS varchar(5)) version INTO #tmp_version
+;
+
+-- Before execute the script, need to set the dates to run for
+DROP TABLE IF EXISTS #tmp_asOf;
+SELECT CAST('#####ASOF#####' AS DATE) asOf INTO #tmp_asOf
+--SELECT CAST ('2017-04-01' AS DATE) asOf INTO #tmp_asOf
+;
+
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+)
+;
+INSERT #ticker SELECT 'FNCL', 'CONVENTIONAL_30YR';    --Conventional Fannie
+INSERT #ticker SELECT 'FNCK', 'JUMBO_30YR';           --Jumbo Fannie
+INSERT #ticker SELECT 'FNCQ30', 'CONVENTIONAL_30YR';  --CQ Fannie High LTV[105-125]
+INSERT #ticker SELECT 'FNCR', 'CONVENTIONAL_30YR';    --CR Fannie High LTV[125-150]
+COMMIT;
+
+CREATE LF INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+
+-- Creates the 30 YR FRM Rate (point adjusted)
+DROP TABLE IF EXISTS #Mtg30YrRates_monthly;
+SELECT
+    TickerName as SeriesName,
+    AsOfDate as asOf, 
+    convert(date, dateadd(month, +1, AsOfDate)) as asOf_lag1,
+    convert(date, dateadd(month, +2, AsOfDate)) as asOf_lag2,
+    SeriesNumValue as MtgRate
+INTO #Mtg30YrRates_monthly
+FROM report.TimeSeries ts
+JOIN report.TimeSeriesMeta tsm
+    ON ts.TimeSeriesMetaId = tsm.TimeSeriesMetaId
+WHERE 1=1
+    AND SeriesType = 'MONTHLY_MTG_RATE'
+	AND ModelType = 'ScaleMtgRateModel v2.0'
+;
+COMMIT;
+
+DROP TABLE IF EXISTS #Mtg30YrRates_monthly_refi;
+-- one and half month lagged
+SELECT
+lag1.SeriesName,
+asof = lag1.asOf_lag1,
+MtgRate = lag1.MtgRate * 0.5 + lag2.MtgRate * 0.5
+INTO #Mtg30YrRates_monthly_refi
+FROM #Mtg30YrRates_monthly lag1
+JOIN #Mtg30YrRates_monthly lag2 ON lag1.asOf_lag1 = lag2.asOf_lag2 AND lag1.SeriesName = lag2.SeriesName
+;
+COMMIT;
+
+CREATE LF INDEX series_idx ON #Mtg30YrRates_monthly_refi(SeriesName);
+CREATE LF INDEX asOf_idx ON #Mtg30YrRates_monthly_refi(asOf);
+
+COMMIT;
+
+-- Create history of asOf dates
+DROP TABLE IF EXISTS #unique_dates;
+SELECT convert(date,dateadd(month, -num, mn.asOf)) as asOf
+INTO #unique_dates
+FROM report.nums,
+(SELECT convert(date, dateadd(day, -datepart(day, getdate()) + 1, getdate())) asOf) mn
+;
+COMMIT;
+
+-- Create Incentive Data
+DROP TABLE IF EXISTS #FNM_LoanIncentive;
+SELECT
+    sli.loanSeqNum,
+    sli.asOf,
+    CASE WHEN (HARP_eligible = 1 OR conventional_eligible = 1) THEN conventional_refi_incentive   ELSE 0.0 END AS conventional_incentive,
+    CASE WHEN fha_eligible = 1                                 THEN fha_refi_incentive            ELSE 0.0 END AS fha_incentive
+INTO #FNM_LoanIncentive
+FROM scale.FNM_Loan_Dev sl
+JOIN #ticker tk
+    ON sl.marketTicker = tk.tickerName
+JOIN scale.FNM_LoanIncentive sli
+    ON sl.loanSeqNum = sli.loanSeqNum 
+JOIN scale.FNM_LoanEligibility sle
+    ON sli.loanSeqNum = sle.loanSeqNum
+    AND sli.asOf = sle.asOf
+WHERE sli.version = (select version from #tmp_version)
+    AND sl.version = '2.50'
+;
+COMMIT;
+
+CREATE HG INDEX id_idx ON #FNM_LoanIncentive(loanSeqNum);
+CREATE LF INDEX asOf_idx ON #FNM_LoanIncentive(asOf);
+COMMIT;
+
+-- Update burnout (cap at 200 bps)
+DROP TABLE IF EXISTS #FNM_LoanIncentive_LoanSize;
+SELECT
+    tli.loanSeqNum,
+    tli.asOf,
+    slh.balance,
+    CASE WHEN tli.conventional_incentive > 200 THEN 200 ELSE tli.conventional_incentive END   AS conventional_incentive,
+    CASE WHEN tli.fha_incentive          > 200 THEN 200 ELSE tli.fha_incentive END            AS fha_incentive
+INTO #FNM_LoanIncentive_LoanSize
+FROM #FNM_LoanIncentive tli
+JOIN scale.FNM_LoanHist slh ON tli.loanSeqNum = slh.loanSeqNum AND tli.asOf = slh.asOf
+;
+COMMIT;
+
+CREATE HG INDEX id_idx ON #FNM_LoanIncentive_LoanSize(loanSeqNum);
+CREATE LF INDEX asOf_idx ON #FNM_LoanIncentive_LoanSize(asOf);
+COMMIT;
+
+-- Initial Burnout computation
+-- Incentive Calculation involving Mortgage Rate, Note Rate, LLPA and PMI
+DROP TABLE IF EXISTS #FNM_LoanBurnout;
+SELECT
+    sl.marketTicker,
+    t0.loanSeqNum,
+    t0.asOf as asOf,
+    sum(CASE WHEN                t1.conventional_incentive > t1.fha_incentive AND t1.conventional_incentive > 0.0 THEN t1.conventional_incentive 
+                 ELSE CASE WHEN  t1.fha_incentive > t1.conventional_incentive AND t1.fha_incentive > 0.0          THEN t1.fha_incentive
+                 ELSE 0.0 
+                 END   
+            END) as burnout
+INTO #FNM_LoanBurnout
+FROM scale.FNM_Loan_Dev sl
+JOIN #ticker tk
+    ON sl.marketTicker = tk.tickerName
+JOIN #FNM_LoanIncentive_LoanSize t0
+    ON sl.loanSeqNum = t0.loanSeqNum
+JOIN #FNM_LoanIncentive_LoanSize t1
+    ON t0.loanSeqNum = t1.loanSeqNum
+    AND t0.asOf > t1.asOf
+WHERE t0.asOf >= (select asOf from #tmp_asOf)
+    AND sl.version = '2.50'
+GROUP BY sl.marketTicker, t0.loanSeqNum, t0.asOf
+;
+COMMIT;
+
+-- Earliest AsOf Date
+DROP TABLE IF EXISTS #FNM_Earliest;
+SELECT
+    l.loanSeqNum,
+    l.marketTicker,
+    o.first_asOf,
+    l.originationDate,
+    l.origNoteRate,
+    cast(0.0 as numeric(10, 4)) as burnout
+INTO #FNM_Earliest
+FROM scale.FNM_Loan_DEv l
+JOIN (
+        SELECT
+            loanSeqNum,
+            min(asOf) as first_asOf
+        FROM
+        (
+            SELECT loanSeqNum, asOf FROM fnm.Cello_LoanHist WHERE asOf >= '20140101'
+            
+            UNION ALL
+            
+            SELECT loanSeqNum, asOf FROM fnm.Cello_Derived_LoanHist
+        ) clh
+        GROUP BY loanSeqNum
+    ) o
+    ON l.loanSeqNum = o.loanSeqNum
+WHERE 1=1
+    AND l.version = '2.50'
+;
+COMMIT;
+
+-- Create missing periods from origination date to first asOf date
+DROP TABLE IF EXISTS #FNM_MissingHist;
+SELECT 
+    e.loanSeqNum, 
+    t.asOf, 
+    e.origNoteRate,
+    mtg.MtgRate
+INTO #FNM_MissingHist
+FROM #FNM_Earliest e
+JOIN #ticker tk
+    ON e.marketTicker = tk.tickerName
+JOIN #unique_dates t
+    ON t.asOf > e.originationDate
+    AND t.asOf <= e.first_asOf 
+JOIN #Mtg30YrRates_monthly_refi mtg
+    ON mtg.asOf = t.asOf
+    AND mtg.SeriesName = tk.mtgRateSeries
+;
+COMMIT;
+
+-- Historical Burnout computation
+-- Simple Calculation involving MortgageRate and Note Rate
+DROP TABLE IF EXISTS #FNM_LoanBurnoutHist;
+SELECT 
+    t0.loanSeqNum,
+    t0.asOf,
+    sum(CASE WHEN t1.origNoteRate - t1.MtgRate <= 0.0 THEN 0.0 ELSE t1.origNoteRate - t1.MtgRate END) as burnout
+INTO #FNM_LoanBurnoutHist
+FROM #FNM_MissingHist t0
+JOIN #FNM_MissingHist t1
+    ON t0.loanSeqNum = t1.loanSeqNum
+    AND t0.asOf > t1.asOf
+WHERE t0.asOf >= (select asOf from #tmp_asOf)
+GROUP BY t0.loanSeqNum, t0.asOf
+;
+COMMIT;
+
+-- Update Burnout for first instance
+UPDATE #FNM_Earliest e SET e.burnout = bh.burnout
+FROM #FNM_LoanBurnoutHist bh
+WHERE bh.loanSeqNum = e.loanSeqNum
+    AND bh.asOf = e.first_asOf;
+COMMIT;
+
+-- Update Burnout with Historical Burnout
+UPDATE #FNM_LoanBurnout b SET b.burnout = b.burnout + e.burnout
+FROM #FNM_Earliest e
+WHERE b.loanSeqNum = e.loanSeqNum
+AND b.marketTicker NOT IN ('FNCQ30', 'FNCR')
+;
+COMMIT;
+
+-- Update Burnout with empty cells
+UPDATE #FNM_LoanBurnout b SET b.burnout = 0.0
+WHERE b.burnout = NULL
+;
+COMMIT;
+
+-- Tests
+
+--SELECT l.marketTicker, sl.originationDate, count(1), sum(balance), sum(balance * l.burnout) / sum(CASE WHEN l.burnout IS NULL THEN 0.0 ELSE balance END) as wavg_burnout FROM #FNM_LoanBurnout l JOIN fnm.Cello_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum AND l.asOf = lh.asOf JOIN scale.FNM_Loan sl ON sl.loanSeqNum = lh.loanSeqNum GROUP BY l.marketTicker, sl.originationDate ORDER BY sl.originationDate
+--SELECT l.marketTicker, l.asOf, count(1), sum(balance), sum(balance * l.burnout) / sum(CASE WHEN l.burnout IS NULL THEN 0.0 ELSE balance END) as wavg_burnout FROM #FNM_LoanBurnout l JOIN fnm.Cello_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum AND l.asOf = lh.asOf GROUP BY l.marketTicker, l.asOf ORDER BY l.asOf
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have burnout populated
+----------------------------------------------------------------------------------------------
+        declare   @cnt int
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_LoanBurnout WHERE burnout IS NULL
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FNM Loans with NULL Burnout LoanCount : %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if burnout is in valid range
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM
+            #FNM_LoanBurnout
+        WHERE
+            burnout < 0.0 --OR burnout > 300
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FNM Loans with Invalid burnout Range LoanCount : %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if count of current month changes in a noticeable amount compare with previous month
+----------------------------------------------------------------------------------------------
+        declare   @cnt_previous int
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_LoanBurnout WHERE asof = (SELECT asOf FROM #tmp_asOf)
+
+        SELECT
+            @cnt_previous =  count(1)
+        FROM scale.FNM_LoanBurnout WHERE asof = (SELECT dateadd(month, -1, asOf) FROM #tmp_asOf) AND version = (select  version from #tmp_version)
+        
+        if (@cnt - @cnt_previous > 0.1 * @cnt_previous OR @cnt_previous - @cnt > 0.1 * @cnt_previous)
+        BEGIN
+            RAISERROR 99999 'FNM LoanBurnout with INVALID COUNT compare with previous month. Current: %1!; Previous: %2!', @cnt, @cnt_previous
+            RETURN
+        END 
+-- End Tests
+
+
+
+-- Load Data into Scale Burnout Table
+DELETE FROM scale.FNM_LoanBurnout
+FROM scale.FNM_LoanBurnout slb, #FNM_LoanBurnout lb
+WHERE 1=1
+    AND slb.loanSeqNum = lb.loanSeqNum
+    AND slb.asOf = lb.asOf
+    AND lb.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND slb.asOf >= (SELECT asOf from #tmp_asOf)
+    AND version = (SELECT version from #tmp_version)
+;
+
+DECLARE @version varchar(5)
+SELECT @version = (select * from #tmp_version)
+
+INSERT INTO scale.FNM_LoanBurnout (loanSeqNum, asOf, version, burnout)
+SELECT
+    loanSeqNum,
+    asOf,
+    @version,
+    burnout --* 100.0
+FROM #FNM_LoanBurnout
+WHERE marketTicker IN (SELECT tickerName FROM #ticker)
+    AND asOf >= (SELECT asOf from #tmp_asOf)
+;

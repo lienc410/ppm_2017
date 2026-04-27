@@ -1,0 +1,57 @@
+============================
+Freddie Mac
+============================
+
+Total FC/REO
+439,894	(371,302 with severity between 0 and 105)
+Total FC
+153,790
+Total REO loans
+286,104
+
+netSaleProceeds = 'C'
+15726
+netSaleProceeds = 'U'
+7
+
+
+o.pctMtgIns = 0 with OLTV/CLTV > 85
+711
+o.pctMtgIns = Null
+386
+
+total number of loans with o.pctMtgIns = Null
+1,165
+
+
+With MI
+133,212
+MI Recoveries > actualLoss
+5,752 	4.3%
+
+loss.actualLoss_noMI > MaxCoverage
+112,735
+loss.miRecoveries < MaxCoverage
+104,370
+
+
+
+
+
+fhl.PIV_CreditLossHist
+No information of whether it's REO or FC
+
+
+
+
+
+============================
+Freddie Mac
+============================
+
+Total FC/REO
+436,964	 (dispositionDate is not null)
+Total FC
+118,983
+Total REO loans
+317,981

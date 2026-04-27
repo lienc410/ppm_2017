@@ -1,0 +1,97 @@
+﻿Build started 3/3/2016 11:26:25 AM.
+     1>Project "C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\CurrentCoupon\CurrentCoupon.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _SCL_SECURE_NO_WARNINGS /D _CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\CurrentCoupon.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _SCL_SECURE_NO_WARNINGS /D _CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt CurrentCoupon.cpp CurrentCoupon.pb.cc CurrentCouponResult.pb.cc MyDate.cpp src\Date\Date.cpp src\Date\DateConvention.cpp src\Date\HolidayList.cpp src\Date\Tenor.cpp src\Util\Exception.cpp src\Util\SimpleUtils.cpp
+         SimpleUtils.cpp
+         Exception.cpp
+         Tenor.cpp
+         HolidayList.cpp
+         DateConvention.cpp
+         Date.cpp
+         MyDate.cpp
+         CurrentCouponResult.pb.cc
+         CurrentCoupon.pb.cc
+         CurrentCoupon.cpp
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(116): warning C4244: 'argument' : conversion from 'google::protobuf::int64' to 'int', possible loss of data
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(192): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(207): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(251): warning C4101: 'p' : unreferenced local variable
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(266): warning C4101: 'p' : unreferenced local variable
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(292): warning C4101: 'daysToBack' : unreferenced local variable
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(292): warning C4101: 'daysToFront' : unreferenced local variable
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(355): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(357): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(371): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(372): warning C4244: 'argument' : conversion from '__int64' to 'int', possible loss of data
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(347): warning C4101: 'daysToSettle' : unreferenced local variable
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(400): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(419): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(424): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(446): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(463): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(473): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(527): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(557): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(558): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(580): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(610): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(611): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(648): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(384): warning C4101: 'minCoupon' : unreferenced local variable
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(388): warning C4101: 'icounter1' : unreferenced local variable
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(384): warning C4101: 'maxCoupon' : unreferenced local variable
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(680): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(695): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(655): warning C4101: 'day' : unreferenced local variable
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(655): warning C4101: 'month' : unreferenced local variable
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(659): warning C4101: 'daysToSettle' : unreferenced local variable
+     1>c:\lien workspace\11.mortgage rate model\currentcoupon\currentcouponmodel_historicaltest\currentcoupon\currentcoupon\currentcoupon.cpp(655): warning C4101: 'year' : unreferenced local variable
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\CurrentCoupon.exe" /INCREMENTAL /NOLOGO "C:\PIV\PIV-it-dev\trunk\External\protobuf\2.5.0\lib\Win32\Debug\libprotobuf.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\CurrentCoupon.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\CurrentCoupon.lib" /MACHINE:X86 Debug\CurrentCoupon.obj
+         Debug\CurrentCoupon.pb.obj
+         Debug\CurrentCouponResult.pb.obj
+         Debug\MyDate.obj
+         Debug\Date.obj
+         Debug\DateConvention.obj
+         Debug\HolidayList.obj
+         Debug\Tenor.obj
+         Debug\Exception.obj
+         Debug\SimpleUtils.obj
+         Debug\stdafx.obj
+     1>libprotobuf.lib(coded_stream.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(coded_stream.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(common.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(common.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(descriptor.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(descriptor.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(descriptor.pb.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(descriptor.pb.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(descriptor_database.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(descriptor_database.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(dynamic_message.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(dynamic_message.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(extension_set.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(extension_set.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(extension_set_heavy.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(extension_set_heavy.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(generated_message_reflection.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(generated_message_reflection.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(generated_message_util.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(generated_message_util.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(message.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(message.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(message_lite.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(message_lite.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(once.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(once.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(atomicops_internals_x86_msvc.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(atomicops_internals_x86_msvc.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(reflection_ops.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(reflection_ops.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(repeated_field.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(repeated_field.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(structurally_valid.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(structurally_valid.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(strutil.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(strutil.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(substitute.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(substitute.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(text_format.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(text_format.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(tokenizer.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(tokenizer.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(unknown_field_set.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(unknown_field_set.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(wire_format.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(wire_format.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(wire_format_lite.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(wire_format_lite.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(zero_copy_stream.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(zero_copy_stream.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(zero_copy_stream_impl.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(zero_copy_stream_impl.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(zero_copy_stream_impl_lite.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(zero_copy_stream_impl_lite.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+     1>libprotobuf.lib(stringprintf.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'libprotobuf.lib(stringprintf.obj)' or at 'C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\vc110.pdb'; linking object as if no debug info
+         CurrentCoupon.vcxproj -> C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\Debug\CurrentCoupon.exe
+     1>Done Building Project "C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\CurrentCouponModel_HistoricalTest\CurrentCoupon\CurrentCoupon\CurrentCoupon.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:10.09

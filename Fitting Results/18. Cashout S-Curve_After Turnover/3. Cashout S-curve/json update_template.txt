@@ -1,0 +1,83 @@
+Prod:
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -50,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -25,
+          "KnotValues": 2.360850413
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 2.8050
+        },
+        {
+          "Knots": 25,
+          "KnotValues": 2.9026
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 2.9236
+        },
+        {
+          "Knots": 75,
+          "KnotValues": 2.9685
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 3.0086
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 3.07
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 3.07
+        }
+      ],
+
+Dev:
+      "lomedia_incentive": [
+        {
+          "Knots": -200,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -50,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -6,
+          "KnotValues": 0.1712
+        },
+        {
+          "Knots": 9,
+          "KnotValues": 0.269295
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 0.3407
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.4035
+        },
+        {
+          "Knots": 85,
+          "KnotValues": 1.6235
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.6235
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1.6235
+        }
+      ],

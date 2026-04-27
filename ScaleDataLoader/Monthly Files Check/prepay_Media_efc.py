@@ -1,0 +1,90 @@
+import random
+import sys
+import datetime
+import os
+from datetime import datetime
+import EmailUtil
+
+
+def main(argv):
+    #Input user argument Year, Month, Date
+    date_str = argv[1] + argv[2] + argv[3];
+    #Setting Directory for target file
+    try:
+        filepath_n = os.path.join('S:', 'IT', 'Dev', 'Scale', 'PrepayModel', 'MediaEffect', date_str, 'media_4.0.txt')
+        file_prep_med_N = open(filepath_n, 'r')
+    except:
+        print("File not Found!")
+
+    #Converting the string input into datetime
+    date_n = datetime.strptime(date_str, '%Y%m%d');
+    print (date_n);
+
+    #Using user input to calculate the previous file
+    #global date_str_pre;
+    if argv[2] != 1:
+        if int(argv[2]) <= 10:
+            date_str_pre = argv[1] + '0' + str(int(argv[2]) - 1) + argv[3];
+            #print(date_str_pre);
+        elif int(argv[2]) > 10:
+            date_str_pre = argv[1] + str(int(argv[2]) - 1) + argv[3];
+            #print(date_str_pre);
+    elif argv[2] == 1:
+        date_str_pre = str(int(argv[1]) - 1) + '12' + argv[3];
+
+    #global asOf_cur_str;
+    print("date_str_pre = " + date_str_pre);
+
+    #Using the result string of the above calculation, seeting the directory for the previous file
+    try:
+        filepath_o = os.path.join('S:', 'IT', 'Dev', 'Scale', 'PrepayModel', 'MediaEffect', date_str_pre, 'media_4.0.txt');
+        file_prep_med_O = open(filepath_o, 'r');
+    except:
+        print("File not Found!")
+
+    #Read in lines of  files, select asOf of the last row in each file
+    line_prep_med_n = file_prep_med_N.readlines();
+    line_prep_med_o = file_prep_med_O.readlines();
+    lastline_n = line_prep_med_n[-1];
+    lastline_o = line_prep_med_o[-1];
+    asOf_n, index_n = lastline_n.split(",");
+    asOf_o, index_o = lastline_o.split(",");
+
+    #Calculating the predicted last asOf of the previous file
+    asOf_cur_str = date_str;
+    asOf_pre_str = date_str_pre;
+
+    #Converting the asOf string in files to the format of the strings calculated above
+    n_year, n_month, n_date = asOf_n.split("-");
+    asOf_N_file = n_year + n_month + n_date;
+    print("asOf_N = " + asOf_N_file);
+
+    #Comparing the asOf in files with the asOf calculated, and print error message
+    if asOf_N_file != asOf_cur_str:
+        print("Error in last row in " + asOf_n + " Data not updated!");
+        body = """<body>
+                  Greetings:
+                  <br/>
+                  <br/>
+                  Error found in the last row with asOf """ + asOf_n + """ Data not updated!
+                  </body>"""
+        em = EmailUtil.EmailUtil();
+        em.sendMessage('john.xiong@PIVcapital.com', "Error Found in Cre_Ava_Mdl_Check with File " + date_str, body);
+
+    for an in range(3):
+        rand = random.randint(1,len(line_cam_o));
+        asOf, index = line_cam_n[rand].split(",");
+        if line_prep_med_n[rand] != line_prep_med_o[rand]:
+            print("Error in record(s) with asOf " + asOf + " and index " + index);
+            body = """<body>
+                      Greetings:
+                      <br/>
+                      <br/>
+                      Error(s) found in record(s) with asOf """ + asOf + """ and index """ + index + """
+                      </body>""";
+            em = EmailUtil.EmailUtil();
+            em.sendMessage('john.xiong@PIVcapital.com', "Error Found in Cre_Ava_Mdl_Check with File " + date_str, body);
+
+
+if __name__ == "__main__":
+    main(sys.argv[0:])

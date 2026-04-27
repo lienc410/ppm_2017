@@ -1,0 +1,4 @@
+After fitting turnover, we look at the Cashout module.
+
+First, find out the no-cashout case. Meaning the s-curve with low cumulative hpa (cum_hap < 10%).
+Also, we want to eliminate the impact of burnout. So we use the filter burnout < 2000, where the burnout multiplier should be around 0.9 to 1.0.

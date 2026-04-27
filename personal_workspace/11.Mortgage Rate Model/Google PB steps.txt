@@ -1,0 +1,18 @@
+First need to copy and paste the definition file into specific folders, 
+S:\IT\Dev\Google Protocol Buffer\protobuf-csharp-port-2.4.1.521\tools\
+and
+S:\IT\Dev\Google Protocol Buffer\protobuf-cplusplus\
+
+Now, in cmd: 
+
+For C#:
+
+-> cd S:\IT\Dev\Google Protocol Buffer\protobuf-csharp-port-2.4.1.521\tools
+-> ProtoGen.exe -output_directory=c:\tmp\src -namespace=ccm.quantlib.input CurrentCouponResult.proto 
+
+For C++
+
+-> cd S:\IT\Dev\Google Protocol Buffer\protobuf-cplusplus
+-> protoc.exe --cpp_out=c:\tmp\src CurrentCouponResult.proto 
+
+It will generate pb code files for C# or C++.

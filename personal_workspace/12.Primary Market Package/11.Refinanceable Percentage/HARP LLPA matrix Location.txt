@@ -1,0 +1,6 @@
+LLPA matrix
+S:\Research\Government\GSE\Fannie Mae\Underwriting Guidelines\Summary of Underwriting Guidelines
+
+
+This is where we are storing MGIC PMI.
+S:\Research\MGIC  

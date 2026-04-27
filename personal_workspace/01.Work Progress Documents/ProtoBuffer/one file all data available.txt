@@ -1,0 +1,332 @@
+using System;
+using System.Data;
+using System.Collections.Generic;
+using System.IO;
+using System.Data.SqlClient;
+
+using log4net;
+using iAnywhere.Data.SQLAnywhere;
+
+using pb = global::Google.ProtocolBuffers;
+using pbc = global::Google.ProtocolBuffers.Collections;
+using pbd = global::Google.ProtocolBuffers.Descriptors;
+
+namespace ccm.quantlib.input
+{
+    class HistoricalRatesGen
+    {
+        private static readonly ILog log = LogManager.GetLogger(typeof(HistoricalRatesGen));
+        private SqlConnection conMs;
+        private SAConnection conIQ;
+
+        private HistoricalRates historicalRates;
+
+        private string outputFile;
+        private string sqlBase;
+        private string dateFormat;
+
+        private DateTime asOfDate;
+//        private DateTime startDate;
+        
+        private DateTime startDateCurrentCoupons30Yr;
+        private DateTime startDateMortgageRates30Yr;
+        private DateTime startDateSwapRates;
+
+        private List<TimeSeries> currentCoupons30Yr;
+        private List<TimeSeries> mortgageRates30Yr;
+        private List<TimeSeries> swapRates;
+
+        private List<DateTime> monthlyDates;
+        private List<DateTime> monthlyDatesForMortgageRate30Yr;
+        private int numMonthsCC;
+        private int numMonthsMR;
+        private int numMonthsSwap;
+        private int numMonthsForMortgageRate30Yr;
+        private int moreYrsForMortgageRate30Yr;
+
+        private List<TimeSeries> histRates;
+
+        public HistoricalRatesGen(DateTime asOfDate, string outputFile, string conStrMs, string conStrIQ)
+        {
+            dateFormat = "yyyyMMdd";
+
+            log.Info("HistoricalRatesGen()");
+            this.asOfDate = asOfDate;
+            this.outputFile = outputFile;
+            //this.outputFileForMortgageRate30Yr = outputFileForMortgageRate30Yr;
+            
+//           startDate = DateTime.Parse("08/01/2013");
+//            moreYrsForMortgageRate30Yr = asOfDate.Year - 2001 -1;
+
+            conMs = new SqlConnection(conStrMs);
+            conIQ = new SAConnection(conStrIQ);
+            conMs.Open();
+            conIQ.Open();
+
+            sqlBase = "select d.AsOfDate, d.SeriesNumValue from TimeSeriesMeta as m,TimeSeries as d"
+                + "\n    where m.TimeSeriesMetaId = d.TimeSeriesMetaId"
+                + "\n    and d.AsOfDate <= '" + asOfDate.ToString(dateFormat) + "'";
+
+        }
+
+        public void cleanUp()
+        {
+            conMs.Close();
+            conIQ.Close();
+        }
+
+        public void getRawData()
+        {
+            string sqlCurrentCoupon30Yr = sqlBase + "and m.source = 'PIV' and m.TickerName = 'FN_CMM_30Yr' and m.category = 'MTG' order by d.AsOfDate";
+            string sqlMortgageRate30Yr = sqlBase + "and m.source = 'CITI' and m.TickerName = 'FHLSurveyRate30Yr' and m.category = 'MTG' order by d.AsOfDate";
+            string sqlSwap = sqlBase + "and m.source = 'YIELDBOOK' and m.TickerName = '10yr Swap Rate' and m.category = 'SWAPRATE' order by d.AsOfDate";
+
+            currentCoupons30Yr = getTimeSeriesData(sqlCurrentCoupon30Yr);
+            mortgageRates30Yr = getTimeSeriesData(sqlMortgageRate30Yr);
+            swapRates = getTimeSeriesData(sqlSwap);
+
+        }
+
+        private void setMonthlyDatesSub(ref DateTime start)
+        {
+            startDateCurrentCoupons30Yr = currentCoupons30Yr[0].AsOfDate;
+            int startMonthCC = startDateCurrentCoupons30Yr.Month;
+            int startYearCC = startDateCurrentCoupons30Yr.Year;
+
+            startDateMortgageRates30Yr = mortgageRates30Yr[0].AsOfDate;
+            int startMonthMR = startDateMortgageRates30Yr.Month;
+            int startYearMR = startDateMortgageRates30Yr.Year;
+
+            startDateSwapRates = swapRates[0].AsOfDate;
+            int startMonthSwap = startDateSwapRates.Month;
+            int startYearSwap = startDateSwapRates.Year;
+ 
+
+            int endMonth = asOfDate.Month;
+            int endYear = asOfDate.Year;
+            if (endMonth > 1)
+                endMonth--;
+            else if (endMonth == 1)
+            {
+                endMonth = 12;
+                endYear--;
+            }
+
+            DateTime startMonthDateCC = new DateTime(startYearCC, startMonthCC, 1);
+            DateTime startMonthDateMR = new DateTime(startYearMR, startMonthMR, 1);
+            DateTime startMonthDateSwap = new DateTime(startYearSwap, startMonthSwap, 1);
+            DateTime endMonthDate = new DateTime(endYear, endMonth, 1);
+
+            monthlyDates = new List<DateTime>();
+            monthlyDatesForMortgageRate30Yr = new List<DateTime>();
+            numMonthsCC = (endYear - startYearCC) * 12 + endMonth - startMonthCC + 1;
+            numMonthsMR = (endYear - startYearMR) * 12 + endMonth - startMonthMR + 1;
+            numMonthsSwap = (endYear - startYearSwap) * 12 + endMonth - startMonthSwap + 1;
+
+
+/*            if (numMonths < 0)
+                Console.WriteLine("Please enter the correct date!");
+*/
+           DateTime intermediateMonthDate = startMonthDate;
+
+           for (int i = 0; i < numMonths; i++)
+            {
+                //Console.WriteLine(intermediateMonthDate);
+                monthlyDates.Add(intermediateMonthDate);
+                int intermediateMonth = intermediateMonthDate.Month;
+                int intermediateYear = intermediateMonthDate.Year;
+
+                if (intermediateMonth <= 11)
+                    intermediateMonth++;
+                else if (intermediateMonth == 12)
+                {
+                    intermediateMonth = 1;
+                    intermediateYear++;
+                }
+
+                intermediateMonthDate = new DateTime(intermediateYear, intermediateMonth, 1);
+            }
+
+            intermediateMonthDate = startMonthDate.AddYears(-moreYrsForMortgageRate30Yr);
+
+            for (int i = 0; i < numMonthsForMortgageRate30Yr; i++)
+            {
+                //Console.WriteLine(intermediateMonthDate);
+                monthlyDatesForMortgageRate30Yr.Add(intermediateMonthDate);
+                int intermediateMonth = intermediateMonthDate.Month;
+                int intermediateYear = intermediateMonthDate.Year;
+
+                if (intermediateMonth <= 11)
+                    intermediateMonth++;
+                else if (intermediateMonth == 12)
+                {
+                    intermediateMonth = 1;
+                    intermediateYear++;
+                }
+
+                intermediateMonthDate = new DateTime(intermediateYear, intermediateMonth, 1);
+            }
+        }
+
+        public void setMonthlyDates() { 
+        
+        
+        }
+
+        public void calcHistoricalRates(ref List<TimeSeries> histRates, int dataLength)
+        {
+
+	        List<DateTime> mDates;
+            List<double> avgRates = new List<double>();
+
+            if (histRates != mortgageRates30Yr)
+                mDates = monthlyDates;
+            else
+                mDates = monthlyDatesForMortgageRate30Yr;
+
+            for (int i = 0; i < dataLength; i++)
+            {
+                double tmpSum = 0;
+                int tmpCount = 0;
+                foreach (TimeSeries t in histRates)
+                {
+                    if (i < dataLength - 1)
+                        {
+                        if (DateTime.Compare(t.AsOfDate, mDates[i]) >= 0 && DateTime.Compare(t.AsOfDate, mDates[i + 1]) < 0)
+                            {
+                                tmpSum = tmpSum + t.SeriesNumValue;
+                                tmpCount++;
+                            }
+                        }
+                    else if (DateTime.Compare(t.AsOfDate, mDates[i]) >= 0)
+                    {
+                        tmpSum = tmpSum + t.SeriesNumValue;
+                        tmpCount++;
+                    }
+                             
+
+                }
+
+                
+//                if (tmpCount > 0)
+                    avgRates.Add(tmpSum / tmpCount);
+            }
+
+            // for (int i = 0; i < numMonths; i++)
+            //Console.WriteLine(avgRates[i]);
+
+            histRates.Clear();
+
+
+           for (int i = 0; i < dataLength; i++)
+               histRates.Add(new TimeSeries("", "", "", "", "", "", mDates[i], mDates[i], avgRates[i], mDates[i]));
+//                histRates.Add(new TimeSeries("", "", "", "", "", mDates[i], mDates[i], mDates[i]));
+
+        }
+
+        public int setHistoricalRate()
+        {
+            log.Info("getHistoricalRates(DateTime asOfDate)");
+
+            calcHistoricalRates(ref currentCoupons30Yr, numMonthsCC);
+            calcHistoricalRates(ref mortgageRates30Yr, numMonthsMR);
+            calcHistoricalRates(ref swapRates, numMonthsSwap);
+
+            //calcHistoricalRates(ref mortgageRates30YrLong, numMonthsForMortgageRate30Yr);
+            return 0;
+        }
+
+        public void printHistoricalRate()
+        {
+            log.Info("---------------------------------------------Historical Rate---------------------------------------------------------");
+            log.Info("---------------------------------------------Current Coupon----------------------------------------------------------");
+            foreach (TimeSeries t in currentCoupons30Yr)
+                log.Info(t.AsOfDate + " Current Coupon 30 Year: " + t.SeriesNumValue);
+            log.Info("-----------------------------------------------Mortgage Rate---------------------------------------------------------");
+            foreach (TimeSeries t in mortgageRates30Yr)
+                log.Info(t.AsOfDate + " Mortgage Rate 30 Year: " + t.SeriesNumValue);            
+            log.Info("-------------------------------------------------Swap Rate-----------------------------------------------------------");
+            foreach (TimeSeries t in swapRates)
+                log.Info(t.AsOfDate + " Swap Rates: " + t.SeriesNumValue);
+       }
+
+        private List<TimeSeries> getTimeSeriesData(string sqlCmd)
+        {
+            //log.Info("getTimeSeriesData(string sqlCmd<" + sqlCmd + ">");
+
+            //SACommand cmd = conIQ.CreateCommand();
+            SqlCommand cmd = conMs.CreateCommand();
+            cmd.CommandText = sqlCmd;
+            List<TimeSeries> rs = new List<TimeSeries>();
+            try
+            {
+                //SADataReader dr = cmd.ExecuteReader();
+                SqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    rs.Add(new TimeSeries(
+                        "", "",
+                        "",
+                        ""
+                        , "", "", dr.GetDateTime(0), dr.GetDateTime(0), dr.GetDouble(1), dr.GetDateTime(0)));
+                }
+                dr.Close();
+            }
+            catch (SAException ex)
+            {
+                log.Info(ex.Message);
+            }
+            return rs;
+        }
+
+        public int genHistoicalRates()
+        {
+            HistoricalRates.Builder hRB = HistoricalRates.CreateBuilder();
+
+
+            foreach (TimeSeries t in swapRates)
+            {
+                String EDate = t.ExpirationDate.ToString(dateFormat);
+                hRB.AddSwapRate10Yr(HistoricalRates.Types.SwapRate10yr.CreateBuilder().SetAsOfDate(Convert.ToInt64(EDate)).SetRate(Convert.ToDouble(t.SeriesNumValue)).Build());
+            }
+
+            foreach (TimeSeries t in currentCoupons30Yr)
+            {
+                String EDate = t.ExpirationDate.ToString(dateFormat);
+                hRB.AddCurrentCoupon30Yr(HistoricalRates.Types.CurrentCoupon30yr.CreateBuilder().SetAsOfDate(Convert.ToInt64(EDate)).SetRate(Convert.ToDouble(t.SeriesNumValue)).Build());
+            }
+
+            foreach (TimeSeries t in mortgageRates30Yr)
+            {
+                String EDate = t.ExpirationDate.ToString(dateFormat);
+                hRB.AddMortgageRate30Yr(HistoricalRates.Types.MortgageRate30yr.CreateBuilder().SetAsOfDate(Convert.ToInt64(EDate)).SetRate(Convert.ToDouble(t.SeriesNumValue)).Build());
+            }
+
+
+
+            historicalRates = hRB.Build();
+            byte[] bytes;
+            using (MemoryStream stream = new MemoryStream())
+            {
+                historicalRates.WriteTo(stream);
+                bytes = stream.ToArray();
+            }
+
+            try
+            {
+                Stream stream = new FileStream(outputFile, FileMode.Create, FileAccess.Write, FileShare.None);
+                stream.Write(bytes, 0, bytes.Length);
+                stream.Close();
+            }
+            catch (IOException iox)
+            {
+                System.Console.WriteLine(iox.Message);
+                log.Info(iox.Message);
+            }
+
+            return 0;
+        }
+
+    }  
+}
+      

@@ -1,0 +1,11 @@
+[IQDatabaseSection]
+database.FHL.dbname=Agency
+database.FHL.user=report
+database.FHL.password=gm4SJDw4
+database.FHL.DSN=ReportAgencyPool
+database.FHL.DSN=Agency
+database.FNM.dbname=Agency
+database.Scale.dbname=Agency
+database.Scale.user=scale
+database.Scale.password=xaYc14rJ
+database.Scale.DSN=ScaleAgencyPool

@@ -1,0 +1,1113 @@
+-- Before execute the script, need to set the dates to run for
+DROP TABLE IF EXISTS #tmp_asOf;
+SELECT 
+CAST('#####ASOF#####' AS DATE) asOf, 
+CAST('#####LAST#####' AS DATE) asOf_last,
+CAST('2014-01-01' AS DATE) asOf_start
+INTO #tmp_asOf
+--SELECT CAST ('2012-01-01' AS DATE) asOf INTO #tmp_asOf
+;
+
+-- Before execute the script, need to set the appType to run for
+DROP TABLE IF EXISTS #tmp_appType;
+SELECT '#####APPTYPE#####' AS appType INTO #tmp_appType
+--SELECT '4.20' AS appType INTO #tmp_appType
+;
+
+-- Select Tickers Needed to be Back-Filled
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+);
+
+INSERT #ticker SELECT 'FNCL', 'CONVENTIONAL_30YR';    --Conventional Fannie
+INSERT #ticker SELECT 'FNCK', 'JUMBO_30YR';           --Jumbo Fannie
+INSERT #ticker SELECT 'FNCQ30', 'CONVENTIONAL_30YR';  --CQ Fannie High LTV[105-125]
+INSERT #ticker SELECT 'FNCR', 'CONVENTIONAL_30YR';    --CR Fannie High LTV[125-150]
+--INSERT #ticker SELECT 'FNCT', 'CONVENTIONAL_20YR';    --20 Yr Conventional Fannie
+--INSERT #ticker SELECT 'FNCI', 'CONVENTIONAL_15YR';    --15 Yr Conventional Fannie
+COMMIT;
+
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT mvc.tickerName, mvc.appType, mvc.incentiveVersion_LL as incentiveVersion, mvc.originationVersion_LL as originationVersion 
+INTO #tmp_version
+FROM scale.ModelVersionConfig mvc
+JOIN #tmp_appType tat
+     ON mvc.appType = tat.appType
+JOIN #ticker tk
+     ON mvc.tickerName = tk.tickerName
+;
+COMMIT;
+
+--Find out the first asof saved in scale.fnm_loanhist
+drop table if exists #fnm_first_asof;
+select lh.loanseqnum, min(lh.asof) as first_asof
+into #fnm_first_asof
+from scale.fnm_loanhist lh
+join fnm.cello_loan l on lh.loanseqnum=l.loanseqnum
+where l.marketticker in (select tickerName from #ticker)
+group by lh.loanseqnum;
+commit;
+
+-- Find out which loans need to back-fill
+drop table if exists #fnm_missing_hist_list;
+select a.loanSeqNum
+into #fnm_missing_hist_list
+from #fnm_first_asof a
+join scale.fnm_loan_dev l on a.loanseqnum=l.loanseqnum
+where l.version in (select originationVersion from #tmp_version) 
+and a.first_asof>l.originationDate;
+commit;
+
+--Remove the loans already available in the missing hist table. Only for new month.
+IF (SELECT asOf FROM #tmp_asOf) = (SELECT asOf_last FROM #tmp_asOf)
+    BEGIN
+        Delete from #FNM_missing_hist_list
+        where loanSeqNum in (Select loanSeqNum from scale.fnm_missing_hist mh inner join #tmp_version t on mh.version = t.incentiveVersion)
+    END
+;
+COMMIT;
+
+-- Find out the missing period for each loan
+DROP TABLE IF EXISTS #unique_dates;
+SELECT convert(date,dateadd(month, -num, mn.asOf)) as asOf
+INTO #unique_dates
+FROM report.nums,
+(SELECT convert(date, dateadd(day, -datepart(day, getdate()) + 1, getdate())) asOf) mn
+;
+COMMIT;
+
+--Create temp table to store data to be added to scale.fnm_missing_hist later
+drop table if exists #fnm_missing_data;
+select
+mhl.loanseqnum,
+t.asof,
+cast (null as numeric(14,2)) as currentBalance,
+cast (null as numeric(14,2)) as schamBalance,
+cast (null as numeric(8,2)) as cltv,
+cast (null as varchar(10)) as MICancelFlag_unlagged,
+cast (null as varchar(10)) as MICancelFlag_lagged,
+l.origPMI,
+cast (null as tinyint) as HARP_eligible,
+cast (null as tinyint) as conventional_eligible,
+cast (null as tinyint) as fha_eligible,
+cast (null as numeric(7,4)) as currLLPA,
+cast (null as numeric(7,4)) as currPMI,
+cast (null as numeric(7,4)) as currMIP,
+cast (null as numeric(10,4)) as fixed_cost,
+cast (null as numeric(10,4)) as conventional_refi_incentive,
+cast (null as numeric(10,4)) as fha_refi_incentive,
+cast (null as numeric(10,4)) as refi_incentive,
+cast (null as numeric(10,4)) as refi_incentive_eligible,
+cast (null as numeric(10,4)) as conventional_refi_incentive_fixed_cost,
+cast (null as numeric(10,4)) as fha_refi_incentive_fixed_cost,
+cast (null as numeric(10,4)) as refi_incentive_fixed_cost,
+cast (null as numeric(10,4)) as refi_incentive_eligible_fixed_cost,
+cast (null as varchar(5)) as version
+into #fnm_missing_data
+from #fnm_missing_hist_list mhl
+join #fnm_first_asof fa on mhl.loanseqnum=fa.loanseqnum
+join scale.fnm_loan_dev l on mhl.loanseqnum=l.loanseqnum 
+join #unique_dates t  on t.asOf >= l.originationDate and t.asOf < fa.first_asOf  
+where l.version in (select originationVersion from #tmp_version);
+commit;
+
+update #fnm_missing_data set version=(select distinct incentiveVersion from #tmp_version);
+commit;
+
+--Calculating currentBalance and schamBalance
+drop table if exists #balance;
+select 
+mh.loanseqnum,
+mh.asof,
+cl.originalLoanAmount,
+l.originationDate,
+cl.origNoteRate,
+cast (null as int) as loanAge,
+cast (null as numeric(14,2)) as currentBalance,
+cast (null as numeric(14,2)) as schamBalance
+into #balance
+from #fnm_missing_data mh
+join scale.fnm_loan_dev l on mh.loanseqnum=l.loanseqnum
+join fnm.cello_loan cl on mh.loanseqnum = cl.loanseqnum
+where l.version in (select originationVersion from #tmp_version);
+commit;
+
+Update #balance set loanAge = DATEDIFF( MONTH, originationDate, asOf);
+commit;
+
+Update #balance 
+Set 
+currentBalance = originalLoanAmount * (1.0-((Power(1+origNoteRate/1200.0,loanAge)-1.0)/(Power(1+origNoteRate/1200.0,360)-1.0))),
+schamBalance = originalLoanAmount * (1.0-((Power(1+origNoteRate/1200.0,loanAge)-1.0)/(Power(1+origNoteRate/1200.0,360)-1.0)));
+COMMIT;
+
+Update #fnm_missing_data mh set mh.currentBalance=b.currentBalance, mh.schamBalance=b.schamBalance
+From #balance b where mh.loanseqnum=b.loanseqnum and mh.asof=b.asof;
+commit;
+
+--Calculating cltv
+drop table if exists #cltv;
+select
+mh.loanseqnum,
+mh.asof,
+mh.currentBalance,
+l.origLTV,
+l.originationDate,
+cl.originalLoanAmount,
+cl.state,
+cast (null as numeric(20,10)) as HPI_orig,
+cast (null as numeric(20,10)) as HPI_current,
+cast (null as numeric(7,4)) as HPI_multiple,
+cast (null as numeric(8,2)) as cltv
+into #cltv
+from #fnm_missing_data mh
+join scale.fnm_loan_dev l on mh.loanseqnum=l.loanseqnum
+join fnm.cello_loan cl on mh.loanseqnum = cl.loanseqnum
+where l.version in (select originationVersion from #tmp_version);
+commit;
+
+UPDATE #cltv c set HPI_orig=hpi.NonSeasonAdjIndex
+from hpi.Cello_HomePriceIndexMonthly hpi 
+where hpi.RegionType = 'STATE'  
+and hpi.TransactionType = 'PURCHASE_ONLY' 
+and c.state = hpi.Region 
+and hpi.asOf = dateadd(month, -1, c.originationDate);
+commit;
+
+-- For loans originated before 1991-03-01, we don't have HPI data. We'll use earliest HPI (1991-03-01) as approximation
+UPDATE #cltv c set HPI_orig=hpi.NonSeasonAdjIndex
+from hpi.Cello_HomePriceIndexMonthly hpi 
+where hpi.RegionType = 'STATE'  
+and hpi.TransactionType = 'PURCHASE_ONLY' 
+and c.state = hpi.Region 
+and hpi.asOf = '1991-03-01'
+and c.HPI_orig is NULL;
+commit;
+						
+UPDATE #cltv c set HPI_current=hpi.NonSeasonAdjIndex
+from hpi.Cello_HomePriceIndexMonthly hpi 
+where hpi.RegionType = 'STATE'
+and hpi.TransactionType = 'PURCHASE_ONLY'
+and c.state = hpi.Region 
+and hpi.asOf = dateadd(month,-1,c.AsOf);
+commit;
+
+UPDATE #cltv c set HPI_multiple=case when HPI_current is NULL then 1.0 else HPI_orig/HPI_current END;
+COMMIT;
+
+UPDATE #cltv c set cltv=convert(numeric(8,2),((currentBalance/originalLoanAmount)*origltv*HPI_multiple));
+COMMIT;
+
+UPDATE #fnm_missing_data mh set mh.cltv=c.cltv
+From #cltv c where mh.loanseqnum=c.loanseqnum and mh.asof=c.asof;
+commit;
+
+-- MI Cancellation
+Drop table if exists #MICancel;
+select
+mh.loanseqnum,
+mh.asof,
+cast (null as varchar(10)) as MICancelFlag_unlagged,
+cast (null as varchar(10)) as MICancelFlag_lagged
+into #MICancel
+from #fnm_missing_data mh
+join scale.fnm_loan_dev l on mh.loanseqnum=l.loanseqnum
+where l.origLTV>80
+and l.version in (select originationVersion from #tmp_version);
+commit;
+
+DROP TABLE IF EXISTS #FNM_ELIGIBLE;
+SELECT
+l.loanseqnum,
+cast(cast(l.calcorigmonth_ll*100+1 as char) as date) as origDate,
+case when (l.numUnits < 0) then 1 else l.numUnits end as numUnits,
+l.occType
+INTO #FNM_ELIGIBLE
+from fnm.cello_loan l
+where l.occtype in ('OWNER','2ND','INV')
+and l.numUnits>=1
+and origDate >= '1999-08-01'
+and loanseqnum in (select loanseqnum from #MICancel);
+COMMIT;
+
+DELETE FROM #FNM_ELIGIBLE WHERE occType='OWNER' and numUnits>4;
+COMMIT;
+
+DELETE FROM #FNM_ELIGIBLE WHERE occType='INV' and numUnits>4;
+COMMIT;
+
+-- for loans eligible for Automatic Cancellation, apply automatic cancellation rule
+DROP TABLE IF EXISTS #FNM_MI_Model;
+SELECT loanseqnum 
+INTO #FNM_MI_Model
+FROM #FNM_ELIGIBLE;
+COMMIT;
+
+DROP TABLE IF EXISTS #FNM_MI_Model_1;
+SELECT loanseqnum 
+INTO #FNM_MI_Model_1
+FROM #FNM_ELIGIBLE
+WHERE (occType='OWNER' and numUnits=1) or (occType='2ND');
+COMMIT;
+
+DROP TABLE IF EXISTS #FNM_MI_Model_2;
+SELECT loanseqnum 
+INTO #FNM_MI_Model_2
+FROM #FNM_ELIGIBLE
+WHERE (occType='OWNER' and numUnits>1) or (occType='INV');
+COMMIT;
+
+-- find out model cancellation time
+DROP TABLE if EXISTS #FNM_Model_Cancel_1;
+SELECT
+h.loanseqnum,
+h.asof,
+cast(cast(l.calcorigmonth_ll*100+1 as char) as date) as origDate,
+l.origTerm,
+dateadd(month,origTerm/2,origDate) as midMonth,
+case when (l.numUnits < 0) then 1 else l.numUnits end as numUnits,
+l.occType,
+h.currentRPB,
+l.origLTV,
+lh.cltv,
+l.originalLoanAmount,
+cast((CASE WHEN (l.origLTV IS NOT NULL and l.origLTV>0) THEN l.originalLoanAmount*100/l.origLTV ELSE NULL END) as numeric(14,2)) as appraised,
+cast((CASE WHEN (l.origLTV IS NOT NULL and l.origLTV>0) THEN 0.78*l.originalLoanAmount*100/l.origLTV ELSE NULL END) as numeric(14,2)) as threshold,
+cast(h.currentRPB/appraised as numeric(4,3)) as cltv_appraised
+INTO #FNM_Model_Cancel_1
+from fnm.cello_loan l
+join 
+(
+	SELECT loanSeqNum, asOf, currentRpb FROM fnm.Cello_Derived_LoanHist
+    UNION ALL
+    SELECT loanSeqNum, asOf, currentRpb FROM fnm.Cello_LoanHist WHERE asOf >= '20140101'
+)  h  
+on l.loanseqnum=h.loanseqnum
+join scale.fnm_loanhist lh on h.loanseqnum=lh.loanseqnum and h.asof=lh.asof
+where h.currentRPB > 0
+and (h.currentRPB <= threshold or h.asof>midMonth)
+and h.loanseqnum in (select loanseqnum from #FNM_MI_Model_1);
+COMMIT;
+
+DROP table if exists #FNM_Model_Cancel_Time_1;
+SELECT
+loanseqnum,
+min(asof) as first_asof
+INTO #FNM_Model_Cancel_Time_1
+FROM #FNM_Model_Cancel_1
+GROUP BY loanseqnum;
+COMMIT;
+
+UPDATE #MICancel mh SET MICancelFlag_unlagged='Y'
+FROM #FNM_Model_Cancel_Time_1 c 
+WHERE mh.loanseqnum=c.loanseqnum 
+AND mh.asOf>=c.first_asOf
+COMMIT;
+
+UPDATE #MICancel mh SET MICancelFlag_unlagged='N'
+WHERE MICancelFlag_unlagged is NULL
+AND mh.loanseqnum in (SELECT loanseqnum from #FNM_MI_Model_1);
+COMMIT;
+
+DROP TABLE if EXISTS #FNM_Model_Cancel_2;
+SELECT
+h.loanseqnum,
+h.asof,
+cast(cast(l.calcorigmonth_ll*100+1 as char) as date) as origDate,
+l.origTerm,
+dateadd(month,origTerm/2,origDate) as midMonth,
+l.numUnits,
+l.occType,
+h.currentRPB,
+l.origLTV,
+lh.cltv,
+l.originalLoanAmount,
+cast((CASE WHEN (l.origLTV IS NOT NULL and l.origLTV>0) THEN l.originalLoanAmount*100/l.origLTV ELSE NULL END) as numeric(14,2)) as appraised,
+cast((CASE WHEN (l.origLTV IS NOT NULL and l.origLTV>0) THEN 0.78*l.originalLoanAmount*100/l.origLTV ELSE NULL END) as numeric(14,2)) as threshold,
+cast(h.currentRPB/appraised as numeric(4,3)) as cltv_appraised
+INTO #FNM_Model_Cancel_2
+from fnm.cello_loan l
+join 
+(
+	SELECT loanSeqNum, asOf, currentRpb FROM fnm.Cello_Derived_LoanHist
+    UNION ALL
+    SELECT loanSeqNum, asOf, currentRpb FROM fnm.Cello_LoanHist WHERE asOf >= '20140101'
+)  h  
+on l.loanseqnum=h.loanseqnum
+join scale.fnm_loanhist lh on h.loanseqnum=lh.loanseqnum and h.asof=lh.asof
+where h.currentRPB > 0
+and h.asof>midMonth
+and h.loanseqnum in (select loanseqnum from #FNM_MI_Model_2);
+COMMIT;
+
+DROP table if exists #FNM_Model_Cancel_Time_2;
+SELECT
+loanseqnum,
+min(asof) as first_asof
+INTO #FNM_Model_Cancel_Time_2
+FROM #FNM_Model_Cancel_2
+GROUP BY loanseqnum;
+COMMIT;
+
+UPDATE #MICancel mh SET MICancelFlag_unlagged='Y'
+FROM #FNM_Model_Cancel_Time_2 c 
+WHERE mh.loanseqnum=c.loanseqnum 
+AND mh.asOf>=c.first_asOf
+COMMIT;
+
+UPDATE #MICancel mh SET MICancelFlag_unlagged='N'
+WHERE MICancelFlag_unlagged is NULL
+AND mh.loanseqnum in (SELECT loanseqnum from #FNM_MI_Model_2);
+COMMIT;
+
+-- there is no seasoned issue, always apply 2-month lag
+DROP TABLE IF EXISTS #Lag;
+SELECT
+loanseqnum,
+min(asof) as first_yes,
+cast(2 as int) as lag
+into #Lag
+FROM #MICancel
+WHERE MICancelFlag_unlagged='Y'
+GROUP BY loanseqnum;
+COMMIT;
+
+UPDATE #MICancel mh SET MICancelFlag_lagged='Y'
+FROM #Lag l WHERE mh.loanseqnum=l.loanseqnum and mh.asof>=dateadd(month, l.lag, l.first_yes);
+COMMIT;
+
+UPDATE #MICancel mh SET MICancelFlag_lagged='Y'
+WHERE loanseqnum in (SELECT loanseqnum from scale.fnm_lender_paid);
+COMMIT;
+
+UPDATE #MICancel mh SET MICancelFlag_lagged='N'
+WHERE MICancelFlag_lagged is NULL;
+COMMIT;
+
+UPDATE #fnm_missing_data mh set mh.MICancelFlag_unlagged=m.MICancelFlag_unlagged,mh.MICancelFlag_lagged=m.MICancelFlag_lagged
+FROM #MICancel m WHERE mh.loanseqnum=m.loanseqnum and mh.asof=m.asof;
+COMMIT;
+
+UPDATE #fnm_missing_data mh set mh.MICancelFlag_unlagged = 'N'
+WHERE mh.MICancelFlag_unlagged is NULL;
+COMMIT;
+
+UPDATE #fnm_missing_data mh set mh.MICancelFlag_lagged = 'N'
+WHERE mh.MICancelFlag_lagged is NULL;
+COMMIT;
+
+-- MI Cancellation based on model
+-- Original PMI Cancellation, if flag='Y' then cancel
+UPDATE #fnm_missing_data i SET i.origPMI=0
+WHERE MICancelFlag_lagged='Y';
+COMMIT;
+
+-- Original PMI haircut
+UPDATE #fnm_missing_data i SET i.origPMI=0.85*i.origPMI
+WHERE i.loanseqnum in (select loanseqnum from scale.fnm_mi_haircut);
+COMMIT;
+
+
+-- Refinance Eligibility
+-- Update HARP Eligibility
+DROP TABLE IF EXISTS #harp_eligibility;
+SELECT
+    slh.loanSeqNum,
+    slh.asOf,
+    CASE
+        WHEN sl.percentHARPed = 100.0 THEN 0
+        WHEN sl.originationDate > '2009-06-01' THEN 0
+        WHEN slh.asOf < '2009-06-01' THEN 0
+        ELSE 1
+    END as HARP_eligible
+INTO #harp_eligibility
+FROM scale.fnm_Loan_Dev sl
+JOIN #fnm_missing_data slh
+    ON sl.loanSeqNum = slh.loanSeqNum
+WHERE 1=1
+    AND sl.version IN (select originationVersion from #tmp_version)
+;
+COMMIT;
+
+-- Update Conventional Eligibility
+DROP TABLE IF EXISTS #conventional_eligibility;
+SELECT distinct
+    sl.loanSeqNum,
+    slh.asOf,
+	cl.occType,
+	sl.origFICO,
+	slh.cltv,
+	slh.currentBalance,
+	sl.numberUnits,
+	cl.origTerm,
+	
+	cast (NULL as numeric(3,0)) as base_PMI,
+	cast (NULL as numeric(3,0)) as occ_PMI,
+	cast (NULL as numeric(3,0)) as size_PMI,
+	
+	cast (NULL as numeric(10,4)) as base_LLPA,
+	cast (NULL as numeric(10,4)) as ltv_LLPA,
+	cast (NULL as numeric(10,4)) as admc_LLPA,
+	cast (NULL as numeric(10,4)) as occ_LLPA,
+	cast (NULL as numeric(10,4)) as unit_LLPA,
+	cast (NULL as numeric(10,4)) as size_LLPA,
+	
+	cast (NULL as numeric(10,4)) as ConvCost,
+	cast (NULL as char(3)) as ConvCostValidility,
+	cast (NULL as numeric(1,0)) as conventional_eligible
+INTO #conventional_eligibility
+FROM fnm.Cello_Loan cl
+JOIN scale.fnm_Loan_Dev sl
+    ON cl.loanSeqNum = sl.loanSeqNum
+JOIN #fnm_missing_data slh
+    ON cl.loanSeqNum = slh.loanSeqNum
+ WHERE 1=1
+    AND sl.version IN (select originationVersion from #tmp_version)
+;
+COMMIT;
+
+-- Update PMI
+UPDATE #conventional_eligibility ce
+SET occ_PMI = pmi_occ.PMI
+FROM report.Cello_PMI_Occupancy_Raw pmi_occ
+    WHERE ce.asOf >= pmi_occ.startDate AND ce.asOf < pmi_occ.endDate
+            AND ce.occType = pmi_occ.occType
+            AND ce.origFICO >= pmi_occ.FICOBucketStart AND ce.origFICO < pmi_occ.FICOBucketEnd
+            AND ce.cltv > pmi_occ.LTVStart AND ce.cltv <= pmi_occ.LTVEnd	
+;
+COMMIT;
+
+UPDATE #conventional_eligibility ce
+SET base_PMI = pmi_base.PMI
+FROM report.Cello_PMI_Base_Raw_v2 pmi_base
+    WHERE ce.asOf >= pmi_base.startDate AND ce.asOf < pmi_base.endDate
+           AND ce.origFICO >= pmi_base.FICOBucketStart AND ce.origFICO < pmi_base.FICOBucketEnd
+           AND ce.cltv > pmi_base.LTVBucketStart AND ce.cltv <= pmi_base.LTVBucketEnd	
+           AND pmi_base.LoanPurpose = 'REFI'	
+		   AND pmi_base.RateType = 'Fixed'
+           AND ce.origTerm > pmi_base.TermBucketStart AND ce.origTerm <= pmi_base.TermBucketEnd
+;
+COMMIT;
+
+UPDATE #conventional_eligibility ce
+SET size_PMI = pmi_size.PMI
+FROM report.Cello_PMI_LoanSize_Raw pmi_size
+    WHERE ce.asOf >= pmi_size.startDate AND ce.asOf < pmi_size.endDate
+            AND ce.origFICO >= pmi_size.FICOBucketStart AND ce.origFICO < pmi_size.FICOBucketEnd
+            AND ce.cltv > pmi_size.LTVStart AND ce.cltv <= pmi_size.LTVEnd	
+            AND ce.currentbalance >= pmi_size.LoanSizeStart AND ce.currentbalance < pmi_size.LoanSizeEnd
+;
+COMMIT;
+
+-- Update LLPA
+UPDATE #conventional_eligibility ce
+SET base_LLPA = llpa_base.LLPA
+FROM report.Cello_LLPA_Base_Raw llpa_base
+    WHERE ce.asOf >= llpa_base.startDate AND ce.asOf < llpa_base.endDate
+            AND ce.origFICO >= llpa_base.FicoStart AND ce.origFICO < llpa_base.FicoEnd
+            AND ce.cltv > llpa_base.LtvStart AND ce.cltv <= llpa_base.LtvEnd
+;
+COMMIT;
+
+UPDATE #conventional_eligibility ce
+SET ltv_LLPA = llpa_ltv.LLPA
+FROM report.Cello_LLPA_LTV_Raw llpa_ltv 
+    WHERE ce.asOf >= llpa_ltv.startDate AND ce.asOf < llpa_ltv.endDate
+           AND ce.cltv > llpa_ltv.LtvStart AND ce.cltv <= llpa_ltv.LtvEnd
+;
+COMMIT;
+
+UPDATE #conventional_eligibility ce
+SET admc_LLPA = llpa_admc.LLPA
+FROM report.Cello_LLPA_ADMC_Raw llpa_admc
+    WHERE ce.asOf >= llpa_admc.startDate AND ce.asOf < llpa_admc.endDate
+;
+COMMIT;
+
+UPDATE #conventional_eligibility ce
+SET occ_LLPA = llpa_occ.LLPA
+FROM report.Cello_LLPA_Occupancy_Raw llpa_occ
+    WHERE ce.asOf >= llpa_occ.startDate AND ce.asOf < llpa_occ.endDate
+            AND ce.occType = llpa_occ.occType
+            AND ce.cltv > llpa_occ.LtvStart AND ce.cltv <= llpa_occ.LtvEnd
+;
+COMMIT;
+
+UPDATE #conventional_eligibility ce
+SET unit_LLPA = llpa_unit.LLPA
+FROM report.Cello_LLPA_Units_Raw llpa_unit
+    WHERE ce.asOf >= llpa_unit.startDate AND ce.asOf < llpa_unit.endDate
+            AND ce.numberUnits = llpa_unit.numUnits
+            AND ce.cltv > llpa_unit.LtvStart AND ce.cltv <= llpa_unit.LtvEnd
+;
+COMMIT;
+
+UPDATE #conventional_eligibility ce
+SET size_LLPA = llpa_size.LLPA
+FROM report.Cello_LLPA_LoanSize_Raw llpa_size
+    WHERE ce.asOf >= llpa_size.startDate AND ce.asOf < llpa_size.endDate
+            AND ce.currentbalance >= llpa_size.LoanSizeStart AND ce.currentbalance < llpa_size.LoanSizeEnd
+            AND ce.cltv > llpa_size.LtvStart AND ce.cltv <= llpa_size.LtvEnd
+;
+COMMIT;
+
+-- Update Conventional Eligibility
+UPDATE #conventional_eligibility ce
+SET ConvCost = base_PMI +occ_PMI + size_PMI + base_LLPA + ltv_LLPA + admc_LLPA + occ_LLPA + unit_LLPA + size_LLPA,
+       ConvCostValidility = CASE WHEN ce.origFICO IS NULL OR ce.cltv IS NULL OR ce.occType IS NULL OR ce.numberUnits IS NULL OR ce.currentbalance IS NULL THEN 'N' ELSE 'Y' END;
+COMMIT;
+
+
+UPDATE #conventional_eligibility ce
+SET conventional_eligible = CASE 
+                                             WHEN ConvCostValidility = 'Y' THEN 
+                                               CASE 
+                                                 WHEN ConvCost IS NULL THEN 0
+                                                 ELSE 1
+                                               END
+                                             ELSE NULL 
+                                         END;
+COMMIT;
+
+
+-- Update FHA Eligibility
+DROP TABLE IF EXISTS #fha_eligibility;
+SELECT
+    sl.loanSeqNum,
+    slh.asOf,
+    CASE 
+        WHEN sl.origFICO < 500 THEN 0
+        WHEN slh.cltv > 97.75 THEN 0
+        WHEN sl.origFICO >= 580 AND slh.cltv <= 97.75 THEN 1
+        WHEN sl.origFICO >= 500 AND slh.cltv <= 90.0 THEN 1
+        ELSE 0
+    END as fha_eligible
+INTO #fha_eligibility
+FROM scale.fnm_Loan_Dev sl
+JOIN #fnm_missing_data slh
+    ON sl.loanSeqNum = slh.loanSeqNum
+WHERE 1=1
+    AND sl.version IN (select originationVersion from #tmp_version)
+;
+COMMIT;
+
+-- update INVESTOR / 2ND as not eligible from conventional to FHA
+UPDATE #fha_eligibility e SET fha_eligible = 0
+FROM #fha_eligibility e, fnm.Cello_Loan cl
+WHERE e.loanSeqNum = cl.loanSeqNum
+AND cl.occType in ('2ND', 'INV')
+;
+COMMIT;
+
+UPDATE #fnm_missing_data mh set mh.HARP_Eligible=h.HARP_Eligible
+FROM #harp_eligibility h where mh.loanseqnum=h.loanseqnum and mh.asof=h.asof;
+COMMIT;
+
+UPDATE #fnm_missing_data mh set mh.conventional_Eligible=h.conventional_Eligible
+FROM #conventional_eligibility h where mh.loanseqnum=h.loanseqnum and mh.asof=h.asof;
+COMMIT;
+
+UPDATE #fnm_missing_data mh set mh.fha_eligible=h.fha_eligible
+FROM #fha_eligibility h where mh.loanseqnum=h.loanseqnum and mh.asof=h.asof;
+COMMIT;
+
+
+-- Incentive Calculation
+-- Creates the 30 YR FRM Rate (point adjusted)
+DROP TABLE IF EXISTS #Mtg30YrRates_monthly;
+SELECT
+    TickerName as SeriesName,
+    AsOfDate as asOf, 
+    convert(date, dateadd(month, +1, AsOfDate)) as asOf_lag1,
+    convert(date, dateadd(month, +2, AsOfDate)) as asOf_lag2,
+    SeriesNumValue as MtgRate
+INTO #Mtg30YrRates_monthly
+FROM report.TimeSeries ts
+JOIN report.TimeSeriesMeta tsm
+    ON ts.TimeSeriesMetaId = tsm.TimeSeriesMetaId
+WHERE 1=1
+    AND SeriesType = 'MONTHLY_MTG_RATE'
+	AND ModelType = 'ScaleMtgRateModel v4.0'
+;
+COMMIT;
+
+DROP TABLE IF EXISTS #Mtg30YrRates_monthly_refi;
+SELECT
+lag1.SeriesName,
+asof = lag1.asOf_lag1,
+MtgRate = lag1.MtgRate * 0.5 + lag2.MtgRate * 0.5
+INTO #Mtg30YrRates_monthly_refi
+FROM #Mtg30YrRates_monthly lag1
+JOIN #Mtg30YrRates_monthly lag2 ON lag1.asOf_lag1 = lag2.asOf_lag2 AND lag1.SeriesName = lag2.SeriesName
+;
+COMMIT;
+
+
+-- Save Loan Data
+DROP TABLE IF EXISTS #LoanIncentive;
+SELECT
+    clh.loanSeqNum,
+    cl.marketTicker,
+	cl.state,
+    clh.asOf,
+	clh.currentBalance,
+	clh.schamBalance as balance,
+	
+    sl.originationDate,
+    sl.numberUnits,
+    sl.origFICO,
+    sl.origNoteRate,
+    cl.origTerm,
+    cl.occType as occupancyStatus,
+    cl.loanPurposeType,
+    clh.origPMI,
+	tk.mtgRateSeries,	
+	clh.cltv,	
+    clh.HARP_eligible,
+	clh.conventional_eligible,
+	clh.fha_eligible,
+	cast(NULL as double) as MtgRate,
+	cast(NULL as double) as MtgRate_GNMA,
+--    mr.MtgRate,
+--    mr_gn.MtgRate as MtgRate_GNMA,
+	
+    cast(NULL as numeric(8, 4)) as pmi_base,
+    cast(NULL as numeric(8, 4)) as pmi_occ,
+    cast(NULL as numeric(8, 4)) as pmi_size,
+
+    cast(NULL as numeric(8, 4)) as llpa_base,
+    cast(NULL as numeric(8, 4)) as llpa_admc,
+    cast(NULL as numeric(8, 4)) as llpa_occ,
+    cast(NULL as numeric(8, 4)) as llpa_unit,
+    cast(NULL as numeric(8, 4)) as llpa_ltv,
+    cast(NULL as numeric(8, 4)) as llpa_loansize,
+
+    cast(NULL as numeric(8, 4)) as pmi,
+    cast(NULL as numeric(8, 4)) as llpa,
+    cast(NULL as numeric(8, 4)) as mip,
+	cast(NULL as numeric(8, 4)) as fixed_cost,
+	cast(NULL as numeric(6, 2)) as mortgage_tax,
+	
+    cast(NULL as numeric(8, 4)) as conv_incentive,
+    cast(NULL as numeric(8, 4)) as fha_incentive,
+    cast(NULL as numeric(8, 4)) as refi_incentive,
+    cast(NULL as numeric(8, 4)) as refi_incentive_eligible,
+
+    cast(NULL as numeric(8, 4)) as conv_incentive_fc,
+    cast(NULL as numeric(8, 4)) as fha_incentive_fc,
+    cast(NULL as numeric(8, 4)) as refi_incentive_fc,
+    cast(NULL as numeric(8, 4)) as refi_incentive_eligible_fc
+INTO #LoanIncentive
+FROM fnm.Cello_Loan cl
+JOIN #ticker tk
+    ON cl.marketTicker = tk.tickerName
+JOIN scale.fnm_Loan_Dev sl
+    ON cl.loanSeqNum = sl.loanSeqNum
+JOIN #fnm_missing_data clh
+    ON cl.loanSeqNum = clh.loanSeqNum
+WHERE 1=1
+    AND sl.version in (select  originationVersion from #tmp_version)
+;
+COMMIT;
+
+--Mortgage Rate Interpolation Factor
+DROP TABLE IF EXISTS #FNM_Mortgage_Interpolation_Factor;
+SELECT 
+inc.loanSeqNum,
+inc.asOf,
+CASE
+    WHEN inc.currentBalance <= cll.LoanSize_limit THEN CAST(0 as float)
+    WHEN inc.currentBalance > (cll.LoanSize_limit + 25000) THEN CAST(1 as float)
+    ELSE cast(((inc.currentBalance - cll.LoanSize_limit)/25000) as float)
+END as InterPolation_Factor
+INTO #FNM_Mortgage_Interpolation_Factor
+FROM #LoanIncentive inc,report.conforming_loansize_limit cll
+where inc.asOf > cll.startDate
+AND inc.asOf < cll.endDate;
+COMMIT;
+
+--Update Mortgage Rate
+UPDATE #LoanIncentive inc
+SET MtgRate = (1-InterPolation_Factor)*mr1.MtgRate + InterPolation_Factor * mr2.MtgRate
+FROM #Mtg30YrRates_monthly_refi mr1
+INNER JOIN #FNM_Mortgage_Interpolation_Factor mif
+    ON mif.asOf = mr1.asOf
+    AND mr1.SeriesName = 'CONVENTIONAL_30YR'
+INNER JOIN #Mtg30YrRates_monthly_refi mr2
+    ON mif.asOf = mr2.asOf
+    AND mr2.SeriesName = 'JUMBO_30YR'
+WHERE inc.loanSeqNum = mif.loanSeqNum
+AND inc.asOf = mif.asOf;
+COMMIT;
+
+UPDATE #LoanIncentive inc
+SET MtgRate = mr.MtgRate
+FROM #Mtg30YrRates_monthly_refi mr
+  WHERE mr.asOf = inc.asOf
+  AND mr.SeriesName = 'CONVENTIONAL_30YR'
+  AND inc.MtgRate is NULL;
+COMMIT;
+
+UPDATE #LoanIncentive inc
+SET MtgRate_GNMA = mr_gn.MtgRate
+FROM #Mtg30YrRates_monthly_refi mr_gn
+    WHERE mr_gn.asOf = inc.asOf
+    AND mr_gn.SeriesName = 'GINNIE_30YR'
+;
+COMMIT;
+
+DROP TABLE IF EXISTS #first_gnma;
+select
+min(asof) as first_asof,
+cast (null as double) as MtgRate
+into #first_gnma
+from #Mtg30YrRates_monthly_refi mr_gn
+where mr_gn.SeriesName = 'GINNIE_30YR';
+commit;
+
+UPDATE #first_gnma g set g.Mtgrate = mr_gn.Mtgrate
+from #Mtg30YrRates_monthly_refi mr_gn
+where g.first_asof = mr_gn.asof
+and mr_gn.SeriesName = 'GINNIE_30YR';
+commit;
+
+UPDATE #LoanIncentive inc
+SET MtgRate_GNMA = g.MtgRate
+FROM #first_gnma g
+    WHERE inc.asof<g.first_asof
+    AND inc.MtgRate_GNMA is NULL
+;
+COMMIT;
+
+-- Update pmi_base
+UPDATE #LoanIncentive inc 
+SET inc.pmi_base = (PMI_LL_FL * (LTV_H - CLTV) * (FICO_H - origFICO) + PMI_LH_FL * (CLTV - LTV_L) * (FICO_H - origFICO) 
+      + PMI_LL_FH * (LTV_H - CLTV) * (origFICO - FICO_L) + PMI_LH_FH * (CLTV - LTV_L) * (origFICO - FICO_L)
+      ) / ((LTV_H - LTV_L) * (FICO_H - FICO_L)) 
+FROM report.Cello_PMI_Base_Bilinear_Interpolation_v2 pmi
+WHERE 1=1
+    AND LoanPurpose = 'REFI'
+    AND inc.asOf >= pmi.startDate and inc.asOf < pmi.endDate 
+    AND CLTV > pmi.LTV_L AND CLTV <= pmi.LTV_H 
+    AND origFICO > pmi.FICO_L AND origFICO <= pmi.FICO_H
+    AND pmi.RateType = 'Fixed'
+    AND inc.origTerm > pmi.TermBucketStart AND inc.origTerm <= pmi.TermBucketEnd
+;
+UPDATE #LoanIncentive inc SET inc.pmi_base = 0 WHERE inc.pmi_base IS NULL;
+
+-- Update pmi_occ
+UPDATE #LoanIncentive inc 
+SET inc.pmi_occ = (PMI_LL_FL * (LTV_H - CLTV) * (FICO_H - origFICO) + PMI_LH_FL * (CLTV - LTV_L) * (FICO_H - origFICO) 
+      + PMI_LL_FH * (LTV_H - CLTV) * (origFICO - FICO_L) + PMI_LH_FH * (CLTV - LTV_L) * (origFICO - FICO_L)
+      ) / ((LTV_H - LTV_L) * (FICO_H - FICO_L)) 
+FROM report.Cello_PMI_Occupancy_Bilinear_Interpolation pmi
+WHERE 1=1
+    AND inc.occupancyStatus = pmi.OccType
+    AND inc.asOf >= pmi.startDate and inc.asOf < pmi.endDate 
+    AND CLTV > pmi.LTV_L AND CLTV <= pmi.LTV_H 
+    AND origFICO > pmi.FICO_L AND origFICO <= pmi.FICO_H
+;
+UPDATE #LoanIncentive inc SET inc.pmi_occ = 0 WHERE inc.pmi_occ IS NULL;
+
+-- Update pmi_size: step 1. bilinear interpolation for LTV and FICO
+UPDATE #LoanIncentive inc 
+SET inc.pmi_size = (PMI_LL_FL * (LTV_H - CLTV) * (FICO_H - origFICO) + PMI_LH_FL * (CLTV - LTV_L) * (FICO_H - origFICO) 
+      + PMI_LL_FH * (LTV_H - CLTV) * (origFICO - FICO_L) + PMI_LH_FH * (CLTV - LTV_L) * (origFICO - FICO_L)
+      ) / ((LTV_H - LTV_L) * (FICO_H - FICO_L)) 
+FROM report.Cello_PMI_LoanSize_Bilinear_Interpolation_25k pmi
+WHERE 1=1
+    AND inc.balance > pmi.LoanSize_L and inc.balance <= LoanSize_H
+    AND inc.asOf >= pmi.startDate and inc.asOf < pmi.endDate 
+    AND CLTV > pmi.LTV_L AND CLTV <= pmi.LTV_H 
+    AND origFICO > pmi.FICO_L AND origFICO <= pmi.FICO_H
+;
+-- Update pmi_size: step 2. linear interpolation for loan size after step 1
+UPDATE #LoanIncentive inc 
+SET inc.pmi_size = (balance - LoanSize_L) / (LoanSize_H - LoanSize_L) * (inc.pmi_size - 0.0)
+FROM report.Cello_PMI_LoanSize_Bilinear_Interpolation_25k pmi
+WHERE 1=1
+    AND inc.balance > pmi.LoanSize_L and inc.balance <= LoanSize_H
+    AND inc.asOf >= pmi.startDate and inc.asOf < pmi.endDate 
+    AND CLTV > pmi.LTV_L AND CLTV <= pmi.LTV_H 
+    AND origFICO > pmi.FICO_L AND origFICO <= pmi.FICO_H
+    AND needExtraInterp = 1
+;
+UPDATE #LoanIncentive inc SET inc.pmi_size = 0 WHERE inc.pmi_size IS NULL;
+
+
+-- Update Base LLPA
+UPDATE #LoanIncentive inc 
+SET inc.llpa_base = (LLPA_LL_FL * (LTV_H - CLTV) * (FICO_H - origFICO) + LLPA_LH_FL * (CLTV - LTV_L) * (FICO_H - origFICO) 
+      + LLPA_LL_FH * (LTV_H - CLTV) * (origFICO - FICO_L) + LLPA_LH_FH * (CLTV - LTV_L) * (origFICO - FICO_L)
+      ) / ((LTV_H - LTV_L) * (FICO_H - FICO_L)) 
+FROM report.Cello_LLPA_Base_Bilinear_Interpolation llpa
+WHERE 1=1
+    AND CLTV > llpa.LTV_L 
+    AND CLTV <= llpa.LTV_H 
+    AND origFICO > llpa.FICO_L 
+    AND origFICO <= llpa.FICO_H
+    AND inc.asOf >= llpa.startDate AND inc.asOf < llpa.endDate
+;
+UPDATE #LoanIncentive inc SET inc.llpa_base = 0 WHERE inc.llpa_base IS NULL;
+
+-- Update ADMC LLPA
+UPDATE #LoanIncentive inc SET inc.llpa_admc = llpa.LLPA
+FROM report.Cello_LLPA_ADMC llpa
+WHERE 1=1
+    AND inc.asOf >= llpa.startDate and inc.asOf < llpa.endDate 
+;
+UPDATE #LoanIncentive inc SET inc.llpa_admc = 0 WHERE inc.llpa_admc IS NULL;
+
+-- Update Occupancy LLPA
+UPDATE #LoanIncentive inc 
+SET inc.llpa_occ = (CLTV - LTV_L) / (LTV_H - LTV_L) * (LLPA_LH - LLPA_LL) + LLPA_LL
+FROM report.Cello_LLPA_Occupancy_Linear_Interpolation llpa
+WHERE 1=1
+    AND inc.occupancyStatus = llpa.OccType
+    AND inc.asOf >= llpa.startDate AND inc.asOf < llpa.endDate 
+    AND inc.CLTV > llpa.LTV_L AND inc.CLTV <= llpa.LTV_H 
+;
+UPDATE #LoanIncentive inc SET inc.llpa_occ = 0 WHERE inc.llpa_occ IS NULL;
+
+-- Update Units LLPA
+UPDATE #LoanIncentive inc 
+SET inc.llpa_unit = (CLTV - LTV_L) / (LTV_H - LTV_L) * (LLPA_LH - LLPA_LL) + LLPA_LL
+FROM report.Cello_LLPA_Units_Linear_Interpolation llpa
+WHERE 1=1
+    AND inc.numberUnits >= llpa.numUnitsStart AND inc.numberUnits < llpa.numUnitsEnd
+    AND inc.asOf >= llpa.startDate AND inc.asOf < llpa.endDate 
+    AND inc.CLTV > llpa.LTV_L AND inc.CLTV <= llpa.LTV_H 
+;
+UPDATE #LoanIncentive inc SET inc.llpa_unit = 0 WHERE inc.llpa_unit IS NULL;
+
+-- Update LTV LLPA
+UPDATE #LoanIncentive inc SET inc.llpa_ltv = llpa.LLPA
+FROM report.Cello_LLPA_LTV llpa
+WHERE 1=1
+    AND inc.asOf >= llpa.startDate and inc.asOf < llpa.endDate 
+    AND inc.cltv > llpa.LTVBucketStart and inc.cltv <= llpa.LTVBucketEnd
+;
+UPDATE #LoanIncentive inc SET inc.llpa_ltv = 0 WHERE inc.llpa_ltv IS NULL;
+
+-- Update Loan Size
+UPDATE #LoanIncentive inc 
+SET inc.llpa_loansize = (balance - LoanSize_L) / (LoanSize_H - LoanSize_L) * (LLPA_LH - LLPA_LL) + LLPA_LL
+FROM report.Cello_LLPA_LoanSize_Interpolation_25k llpa
+WHERE 1=1
+    AND inc.asOf >= llpa.startDate and inc.asOf < llpa.endDate 
+    AND inc.balance > llpa.LoanSize_L and inc.balance <= llpa.LoanSize_H
+    AND inc.cltv > llpa.LTVBucketStart and inc.cltv <= llpa.LTVBucketEnd
+;
+UPDATE #LoanIncentive inc SET inc.llpa_loansize = 0 WHERE inc.llpa_loansize IS NULL;
+
+-- Update Base MIP
+UPDATE #LoanIncentive inc 
+SET inc.mip = (AnnualMIPPoints_LL_SL * (LTV_H - CLTV) * (LoanSize_H - balance) + AnnualMIPPoints_LH_SL * (CLTV - LTV_L) * (LoanSize_H - balance) 
+                + AnnualMIPPoints_LL_SH * (LTV_H - CLTV) * (balance - LoanSize_L) + AnnualMIPPoints_LH_SH * (CLTV - LTV_L) * (balance - LoanSize_L)
+                ) / ((LTV_H - LTV_L) * (LoanSize_H - LoanSize_L))
+            + mip_base.UpfrontMIPPoints / 12.0
+FROM report.Cello_MIP_Base_Bilinear_Interpolation_25k mip_base
+WHERE 1=1
+    AND inc.origTerm             >  mip_base.TermBucketStart
+	AND inc.origTerm             <= mip_base.TermBucketEnd
+	AND inc.cltv                 >  mip_base.LTV_L
+	AND inc.cltv                 <= mip_base.LTV_H
+	AND inc.balance              >= mip_base.LoanSize_L
+	AND inc.balance              <= mip_base.LoanSize_H
+    AND inc.originationDate      >  mip_base.OriginationStartDate
+	AND inc.originationDate      <= mip_base.OriginationEndDate
+	AND inc.asOf                 >  mip_base.StartDate
+	AND inc.asOf                 <= mip_base.EndDate
+;
+UPDATE #LoanIncentive SET mip = 0.0 WHERE mip IS NULL;
+COMMIT;
+
+-- Update PMI and LLPA Incentive
+UPDATE #LoanIncentive inc SET
+pmi = (CASE 
+                WHEN HARP_eligible = 1 THEN 0 
+                ELSE (pmi_base + pmi_occ + pmi_size) / 100.0 
+            END),
+llpa = (CASE 
+                WHEN HARP_eligible = 1 THEN 
+                    (CASE 
+                        WHEN (llpa_base + llpa_admc + llpa_occ + llpa_unit + llpa_ltv + llpa_loansize) / 100.0 > 0.75 THEN 0.75 
+                        ELSE (llpa_base + llpa_admc + llpa_occ + llpa_unit + llpa_ltv + llpa_loansize) / 100.0
+                    END) 
+                ELSE (llpa_base + llpa_admc + llpa_occ + llpa_unit + llpa_ltv + llpa_loansize) / 100.0
+            END),
+mip = mip / 100.0
+;
+
+
+-- Update fixed cost adjustment
+UPDATE #LoanIncentive inc 
+SET inc.fixed_cost=CASE WHEN currentBalance <= 40000 THEN 1.0
+									 ELSE (2000.0/currentBalance)*20.0 END;
+COMMIT;
+
+-- Update mortgage tax adjustment
+UPDATE #LoanIncentive inc 
+SET inc.mortgage_tax=CASE WHEN inc.state in ('NY') THEN 0.5 ELSE 0.0 END;
+COMMIT;
+-- Update LLPA for 15 Year Loans
+UPDATE #LoanIncentive inc SET inc.llpa = 0 WHERE inc.marketTicker = 'FNCI';
+COMMIT;
+
+-- Update Conventional Refinance Incentive
+UPDATE #LoanIncentive inc SET conv_incentive = CASE WHEN inc.marketTicker = 'FNCT' THEN origNoteRate + (origPMI / 100.0) - MtgRate - (llpa / 3.5) - pmi - mortgage_tax
+                                                    ELSE origNoteRate + (origPMI / 100.0) - MtgRate - (llpa / 4.0) - pmi - mortgage_tax END;
+delete from #LoanIncentive where conv_incentive is NULL;
+
+UPDATE #LoanIncentive inc SET conv_incentive_fc = CASE WHEN inc.marketTicker = 'FNCT' THEN origNoteRate + (origPMI / 100.0) - MtgRate - (llpa / 3.5) - pmi - fixed_cost - mortgage_tax
+                                                    ELSE origNoteRate + (origPMI / 100.0) - MtgRate - (llpa / 4.0) - pmi - fixed_cost - mortgage_tax END;
+delete from #LoanIncentive where conv_incentive_fc is NULL;
+
+-- Update FHA Refinance Incentive
+UPDATE #LoanIncentive inc SET fha_incentive = origNoteRate + (origPMI / 100.0) - MtgRate_GNMA - mip - mortgage_tax;
+UPDATE #LoanIncentive inc SET fha_incentive = 0 WHERE fha_incentive is NULL;
+
+UPDATE #LoanIncentive inc SET fha_incentive_fc = origNoteRate + (origPMI / 100.0) - MtgRate_GNMA - mip - fixed_cost - mortgage_tax;
+UPDATE #LoanIncentive inc SET fha_incentive_fc = 0 WHERE fha_incentive_fc is NULL;
+
+-- Ignore the conventional to FHA incentive for 15/20 year loans
+UPDATE #LoanIncentive inc SET fha_incentive = NULL WHERE inc.marketTicker in ('FNCI', 'FNCT');
+UPDATE #LoanIncentive inc SET fha_incentive_fc = NULL WHERE inc.marketTicker in ('FNCI', 'FNCT');
+
+-- Update Refinance Incentive
+UPDATE #LoanIncentive inc
+SET refi_incentive = CASE WHEN fha_incentive IS NULL THEN conv_incentive
+                        ELSE CASE WHEN conv_incentive >= fha_incentive THEN conv_incentive ELSE fha_incentive END END;
+						
+UPDATE #LoanIncentive inc 
+SET refi_incentive_fc = CASE WHEN fha_incentive_fc IS NULL THEN conv_incentive_fc
+                        ELSE CASE WHEN conv_incentive_fc >= fha_incentive_fc THEN conv_incentive_fc ELSE fha_incentive_fc END END;
+
+-- Update Refinance Incentive for Eligible Loans
+UPDATE #LoanIncentive inc SET refi_incentive_eligible = CASE 
+        WHEN HARP_eligible = 0 AND conventional_eligible = 0 AND fha_eligible = 0 THEN NULL
+        WHEN HARP_eligible = 0 AND conventional_eligible = 0 AND fha_eligible = 1 THEN fha_incentive
+        WHEN (HARP_eligible = 1 OR conventional_eligible = 1) AND fha_eligible = 0 THEN conv_incentive
+        WHEN (HARP_eligible = 1 OR conventional_eligible = 1) AND fha_eligible = 1 THEN refi_incentive
+        ELSE NULL 
+    END;
+COMMIT;
+
+UPDATE #LoanIncentive inc SET refi_incentive_eligible_fc = CASE 
+        WHEN HARP_eligible = 0 AND conventional_eligible = 0 AND fha_eligible = 0 THEN NULL
+        WHEN HARP_eligible = 0 AND conventional_eligible = 0 AND fha_eligible = 1 THEN fha_incentive_fc
+        WHEN (HARP_eligible = 1 OR conventional_eligible = 1) AND fha_eligible = 0 THEN conv_incentive_fc
+        WHEN (HARP_eligible = 1 OR conventional_eligible = 1) AND fha_eligible = 1 THEN refi_incentive_fc
+        ELSE NULL 
+    END;
+COMMIT;
+
+UPDATE #fnm_missing_data mh set 
+mh.currLLPA = i.llpa * 100.0,
+mh.currPMI = i.pmi * 100.0,
+mh.currMIP = i.mip * 100.0,
+mh.fixed_cost = i.fixed_cost * 100.0,
+mh.conventional_refi_incentive = i.conv_incentive * 100.0,
+mh.fha_refi_incentive = i.fha_incentive * 100.0,
+mh.refi_incentive = i.refi_incentive * 100.0,
+mh.refi_incentive_eligible = i.refi_incentive_eligible * 100.0,
+mh.conventional_refi_incentive_fixed_cost = i.conv_incentive_fc * 100.0,
+mh.fha_refi_incentive_fixed_cost = i.fha_incentive_fc * 100.0,
+mh.refi_incentive_fixed_cost = i.refi_incentive_fc * 100.0,
+mh.refi_incentive_eligible_fixed_cost = i.refi_incentive_eligible_fc * 100.0
+FROM #LoanIncentive i 
+WHERE mh.loanseqnum=i.loanseqnum and mh.asof=i.asof;
+COMMIT;
+
+--Delete the existing rows from the missing_hist table
+Delete from scale.fnm_missing_hist
+from scale.fnm_missing_hist mh, #fnm_missing_data md
+Where mh.loanSeqNum = md.loanSeqNum
+and mh.version = md.version;
+COMMIT;
+
+--Transfer the data to the missing hist table
+Insert into scale.fnm_missing_hist
+(
+loanSeqNum,
+asOf,
+currentBalance,
+schamBalance,
+cltv,
+MICancelFlag_unlagged,
+MICancelFlag_lagged,
+origPMI,
+HARP_eligible,
+conventional_eligible,
+fha_eligible,
+currLLPA,
+currPMI,
+currMIP,
+fixed_cost,
+conventional_refi_incentive,
+fha_refi_incentive,
+refi_incentive,
+refi_incentive_eligible,
+conventional_refi_incentive_fixed_cost,
+fha_refi_incentive_fixed_cost,
+refi_incentive_fixed_cost,
+refi_incentive_eligible_fixed_cost,
+version
+)
+Select 
+loanSeqNum,
+asOf,
+currentBalance,
+schamBalance,
+cltv,
+MICancelFlag_unlagged,
+MICancelFlag_lagged,
+origPMI,
+HARP_eligible,
+conventional_eligible,
+fha_eligible,
+currLLPA,
+currPMI,
+currMIP,
+fixed_cost,
+conventional_refi_incentive,
+fha_refi_incentive,
+refi_incentive,
+refi_incentive_eligible,
+conventional_refi_incentive_fixed_cost,
+fha_refi_incentive_fixed_cost,
+refi_incentive_fixed_cost,
+refi_incentive_eligible_fixed_cost,
+version
+from #fnm_missing_data;
+commit;
+
+
+ -- TESTS
+---------------------------------------------------------------------------------------------------------------
+ -- Check if there are any duplicates in Incentive and Backfill Table
+---------------------------------------------------------------------------------------------------------------
+
+declare @cnt int
+
+SELECT @cnt = count(*)
+FROM scale.FNM_LoanIncentive i
+Inner Join scale.FNM_missing_hist m
+ON i.loanSeqNum = m.loanSeqNum
+AND i.asOf = m.asOf
+WHERE i.version in (select distinct incentiveVersion from #tmp_version)
+AND i.version = m.version
+
+if (@cnt > 0)
+    BEGIN
+        RAISERROR 99999 'Number of FHL Loans with NULL Value for conventional incentive: %1!', @cnt
+        RETURN
+    END
+;
+
+---------------------------------------------------------------------------------------------------------------
+
+ -- END TESTS

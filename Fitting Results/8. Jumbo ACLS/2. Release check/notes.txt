@@ -1,0 +1,2 @@
+When running the pre-release check, some issues were discovered related by loan size.
+For the OTM loans with <= 80 OLTV, our v4.20 model is generally too fast for the lower loan size cases(85) and fast for the larger loan size cases(175).

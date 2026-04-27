@@ -1,0 +1,46 @@
+{
+    'FHL_LOAN_SCALE_DB': [
+        'FHL_update_loan_missing_data',
+        'FHL_update_loan_HARP_percentage_step1',
+        'FHL_update_loan_orig_pmi',
+        'FHL_update_loan_eligibility',
+        'FHL_update_loan_refi_incentive',
+        'FHL_update_loan_HARP_percentage_step2',
+		'FHL_update_loan_backfill',
+        'FHL_update_loan_burnout'
+    ],
+    'FHL_POOL_SCALE_DB': [
+        'FHL_update_pool_missing_data',
+        'FHL_update_pool_distributions',
+        'FHL_update_pool_delinquency_estimate',
+        'FHL_update_pool_eligibility',
+        'FHL_update_pool_refi_incentive',
+        'FHL_update_pool_burnout'
+    ],
+    'FNM_LOAN_SCALE_DB': [
+        'FNM_update_loan_missing_data',
+        'FNM_update_loan_HARP_percentage_step1',
+        'FNM_update_loan_orig_pmi',
+        'FNM_update_loan_eligibility',
+        'FNM_update_loan_refi_incentive',
+        'FNM_update_loan_HARP_percentage_step2',
+		'FNM_update_loan_backfill',
+        'FNM_update_loan_burnout'
+    ],
+    'FNM_POOL_SCALE_DB': [
+        'FNM_update_pool_missing_data',
+        'FNM_update_pool_distributions',
+        'FNM_update_pool_delinquency_estimate',
+        'FNM_update_pool_eligibility',
+        'FNM_update_pool_refi_incentive',
+        'FNM_update_pool_burnout'
+    ],
+    'GNM_LOAN_SCALE_DB': [
+        'GNM_update_loan_origination',
+        'GNM_update_loan_orig_mip',
+        'GNM_update_loan_hist',
+        'GNM_update_loan_eligibility',
+        'GNM_update_loan_refi_incentive',
+        'GNM_update_loan_burnout'
+    ]
+}

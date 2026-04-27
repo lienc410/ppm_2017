@@ -1,0 +1,140 @@
+-- Ginnie
+-- Loan Level
+-- Part 2 of 6
+-- Script to update origination MIP
+-- Updates origMIP
+
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT CAST ('2.50' AS varchar(5)) version INTO #tmp_version
+;
+
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+)
+;
+INSERT #ticker SELECT 'GNSF', 'GINNIE_30YR';   --Ginne
+INSERT #ticker SELECT 'G2SF', 'GINNIE_30YR';   --Ginnie
+INSERT #ticker SELECT 'G2SF-JM', 'GINNIE_30YR';-- Ginnie Jumbo
+COMMIT;
+
+CREATE LF INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+
+-- Create Loan Origination Data
+DROP TABLE IF EXISTS #GNM_OrigMIP;
+SELECT
+    sl.loanSeqNum,
+    sl.loanType,
+    sl.marketTicker,
+    CASE WHEN cl.origTerm IS NULL THEN 360 ELSE cl.origTerm END as origTerm,
+    sl.originationDate,
+    sl.origLoanSize,
+    sl.origLTV,
+    cast(NULL as numeric(8, 4)) as mip_begin
+INTO #GNM_OrigMIP
+FROM scale.GNM_Loan_DEV sl
+JOIN #ticker tk
+    ON sl.marketTicker = tk.tickerName
+JOIN gnm.Cello_Loan cl
+    ON cl.loanSeqNum = sl.loanSeqNum
+WHERE 1 =1 
+    AND sl.version = (select version from #tmp_version)
+;
+COMMIT;
+CREATE HG INDEX loan_id_idx ON #GNM_OrigMIP(loanSeqNum);
+CREATE LF INDEX origination_date_idx ON #GNM_OrigMIP(originationDate);
+CREATE HG INDEX bal_idx ON #GNM_OrigMIP(origLoanSize);
+CREATE LF INDEX ltv_idx ON #GNM_OrigMIP(origLTV);
+COMMIT;
+
+
+--remove
+select distinct(loanType) from #GNM_OrigMIP
+WHERE mip_begin > 500.0
+--end remove
+
+
+-- Update Base MIP
+UPDATE #GNM_OrigMIP inc 
+SET inc.mip_begin = (AnnualMIPPoints_LL_SL * (LTV_H - origLTV) * (LoanSize_H - origLoanSize) + AnnualMIPPoints_LH_SL * (origLTV - LTV_L) * (LoanSize_H - origLoanSize) 
+                + AnnualMIPPoints_LL_SH * (LTV_H - origLTV) * (origLoanSize - LoanSize_L) + AnnualMIPPoints_LH_SH * (origLTV - LTV_L) * (origLoanSize - LoanSize_L)
+                ) / ((LTV_H - LTV_L) * (LoanSize_H - LoanSize_L))
+            + mip_base.UpfrontMIPPoints / 12.0
+FROM report.Cello_MIP_Base_Bilinear_Interpolation mip_base
+WHERE 1=1
+    AND inc.origTerm              >  mip_base.TermBucketStart
+	AND inc.origTerm              <= mip_base.TermBucketEnd
+	AND inc.origLTV               >  mip_base.LTV_L
+	AND inc.origLTV               <= mip_base.LTV_H
+	AND inc.origLoanSize          >= mip_base.LoanSize_L
+	AND inc.origLoanSize          <= mip_base.LoanSize_H
+    AND inc.originationDate       >  mip_base.OriginationStartDate
+	AND inc.originationDate       <= mip_base.OriginationEndDate
+	AND inc.originationDate       >  mip_base.StartDate
+	AND inc.originationDate       <= mip_base.EndDate
+    AND inc.loanType = 'FHA'
+    AND inc.mip_begin IS NULL;
+;
+COMMIT;
+
+-- Update MIP for none-FHA loans
+--  ignore the amount of orig MIP for VA, PIH and RHS
+UPDATE #GNM_OrigMIP l SET l.mip_begin = 0.0
+WHERE l.loanType != 'FHA'
+;
+
+-- Tests
+
+--SELECT marketTicker, originationDate, count(1), sum(origLoanSize), sum(origLoanSize * mip_begin) / sum(origLoanSize) as wavg_orig_mip FROM #GNM_OrigMIP GROUP BY marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+--SELECT l.marketTicker, asOf, count(1), sum(balance), sum(balance * mip_begin) / sum(balance) as wavg_orig_mip FROM #GNM_OrigMIP l JOIN scale.GNM_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum GROUP BY l.marketTicker, asOf HAVING count(1) > 10 ORDER BY asOf
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  mip_begin IS NULL
+----------------------------------------------------------------------------------------------
+        declare   @cnt int
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_OrigMIP  WHERE mip_begin IS NULL
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'GNM Loans with NULL VALUE for  mip_begin LoanCount : %1!', @cnt
+            RETURN
+        END
+        
+----------------------------------------------------------------------------------------------
+-- Check to see if mip_begin is in valid range
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_OrigMIP WHERE mip_begin < 0.0 OR mip_begin > 500
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'GNM Loans with INVALID RANGE VALUE for  mip_begin LoanCount : %1!', @cnt
+            RETURN
+        END
+
+-- End Tests
+
+
+
+-- Update Scale Loan Table
+UPDATE scale.GNM_Loan_Dev
+SET origMIP = NULL
+WHERE marketTicker IN (SELECT tickerName FROM #ticker)
+    AND version = (SELECT version from #tmp_version)
+;
+
+UPDATE scale.GNM_Loan_Dev l
+SET l.origMIP = i.mip_begin
+FROM #GNM_OrigMIP i
+WHERE i.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND l.loanSeqNum = i.loanSeqNum
+    AND version = (SELECT version from #tmp_version)
+;

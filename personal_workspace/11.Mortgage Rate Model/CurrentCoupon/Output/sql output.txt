@@ -1,0 +1,4 @@
+exec AddTimeSeries 'PIV','FN_CMM_30Yr' ,'Rate' ,'MTG'  ,NULL ,@AsOfDate  ,@SeriesNumValue ,NULL ,NULL
+
+
+ string conMs = "user id=dev;password=ufmg71dkiw;server=50.28.74.237\PIV-MSSQL,1433;Trusted_Connection=false;database=PIV1015;connection timeout=30";

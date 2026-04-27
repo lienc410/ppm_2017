@@ -1,0 +1,188 @@
+Merge to:
+https://docs.google.com/document/d/1_Ou-J5SDMBsp5FPg9-vYMGbKHQg9vLa_MfO1U4bH2Us/edit
+
+
+
+
+
+Release Date: 	3/6/2017
+SVN Revision #:	10898
+Agency:		GNM
+Data Level:	Loan
+Periods:	All
+Data Field:	All
+
+Update:
+This release is preparision for GNMA model v2.00. Data update involves all five GNMA loan level tables:
+	- Scale.GNM_loan
+	- Scale.GNM_loanHist
+	- Scale.GNM_loanEligbility
+	- Scale.GNM_loanIncentive
+	- Scale.GNM_loanBurnout
+1. Loan Origination (Scale.GNM_loan)
+	Based on v1.00 table, we did the following updates:
+	a)  Add five additional variables to the table
+	loanType
+	loanPurposeType
+	tpoType
+	firstTimeHomeBuyerFlag
+	reperformingStatus
+b) Data Cleaning
+	In order to fill in the Nulls, we used two approaches: Nearest-neighbor and Binning to find a most similar (or closest) record for each missing data point. We applied the filling algorithm for the following three variables:
+	origFICO
+	origLTV
+	loanPurposeType
+	The detailed algorithm can be found in the Google Doc:
+	https://docs.google.com/document/d/1eawGJ_R24HpQkE_Ujej7HjkV-AdJLJBP-sFgDjYR5Kc/edit
+
+2. Loan Hist 
+	The loan hist table contents the monthly updated time series data for each loan. New updates for v2.00 release include:
+	a) Add additional variables to scale.gnm_loan
+	loanAge
+	delMonths
+	removalReasonType
+	schamBalance
+	b) Data Cleaning
+	Fill in Null data points for the following variables:
+	loanAge
+	cltv
+	schamBalance
+	LoanAge will be calculated by origination date and current asof date;
+	CLTV is estimated by HPI and OLTV, with the assumption of scheduled amortization;
+	SchamBalance used calcScham as the primary source.
+
+3. Loan Eligibility
+	Followed the conventional v2.41 algorithm and applied them on GNMA loans. Only calculated the GNMA to conventional eligibility. GNMA to GNMA refi-eligibility will assign to be always eligible.
+
+4. Loan Incentive
+	Update the GNMA v1.0 incentive calculation to a similar calculation used in conventional v2.41 version.
+	Included GNM to conventional incentive
+	Incentive  = max(GNMA incentive, conventional incentive)
+	Use different mortgage rate in GNMA to GNMA and GNMA to conventional incentive
+	Included the incentive_eligible version as an additional variable. That is defined as the incentive for the case when it's available to refinance. (only apply to GNMA to conventional refi)
+5. Loan Burnout
+	Updated the burnout calculation from v1.0 to the most up to date v2.41 conventional algorithm.
+	Use absolute incentive instead of relative incentive
+	Count incentive only when the loan is eligible to refi (only apply to GNMA to conventional refi)
+	Cap incentive at 200 bps
+
+
+================================================================================================
+
+Release Date: 	3/6/2017
+SVN Revision #:	-
+Agency:		FHL/FNM
+Data Level:	Loan
+Periods:	All
+Data Field:	Burnout 1.00 / 2.00
+
+Update:
+1. Removed historical version of loan level burnout
+	- As per Derek's request, we need to remove the historical burnout loan level tables as they take too much space in DB (we currently have 4 versions). "The larger our table, the longer it takes to backup the database and the longer it takes to restore in case we have a DB down situation." So we decided to remove the historic version 1.00 and 2.00, and keep version 2.30 as production and 2.40 as development.
+
+================================================================================================
+
+Release Date: 	2/24/2017
+SVN Revision #:	9782
+Agency:		FHL/FNM
+Data Level:	Pool
+Periods:	All
+Data Field:	Incentive 2.00 / Burnout 2.30 / 2.40
+
+Update:
+1. Incentive Bug Fix
+	- The algorithm will check if the pool has loan level information for every factor date. If it does, it will use the loan level aggregate value, otherwise, use the pool level value.  So it will cover the case that we only have one snapshot of loan level data and the won't overwrite the loan level average numbers.
+2. Updated burnout 2.30 and 2.40 due to incentive update
+
+================================================================================================
+
+Release Date: 	2/20/2017
+SVN Revision #:	9775
+Agency:		FHL/FNM
+Data Level:	Pool
+Periods:	All
+Data Field:	Burnout 2.40
+
+Update:
+1. Burnout 2.40
+	- Change relative incentive to absolute incentive
+	- Cap incentive on 200 bps
+	- No log calculation
+	- Add one month lag to burnout
+
+================================================================================================
+
+Release Date: 	1/24/2017
+SVN Revision #:	9429
+Agency:		FHL/FNM
+Data Level:	Pool
+Periods:	All
+
+Update:
+1. Incentive
+	- removed the condition "WHERE issueId NOT IN (SELECT distinct issueId from #FNM_LoanBasedIncentive)", to fix the case that only few months LL snapshot is available
+
+================================================================================================
+
+Release Date: 	1/23/2017
+SVN Revision #:	9338
+Agency:		FHL/FNM/GNM
+Data Level:	Loan/Pool
+Periods:	All
+
+Update:
+1. MIP rules
+	- updated rules for MIP grantfather loans
+
+================================================================================================
+
+
+Release Date: 	1/9/2017
+SVN Revision #:	9236
+Agency:		FHL/FNM
+Data Level:	Loan/Pool 
+Periods:	2016-12 Factor Date
+
+Update:
+1. Refi Incentive 2.01
+	- Based on the 25 bps MIP cut on Jan 2017, developed a test version assuming the cut effectives on Dev 2016
+
+================================================================================================
+
+Release Date: 	1/6/2017
+SVN Revision #:	9233
+Agency:		FHL/FNM
+Data Level:	Loan/Pool
+
+Update:
+1. Refinance Eligibility conventional to FHA
+	- Changed the cltv cutoff to be 97.75% instead of 97.5%
+	- The investor / second loans are not eligible to refinance from conventional to FHA
+2. Debug LLPA(LoanSize) table
+	- removed overlap for cltv > 90
+
+================================================================================================
+
+Release Date: 	12/20/2016
+SVN Revision #:	9166
+Agency:		FHL/FNM
+Data Level:	Loan/Pool
+
+Update:
+1. Included new issue pools
+	- Altered column name: schamBalnace to balance
+	- Swtiched to currentRpb / currentBalance if schamBalance is Null
+	- FNM: WALA >= -1; FHL/GNM: Start from WALA >= 0
+	- Added balace > 0.01 filter, removed paid off pools
+
+================================================================================================
+
+Release Date: 	12/13/2016
+SVN Revision #:	9007
+Agency:		FHL/FNM
+Data Level:	Loan/Pool
+
+Update:
+1. Burnout v2.30
+	- Added refinance eligibility to burnout calculation
+	- Changed to max(conventional incentive, FHA incentive) from conventional incentive

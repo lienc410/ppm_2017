@@ -1,0 +1,5364 @@
+{
+  "Version": ["v2.00"],
+  "BaseModel": ["gnma30"],
+  "FHA": {
+    "MortgageRateLag": [1],
+    "CurtailmentSubModel": {
+      "baselineConstant": [1],
+      "adjustmentFactor": [1],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 1.6e-005
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.000206
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 0.000265
+        },
+        {
+          "Knots": 48,
+          "KnotValues": 0.000355
+        },
+        {
+          "Knots": 96,
+          "KnotValues": 0.000591
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 0.000641
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 0.001753
+        },
+        {
+          "Knots": 336,
+          "KnotValues": 0.007695
+        },
+        {
+          "Knots": 360,
+          "KnotValues": 0.023688
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "DefaultSubModelCurr": {
+      "baselineConstant": [0.001448623],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.04
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.43
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.81
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.23
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.24
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.24
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 1.24
+        },
+        {
+          "Knots": 330,
+          "KnotValues": 1.24
+        }
+      ],
+      "monthsSince": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.24
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 1.04
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.26
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.4
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.41
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 1.41
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.41
+        },
+        {
+          "Knots": 90,
+          "KnotValues": 1.41
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.41
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -400,
+          "KnotValues": 0.2
+        },
+        {
+          "Knots": -300,
+          "KnotValues": 0.2
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.22
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 0.31
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 0.45
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 0.56
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 0.68
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 0.87
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.98
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.01
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.37
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 0.45
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 0.57
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 0.79
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1.29
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.41
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.42
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1.42
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1.42
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1.42
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 550,
+          "KnotValues": 2.72
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.66
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1.18
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 0.62
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 0.34
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.27
+        },
+        {
+          "Knots": 850,
+          "KnotValues": 0.27
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "DefaultSubModelDelq": {
+      "baselineConstant": [0.02921263],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 1.37
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.93
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.49
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.22
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.1
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.4
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.62
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.84
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 330,
+          "KnotValues": 1.1
+        }
+      ],
+      "monthsSince": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.39
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.95
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.75
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 0.62
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 0.52
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 0.37
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 90,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 0.1
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -400,
+          "KnotValues": 0.13
+        },
+        {
+          "Knots": -300,
+          "KnotValues": 0.13
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.89
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 1.13
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.13
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.13
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1.13
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.13
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.13
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.29
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 0.48
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 0.61
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 0.86
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1.03
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.14
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.2
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1.23
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1.5
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1.5
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 550,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.96
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 0.95
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 0.95
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 0.95
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.95
+        },
+        {
+          "Knots": 850,
+          "KnotValues": 0.95
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "TurnoverSubModel": {
+      "baselineConstant": [0.004590648],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 0.7
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.76
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.82
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.89
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.07
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1.07
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1.07
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.11
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.59
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.22
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.24
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 48,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 72,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 84,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 96,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 108,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.25
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -600,
+          "KnotValues": 0.39
+        },
+        {
+          "Knots": -400,
+          "KnotValues": 0.41
+        },
+        {
+          "Knots": -300,
+          "KnotValues": 0.48
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.67
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 1.18
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 1.29
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1.29
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1.04
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.03
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.39
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.31
+        }
+      ],
+      "wacls": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.32
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.78
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 0.74
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.69
+        }
+      ],
+      "pct_REFI": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.992
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1.018
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1.043
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.068
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1.094
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.119
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 0.68
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 0.95
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1.06
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1.14
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1.24
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1.18
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1.2
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 0.93
+        }
+      ]
+    },
+    "RefinanceSubModel": {
+      "baselineConstant": [0.01144116],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 0.51
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.51
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.735
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.84
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.964
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1.7
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.988
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.08
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 0.0016
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 0.0387
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 0.188
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 0.5742
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.6391
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 2.7082
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 3.29
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 3.32
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 3.32
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1
+        }
+      ],
+      "wacls": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 0.75
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.94
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.15
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 1.3
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.59
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 2.3
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "media_effect": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.45
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 0.71
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1.39
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 2.13
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 2.65
+        }
+      ],
+      "burnout": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 1000,
+          "KnotValues": 0.94
+        },
+        {
+          "Knots": 2000,
+          "KnotValues": 0.84
+        },
+        {
+          "Knots": 4000,
+          "KnotValues": 0.62
+        },
+        {
+          "Knots": 8000,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 16000,
+          "KnotValues": 0.34
+        },
+        {
+          "Knots": 32000,
+          "KnotValues": 1e-005
+        }
+      ],
+      "pct_dq": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    }
+  },
+  "VA": {
+    "MortgageRateLag": [1],
+    "CurtailmentSubModel": {
+      "baselineConstant": [1],
+      "adjustmentFactor": [1],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 1.6e-005
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.000206
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 0.000265
+        },
+        {
+          "Knots": 48,
+          "KnotValues": 0.000355
+        },
+        {
+          "Knots": 96,
+          "KnotValues": 0.000591
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 0.000641
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 0.001753
+        },
+        {
+          "Knots": 336,
+          "KnotValues": 0.007695
+        },
+        {
+          "Knots": 360,
+          "KnotValues": 0.023688
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "DefaultSubModelCurr": {
+      "baselineConstant": [0.0007514362],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.09
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.56
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.93
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.13
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.23
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.29
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.29
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 1.29
+        },
+        {
+          "Knots": 330,
+          "KnotValues": 1.29
+        }
+      ],
+      "monthsSince": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.31
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.37
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.57
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.77
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 1.92
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 2
+        },
+        {
+          "Knots": 90,
+          "KnotValues": 2.09
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 2.09
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 0.02
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.04
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 0.13
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 0.31
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 0.52
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 0.81
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.12
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.13
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1.13
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.13
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.13
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.47
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 0.48
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 0.58
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 0.78
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1.19
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.5
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 2.15
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 2.15
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 2.15
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 2.15
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 500,
+          "KnotValues": 2.54
+        },
+        {
+          "Knots": 550,
+          "KnotValues": 2.54
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 2.42
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1.72
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 0.81
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 0.4
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.14
+        },
+        {
+          "Knots": 850,
+          "KnotValues": 1e-005
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "DefaultSubModelDelq": {
+      "baselineConstant": [0.02717594],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 1.66
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.41
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.2
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.1
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.37
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.58
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.83
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 0.98
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.06
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.06
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.06
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 1.06
+        },
+        {
+          "Knots": 330,
+          "KnotValues": 1.06
+        }
+      ],
+      "monthsSince": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.31
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.91
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.77
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 0.67
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 0.62
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 0.51
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 90,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 0.1
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -400,
+          "KnotValues": 0.02
+        },
+        {
+          "Knots": -300,
+          "KnotValues": 0.02
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.04
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 0.31
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 1.03
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 1.035
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 1.04
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.1
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.23
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 0.65
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 0.98
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.07
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.16
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1.16
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1.16
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1.16
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 550,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 850,
+          "KnotValues": 1
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "TurnoverSubModel": {
+      "baselineConstant": [0.004590648],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 0.7
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.76
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.82
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.89
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.07
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1.07
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1.07
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.11
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.59
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.22
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.24
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 48,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 72,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 84,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 96,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 108,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.25
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -600,
+          "KnotValues": 0.39
+        },
+        {
+          "Knots": -400,
+          "KnotValues": 0.41
+        },
+        {
+          "Knots": -300,
+          "KnotValues": 0.48
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.67
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 1.18
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 1.29
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1.29
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1.04
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.03
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.39
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.31
+        }
+      ],
+      "wacls": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.32
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.78
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 0.74
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.69
+        }
+      ],
+      "pct_REFI": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.992
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1.018
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1.043
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.068
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1.094
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.119
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 0.68
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 0.95
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1.06
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1.14
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1.24
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1.18
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1.2
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 0.93
+        }
+      ]
+    },
+    "RefinanceSubModel": {
+      "baselineConstant": [0.01144116],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 0.51
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.51
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.735
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.84
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.964
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1.7
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.988
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.08
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 0.0016
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 0.0387
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 0.188
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 0.5742
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.6391
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 2.7082
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 3.29
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 3.32
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 3.32
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1
+        }
+      ],
+      "wacls": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 0.75
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.94
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.15
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 1.3
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.59
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 2.3
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "media_effect": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.45
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 0.71
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1.39
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 2.13
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 2.65
+        }
+      ],
+      "burnout": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 1000,
+          "KnotValues": 0.94
+        },
+        {
+          "Knots": 2000,
+          "KnotValues": 0.84
+        },
+        {
+          "Knots": 4000,
+          "KnotValues": 0.62
+        },
+        {
+          "Knots": 8000,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 16000,
+          "KnotValues": 0.34
+        },
+        {
+          "Knots": 32000,
+          "KnotValues": 1e-005
+        }
+      ],
+      "pct_dq": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    }
+  },
+  "RHS": {
+    "MortgageRateLag": [1],
+    "CurtailmentSubModel": {
+      "baselineConstant": [1],
+      "adjustmentFactor": [1],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 1.6e-005
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.000206
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 0.000265
+        },
+        {
+          "Knots": 48,
+          "KnotValues": 0.000355
+        },
+        {
+          "Knots": 96,
+          "KnotValues": 0.000591
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 0.000641
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 0.001753
+        },
+        {
+          "Knots": 336,
+          "KnotValues": 0.007695
+        },
+        {
+          "Knots": 360,
+          "KnotValues": 0.023688
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "DefaultSubModelCurr": {
+      "baselineConstant": [0.001543367],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.09
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.56
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 0.97
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.03
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.03
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.03
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 1.03
+        },
+        {
+          "Knots": 330,
+          "KnotValues": 1.03
+        }
+      ],
+      "monthsSince": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.23
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 1.23
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.34
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.57
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.65
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 1.65
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.65
+        },
+        {
+          "Knots": 90,
+          "KnotValues": 1.65
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.65
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 0.2
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.2
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 0.43
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 0.64
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 0.78
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 0.83
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.09
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.19
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1.32
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.58
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.58
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.37
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 0.37
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 0.57
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 0.79
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1.21
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.21
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.21
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1.21
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1.21
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1.21
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 550,
+          "KnotValues": 2.3
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.3
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 0.97
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 0.71
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 0.44
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.02
+        },
+        {
+          "Knots": 850,
+          "KnotValues": 0.02
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "DefaultSubModelDelq": {
+      "baselineConstant": [0.02701701],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 1.2
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.2
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.1
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.68
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 330,
+          "KnotValues": 1.05
+        }
+      ],
+      "monthsSince": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.41
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.88
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.68
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 0.58
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 0.49
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 0.36
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 0.29
+        },
+        {
+          "Knots": 90,
+          "KnotValues": 0.2
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 0.11
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 0.11
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 0.96
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 1.07
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 1.09
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.1
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.18
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 0.7
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 0.75
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 0.81
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1.04
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.04
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.04
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1.04
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1.04
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1.04
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 550,
+          "KnotValues": 1.48
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 0.98
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 0.91
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 0.73
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.44
+        },
+        {
+          "Knots": 850,
+          "KnotValues": 0.19
+        },
+        {
+          "Knots": 900,
+          "KnotValues": 0.19
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "TurnoverSubModel": {
+      "baselineConstant": [0.004590648],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 0.7
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.76
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.82
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.89
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.07
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1.07
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1.07
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.11
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.59
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.22
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.24
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 48,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 72,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 84,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 96,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 108,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.25
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -600,
+          "KnotValues": 0.39
+        },
+        {
+          "Knots": -400,
+          "KnotValues": 0.41
+        },
+        {
+          "Knots": -300,
+          "KnotValues": 0.48
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.67
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 1.18
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 1.29
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1.29
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1.04
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.03
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.39
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.31
+        }
+      ],
+      "wacls": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.32
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.78
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 0.74
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.69
+        }
+      ],
+      "pct_REFI": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.992
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1.018
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1.043
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.068
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1.094
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.119
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 0.68
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 0.95
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1.06
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1.14
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1.24
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1.18
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1.2
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 0.93
+        }
+      ]
+    },
+    "RefinanceSubModel": {
+      "baselineConstant": [0.01144116],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 0.51
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.51
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.735
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.84
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.964
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1.7
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.988
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.08
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 0.0016
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 0.0387
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 0.188
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 0.5742
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.6391
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 2.7082
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 3.29
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 3.32
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 3.32
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1
+        }
+      ],
+      "wacls": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 0.75
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.94
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.15
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 1.3
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.59
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 2.3
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "media_effect": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.45
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 0.71
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1.39
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 2.13
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 2.65
+        }
+      ],
+      "burnout": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 1000,
+          "KnotValues": 0.94
+        },
+        {
+          "Knots": 2000,
+          "KnotValues": 0.84
+        },
+        {
+          "Knots": 4000,
+          "KnotValues": 0.62
+        },
+        {
+          "Knots": 8000,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 16000,
+          "KnotValues": 0.34
+        },
+        {
+          "Knots": 32000,
+          "KnotValues": 1e-005
+        }
+      ],
+      "pct_dq": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    }
+  },
+  "PIH": {
+    "MortgageRateLag": [1],
+    "CurtailmentSubModel": {
+      "baselineConstant": [1],
+      "adjustmentFactor": [1],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 1.6e-005
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.000206
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 0.000265
+        },
+        {
+          "Knots": 48,
+          "KnotValues": 0.000355
+        },
+        {
+          "Knots": 96,
+          "KnotValues": 0.000591
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 0.000641
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 0.001753
+        },
+        {
+          "Knots": 336,
+          "KnotValues": 0.007695
+        },
+        {
+          "Knots": 360,
+          "KnotValues": 0.023688
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "DefaultSubModelCurr": {
+      "baselineConstant": [0.0004920624],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.26
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.43
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 0.54
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.02
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.09
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.09
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 1.09
+        },
+        {
+          "Knots": 330,
+          "KnotValues": 1.09
+        }
+      ],
+      "monthsSince": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.31
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.91
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.21
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.5
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.74
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 2.15
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 3.24
+        },
+        {
+          "Knots": 90,
+          "KnotValues": 4.6
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 4.6
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 0.38
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.38
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 0.38
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 0.38
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 0.41
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 0.53
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.14
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.29
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 2.11
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 2.11
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 2.11
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 550,
+          "KnotValues": 2.87
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.64
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1.55
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 0.92
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.2
+        },
+        {
+          "Knots": 850,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 900,
+          "KnotValues": 0.1
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "DefaultSubModelDelq": {
+      "baselineConstant": [0.0164388],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 2.15
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.25
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 0.1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.1
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.08
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.39
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.53
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 0.85
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 240,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 330,
+          "KnotValues": 1.05
+        }
+      ],
+      "monthsSince": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.14
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.94
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 0.86
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 0.78
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 0.48
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 0.35
+        },
+        {
+          "Knots": 90,
+          "KnotValues": 0.35
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 0.35
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 0.53
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.13
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.26
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1.26
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.26
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.26
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 550,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 850,
+          "KnotValues": 1
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    },
+    "TurnoverSubModel": {
+      "baselineConstant": [0.004590648],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 0.7
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.76
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.82
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.89
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.07
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1.07
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1.07
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.11
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.59
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.22
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.24
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 48,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 72,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 84,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 96,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 108,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.25
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -600,
+          "KnotValues": 0.39
+        },
+        {
+          "Knots": -400,
+          "KnotValues": 0.41
+        },
+        {
+          "Knots": -300,
+          "KnotValues": 0.48
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 0.67
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 1.18
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 1.29
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1.29
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.05
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1.04
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.03
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.39
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.31
+        }
+      ],
+      "wacls": [
+        {
+          "Knots": 0,
+          "KnotValues": 1.32
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.78
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 0.74
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 0.69
+        }
+      ],
+      "pct_REFI": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.992
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1.018
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1.043
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.068
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1.094
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.119
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 0.68
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 0.72
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 0.95
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1.06
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1.14
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1.24
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1.18
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1.2
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1.01
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 0.93
+        }
+      ]
+    },
+    "RefinanceSubModel": {
+      "baselineConstant": [0.01144116],
+      "adjustmentFactor": [1],
+      "cai": [
+        {
+          "Knots": 100,
+          "KnotValues": 0.51
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.51
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 0.735
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 0.84
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 0.964
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 600,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1.7
+        }
+      ],
+      "wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.988
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.08
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.08
+        }
+      ],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": -200,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": -100,
+          "KnotValues": 0.0016
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 0.0387
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 0.188
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 0.5742
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.6391
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 2.7082
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 3.29
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 3.32
+        },
+        {
+          "Knots": 500,
+          "KnotValues": 3.32
+        }
+      ],
+      "cltv": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 140,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 160,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 180,
+          "KnotValues": 1
+        }
+      ],
+      "wacls": [
+        {
+          "Knots": 0,
+          "KnotValues": 1e-005
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 0.75
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 0.94
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.15
+        },
+        {
+          "Knots": 250,
+          "KnotValues": 1.3
+        },
+        {
+          "Knots": 400,
+          "KnotValues": 1.59
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 2.3
+        }
+      ],
+      "fico": [
+        {
+          "Knots": 600,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 650,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 700,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 750,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 800,
+          "KnotValues": 1
+        }
+      ],
+      "media_effect": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.45
+        },
+        {
+          "Knots": 20,
+          "KnotValues": 0.71
+        },
+        {
+          "Knots": 40,
+          "KnotValues": 1.39
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.7
+        },
+        {
+          "Knots": 80,
+          "KnotValues": 2.13
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 2.65
+        }
+      ],
+      "burnout": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 1000,
+          "KnotValues": 0.94
+        },
+        {
+          "Knots": 2000,
+          "KnotValues": 0.84
+        },
+        {
+          "Knots": 4000,
+          "KnotValues": 0.62
+        },
+        {
+          "Knots": 8000,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 16000,
+          "KnotValues": 0.34
+        },
+        {
+          "Knots": 32000,
+          "KnotValues": 1e-005
+        }
+      ],
+      "pct_dq": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1
+        }
+      ],
+      "seasonalityMultipliers": [
+        {
+          "Knots": "Jan",
+          "KnotValues": 0.9
+        },
+        {
+          "Knots": "Feb",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Mar",
+          "KnotValues": 1.1
+        },
+        {
+          "Knots": "Apr",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "May",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jun",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Jul",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Aug",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Sep",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Oct",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Nov",
+          "KnotValues": 1
+        },
+        {
+          "Knots": "Dec",
+          "KnotValues": 1
+        }
+      ]
+    }
+  }
+}

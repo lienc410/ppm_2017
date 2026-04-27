@@ -1,0 +1,2 @@
+We decided not to change the refi s-curve, in this step. As the tracking for 3s looks ok.
+So the ITM part won't change.

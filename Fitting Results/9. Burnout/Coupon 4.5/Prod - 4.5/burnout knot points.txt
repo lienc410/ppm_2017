@@ -1,0 +1,74 @@
+Pro:
+
+"burnout": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 1000,
+          "KnotValues": 0.9512
+        },
+        {
+          "Knots": 2000,
+          "KnotValues": 0.8776
+        },
+        {
+          "Knots": 4000,
+          "KnotValues": 0.6976
+        },
+        {
+          "Knots": 8000,
+          "KnotValues": 0.5984
+        },
+        {
+          "Knots": 16000,
+          "KnotValues": 0.4712
+        },
+        {
+          "Knots": 32000,
+          "KnotValues": 0.2
+        }
+      ],
+
+
+Dev:
+
+"burnout": [
+        {
+          "Knots": 0,
+          "KnotValues": 1
+        },
+        {
+          "Knots": 1000,
+          "KnotValues": 0.9512
+        },
+        {
+          "Knots": 2000,
+          "KnotValues": 0.8776
+        },
+        {
+          "Knots": 4000,
+          "KnotValues": 0.6976
+        },
+	{
+          "Knots": 6000,
+          "KnotValues": 0.629475 * 0.87 = 0.54764325
+        },
+        {
+          "Knots": 8000,
+          "KnotValues": 0.5984 * 0.88 = 0.526592
+        },
+	{
+          "Knots": 10000,
+          "KnotValues": 0.561790625 (need to be monotonic)
+        },
+        {
+          "Knots": 16000,
+          "KnotValues": 0.4712
+        },
+        {
+          "Knots": 32000,
+          "KnotValues": 0.2
+        }
+      ],

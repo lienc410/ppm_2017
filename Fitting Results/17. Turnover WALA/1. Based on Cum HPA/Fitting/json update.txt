@@ -1,0 +1,110 @@
+Prod:
+ 	"wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.16
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 0.85
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 0.96
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.02
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 1.14
+        },
+        {
+          "Knots": 48,
+          "KnotValues": 1.23
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 72,
+          "KnotValues": 1.263
+        },
+        {
+          "Knots": 84,
+          "KnotValues": 1.263
+        },
+        {
+          "Knots": 96,
+          "KnotValues": 1.263
+        },
+        {
+          "Knots": 108,
+          "KnotValues": 1.263
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.263
+        }
+      ],
+Dev:
+ 	"wala": [
+        {
+          "Knots": 0,
+          "KnotValues": 0.16
+        },
+        {
+          "Knots": 6,
+          "KnotValues": 0.5
+        },
+        {
+          "Knots": 12,
+          "KnotValues": 1.02
+        },
+        {
+          "Knots": 18,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 24,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 36,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 48,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.25
+        },
+        {
+          "Knots": 72,
+          "KnotValues": 1.263
+        },
+        {
+          "Knots": 84,
+          "KnotValues": 1.263
+        },
+        {
+          "Knots": 96,
+          "KnotValues": 1.263
+        },
+        {
+          "Knots": 108,
+          "KnotValues": 1.263
+        },
+        {
+          "Knots": 120,
+          "KnotValues": 1.263
+        }
+      ],

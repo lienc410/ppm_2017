@@ -1,0 +1,234 @@
+-- Ginnie Project Loans
+-- Pool Level
+-- Part 4 of 4
+-- Script to update the refinance incentive metrics
+-- Updates penalty_adjusted_refi_incentive
+
+-- Before execute the script, need to set the dates to run for
+DROP TABLE IF EXISTS #tmp_asOf;
+--SELECT CAST('#####ASOF#####' AS DATE) asOf INTO #tmp_asOf
+SELECT CAST ('1994-02-01' AS DATE) asOf INTO #tmp_asOf
+;
+
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT CAST ('2.30' AS varchar(5)) version INTO #tmp_version
+;
+
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+)
+;
+INSERT #ticker SELECT 'GPL', 'GNM_PL';   --Ginnie Project Loan
+COMMIT;
+
+CREATE LF INDEX tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+
+-- Creates the 30 YR FRM Rate (point adjusted)
+DROP TABLE IF EXISTS #Mtg30YrRates_monthly;
+SELECT
+    TickerName as SeriesName,
+    AsOfDate as asOf, 
+    convert(date, dateadd(month, +1, AsOfDate)) as asOf_lag1,
+    convert(date, dateadd(month, +2, AsOfDate)) as asOf_lag2,
+    convert(date, dateadd(month, +3, AsOfDate)) as asOf_lag3,
+    SeriesNumValue as MtgRate
+INTO #Mtg30YrRates_monthly
+FROM report.TimeSeries ts
+JOIN report.TimeSeriesMeta tsm
+    ON ts.TimeSeriesMetaId = tsm.TimeSeriesMetaId
+WHERE 1=1
+    AND Source = 'PIV'
+    AND SeriesType = 'MONTHLY_MTG_RATE'
+    AND ModelType = 'ScaleMtgRateModel v2.0'
+;
+COMMIT;
+
+CREATE LF INDEX series_idx ON #Mtg30YrRates_monthly(SeriesName);
+CREATE LF INDEX asOf_idx ON #Mtg30YrRates_monthly(asOf);
+CREATE LF INDEX asOf_lag1_idx ON #Mtg30YrRates_monthly(asOf_lag1);
+CREATE LF INDEX asOf_lag2_idx ON #Mtg30YrRates_monthly(asOf_lag2);
+CREATE LF INDEX asOf_lag3_idx ON #Mtg30YrRates_monthly(asOf_lag3);
+
+COMMIT;
+
+-- Create Pool Historical Incentive Data
+DROP TABLE IF EXISTS #GPL_PoolIncentive;
+SELECT
+    sp.loanNumber,
+    sp.poolNumber,
+    sp.issueId,
+    sp.marketTicker,
+    sp.firstPaymentDate,
+    sp.loanInterestRate,
+    sp.lockoutEndDate,
+    sph.asOf, -- Factor Date
+    sph.balance,
+    sph.canPrepay,
+    mtg.MtgRate,
+    spi.penalty_adjusted_incentive,
+    cast(0.0 as Numeric(10, 4)) as burnout
+INTO #GPL_PoolIncentive
+FROM scale.GPL_Pool sp
+JOIN scale.GPL_PoolHist sph
+    ON sp.loanNumber = sph.loanNumber
+JOIN scale.GPL_PoolIncentive spi
+    ON sph.loanNumber = spi.loanNumber
+    AND sph.asOf = spi.asOf
+JOIN #ticker tk
+    ON sp.marketTicker = tk.tickerName
+JOIN #Mtg30YrRates_monthly mtg
+    ON sph.asOf = mtg.asOf_lag2 -- (2 month lag impossed here, prepay date lag of 2 months)
+    AND mtg.SeriesName = tk.mtgRateSeries
+WHERE spi.version = '1.30'
+;
+COMMIT;
+
+-- Create history of asOf dates
+DROP TABLE IF EXISTS #unique_dates;
+SELECT convert(date,dateadd(month, -num, mn.asOf)) as asOf
+INTO #unique_dates
+FROM report.nums,
+(SELECT convert(date, dateadd(day, -datepart(day, getdate()) + 1, getdate())) asOf) mn
+;
+COMMIT;
+
+-- Initial Burnout computation
+-- Calculation involving penalty_adjusted_incentive
+DROP TABLE IF EXISTS #GPL_PoolBurnout;
+SELECT
+    sp.marketTicker,
+    t0.poolNumber,
+    t0.loanNumber,
+    t0.issueId,
+    t0.asOf as asOf,
+    sum(CASE WHEN CASE WHEN t1.penalty_adjusted_incentive > 275.0 THEN 275.0 ELSE t1.penalty_adjusted_incentive END > 0 AND t1.canPrepay = 1 THEN CASE WHEN t1.penalty_adjusted_incentive > 275.0 THEN 275.0 ELSE t1.penalty_adjusted_incentive END ELSE 0.0 END) as burnout
+INTO #GPL_PoolBurnout
+FROM scale.GPL_Pool sp
+JOIN #GPL_PoolIncentive t0
+    ON sp.loanNumber = t0.loanNumber
+JOIN #GPL_PoolIncentive t1
+    ON t0.loanNumber = t1.loanNumber
+    AND t0.asOf > t1.asOf
+WHERE 1=1
+GROUP BY sp.marketTicker, t0.poolNumber, t0.loanNumber, t0.issueId, t0.asOf
+;
+COMMIT;
+
+-- Need to populate Missing Period Burnout
+-- Earliest AsOf Date
+DROP TABLE IF EXISTS #GPL_MinAsOf;
+SELECT
+    loanNumber,
+    min(asOf) as first_asOf
+INTO #GPL_MinAsOf
+FROM #GPL_PoolIncentive  
+GROUP BY loanNumber
+;
+COMMIT;
+
+DROP TABLE IF EXISTS #GPL_Earliest;
+SELECT
+    pi.loanNumber,
+    pi.marketTicker,
+    ma.first_asOf,
+    pi.firstPaymentDate,
+    pi.lockoutEndDate,
+    pi.loanInterestRate,
+    cast(0.0 as numeric(10, 4)) as burnout
+INTO #GPL_Earliest
+FROM #GPL_PoolIncentive pi
+JOIN #GPL_MinAsOf ma
+    ON pi.loanNumber = ma.loanNumber
+    AND pi.asOf = ma.first_asOf
+;
+
+-- Create missing periods from origination date to first asOf date
+DROP TABLE IF EXISTS #GPL_MissingHist;
+SELECT 
+    e.loanNumber, 
+    t.asOf, 
+    e.loanInterestRate,
+    e.lockoutEndDate,
+    mtg.MtgRate
+INTO #GPL_MissingHist
+FROM #GPL_Earliest e
+JOIN #ticker tk
+    ON e.marketTicker = tk.tickerName
+JOIN #unique_dates t
+    ON t.asOf > e.firstPaymentDate
+    AND t.asOf <= e.first_asOf 
+JOIN #Mtg30YrRates_monthly mtg
+    ON mtg.asOf_lag2 = t.asOf
+    AND mtg.SeriesName = tk.mtgRateSeries
+;
+COMMIT;
+
+-- Historical Burnout computation
+-- Simple Calculation involving MortgageRate and Note Rate
+DROP TABLE IF EXISTS #GPL_BurnoutHist;
+SELECT 
+    t0.loanNumber,
+    t0.asOf,
+    sum(CASE WHEN CASE WHEN 100.0 * (t1.loanInterestRate - t1.MtgRate) > 275.0 THEN 275.0 ELSE 100.0 * (t1.loanInterestRate - t1.MtgRate) END > 0 AND t1.asOf > t1.lockoutEndDate THEN CASE WHEN 100.0 * (t1.loanInterestRate - t1.MtgRate) > 275.0 THEN 275.0 ELSE 100.0 * (t1.loanInterestRate - t1.MtgRate) END ELSE 0.0 END) as burnout
+INTO #GPL_BurnoutHist
+FROM #GPL_MissingHist t0
+JOIN #GPL_MissingHist t1
+    ON t0.loanNumber = t1.loanNumber
+    AND t0.asOf > t1.asOf
+GROUP BY t0.loanNumber, t0.asOf
+;
+COMMIT;
+
+-- Update Burnout for first instance
+UPDATE #GPL_Earliest e SET e.burnout = bh.burnout
+FROM #GPL_BurnoutHist bh
+WHERE bh.loanNumber = e.loanNumber
+    AND bh.asOf = e.first_asOf;
+COMMIT;
+
+-- Update Burnout with Historical Burnout
+UPDATE #GPL_PoolBurnout b SET b.burnout = b.burnout + e.burnout
+FROM #GPL_Earliest e
+WHERE b.loanNumber = e.loanNumber
+;
+
+-- Update Table
+UPDATE #GPL_PoolIncentive i SET i.burnout = b.burnout
+FROM #GPL_PoolBurnout b
+WHERE i.loanNumber = b.loanNumber
+    AND i.asOf = b.asOf
+;
+COMMIT;
+ 
+
+-- Load Data into Scale Burnout Table
+DELETE FROM scale.GPL_PoolBurnout
+FROM scale.GPL_PoolBurnout spb, scale.GPL_Pool sp
+WHERE 1=1
+    AND spb.loanNumber = sp.loanNumber
+    AND sp.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND spb.asOf >= (SELECT asOf from #tmp_asOf)
+    AND version = (SELECT version from #tmp_version)
+;
+ 
+
+INSERT INTO scale.GPL_PoolBurnout (issueId, poolNumber, loanNumber, asOf, version, burnout)
+SELECT
+    issueId,
+    poolNumber,
+    loanNumber,
+    asOf,
+    version,
+    burnout
+FROM #GPL_PoolIncentive
+JOIN #tmp_version on 1=1
+WHERE marketTicker IN (SELECT tickerName FROM #ticker)
+    AND asOf >= (SELECT asOf from #tmp_asOf)
+;
+

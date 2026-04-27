@@ -1,0 +1,122 @@
+#' @title Generate prepayment forecasts 
+#' 
+#' @description
+#' \code{ModelProj} Generate model and submodel forecasts based on indicative data from a data frame.
+#' The forecasts are added as columns to the data frame.
+#'  
+#' @param configData  Configuration data for prepayment model
+#' @param modelVersions Release numbers for different versions of the prepayment model
+#' @param json json containing submodel splines
+#' @param ppdata data frame containing indicative data for the loans/pools/replines that we want projections for
+#' 
+#' @examples
+#' \dontrun{
+#'  ModelProj(configData=configData, modelVersions=c("v2.42", "v3.00"), ppdata=ppdata)
+#'  }
+#'  
+ModelProj <- function(configData, modelVersions=NA, json=NULL, ppdata) {
+      
+      coll        <- configData$FitParam$coll
+      
+      if (any(is.na(modelVersions))) {
+        stop("Need prepayment model version to make projections\n")
+      }
+      
+      for (modelVersion in modelVersions) {
+      
+      if (is.null(json) | (length(modelVersions) > 1)) {
+        json <- ParseModelJSON(configData=configData, modelVersion=modelVersion) 
+      }
+      
+      turn.mdl     <- json$turn.mdl
+      cout.mdl     <- json$cout.mdl
+      refi.mdl     <- json$refi.mdl
+      curt.mdl     <- json$curt.mdl
+      dfltcurr.mdl <- json$dfltcurr.mdl
+      dfltdelq.mdl <- json$dfltdelq.mdl
+      
+      if (configData$FitParam$useAltDfltFile) {
+        
+        # Use unadjusted incentive for default predictions
+        ppdata$incentive  <- ppdata$incentive.store  
+        dfltpred          <- PredictDflt(curr.spl=dfltcurr.mdl, delq.spl=dfltdelq.mdl, data=ppdata)
+        dfltall           <- dfltpred$pred_all
+        dfltcurr          <- dfltpred$pred_curr
+        dfltdelq          <- dfltpred$pred_delq
+        
+        modelSMM <- dfltall
+        modelCPR <- SMMtoCPR(modelSMM)
+        
+        l        <- data.frame(dfltall, dfltcurr, dfltdelq, modelSMM, modelCPR)
+        names(l) <- paste(names(l), modelVersion, sep="_")
+        # Drop these columns if they already exist otherwise we'll create duplicate column names
+        ppdata   <- ppdata[, !(names(ppdata) %in% names(l))]
+        ppdata   <- cbind(ppdata, l)
+        
+      } else {
+          curtInfo <- PredictSubmodel(coll=coll, submodel="curt", submdl.spl=curt.mdl, data=ppdata, seasadj=TRUE, version=modelVersion)
+          curt <- curtInfo$pred
+          curt.mult <- curtInfo$mult
+          
+        
+          # Use unadjusted incentive for default predictions
+          ppdata$incentive  <- ppdata$incentive.store  
+          dfltpred          <- PredictDflt(curr.spl=dfltcurr.mdl, delq.spl=dfltdelq.mdl, data=ppdata, version=modelVersion)
+          dfltall           <- dfltpred$pred_all
+          dfltcurr          <- dfltpred$pred_curr
+          dfltdelq          <- dfltpred$pred_delq
+          dflt.mult         <- dfltpred$mult
+        
+          # Use adjusted incentive for OTM Cashout-refis
+          ppdata$incentive <- ppdata$incentive.store - ppdata$reficost
+          coutInfo         <- PredictSubmodel(coll=coll, submodel="cout", submdl.spl=cout.mdl, data=ppdata, seasadj=TRUE, version=modelVersion)
+          cout             <- coutInfo$pred
+          cout.mult        <- coutInfo$mult
+        
+          # Use unadjusted incentive for turnover predictions
+          ppdata$incentive <- ppdata$incentive.store  
+          turnInfo         <- PredictSubmodel(coll=coll, submodel="turn", submdl.spl=turn.mdl, data=ppdata, seasadj=TRUE, version=modelVersion)
+          turn             <- turnInfo$pred
+          
+          # dial.purchase           <- 1.0
+          # dial.REFI_NCO           <- 0.87
+          # dial.REFI_CO            <- 0.87
+          # dial.REFI_other         <- dial.REFI_NCO
+          # ppdata$dial.purpose     <- (ppdata$pct_purchase * dial.purchase + ppdata$pct_REFI_NCO * dial.REFI_NCO + ppdata$pct_REFI_CO * dial.REFI_CO +
+          #                               ppdata$pct_REFI_Other * dial.REFI_other) / (ppdata$pct_purchase + ppdata$pct_REFI_NCO + ppdata$pct_REFI_CO + ppdata$pct_REFI_Other)
+          # 
+          # dial.inv                <- 1.18
+          # dial.2nd                <- 1.0
+          # dial.owner              <- 1.0
+          # ppdata$dial.occupancy   <- (ppdata$pct_inv * dial.inv + ppdata$pct_2nd * dial.2nd + ppdata$pct_owner * dial.owner
+          #                             ) / (ppdata$pct_inv + ppdata$pct_2nd + ppdata$pct_owner)
+          # 
+          # dial.second_lien        <- 1.28
+          # dial.non.second_lien    <- 0.97
+          # ppdata$dial.second_lien <- (ppdata$pct_second_lien * dial.second_lien + (100 - ppdata$pct_second_lien) * dial.non.second_lien) / 100
+          
+          turn             <- turn #* ppdata$dial.purpose * ppdata$dial.occupancy * ppdata$dial.second_lien
+          turn.mult        <- turnInfo$mult
+        
+          # Use adjusted incentive to refi predictions
+          ppdata$incentive <- ppdata$incentive.store - ppdata$reficost
+          refiInfo         <- PredictSubmodel(coll=coll, submodel="refi", submdl.spl=refi.mdl, data=ppdata, seasadj=TRUE,
+                                              version=modelVersion)
+          refi             <- refiInfo$pred
+          refi.mult        <- refiInfo$mult
+        
+          modelSMM <- curt + dfltall + cout + turn + refi
+          modelCPR <- SMMtoCPR(modelSMM)
+        
+          l        <- data.frame(curt, dfltall, dfltcurr, dfltdelq, cout, turn, refi, modelSMM, modelCPR)
+          names(l) <- paste(names(l), modelVersion, sep="_")
+          # Drop these columns if they already exist otherwise we'll create duplicate column names
+          ppdata   <- ppdata[, !(names(ppdata) %in% names(l))]
+          # ppdata   <- cbind(ppdata, l, curt.mult, dflt.mult, cout.mult, turn.mult, refi.mult)
+          ppdata   <- cbind(ppdata, l, cout.mult, turn.mult, refi.mult)
+      }    
+      
+   }
+      
+   return(ppdata)
+} 

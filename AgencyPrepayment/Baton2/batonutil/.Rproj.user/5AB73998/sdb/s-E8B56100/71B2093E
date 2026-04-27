@@ -1,0 +1,16 @@
+{
+    "contents" : "#' @title RMSE with option to use weights for different points and to also allow computation of an adjusted RMSE \n#' \n#' @description\n#' \\code{ModelErrorStats} calculates the RMSE given a vector of actual prepayments and a vector of projected prepayments.\n#'  \n#' @param actual  observed prepayment rates\n#' @param pred model predictions\n#' @param weights weights for the various observations\n#' @param totalparams not used\n#' @param freeparams not used\n#' \n#' @return\n#' List with error statistics\n#' \n#' @examples\n#' \\dontrun{\n#'  ModelErrorStats(actual=actual, pred=pred, weights)\n#'  }\n#'  \nModelErrorStats <- function(actual, pred, weights = NULL, totalparams = 0, freeparams = 0) {\n    \n    if (is.null(weights)) \n        weights <- rep(1, length(actual))\n    else {\n      if ((sum(weights) > 1.01) | (sum(weights) < 0.99)) {\n        stop(paste(\"Weights need to add to 1\", round(sum(weights), digits=2), \"\\n\", sep=\" \"))\n      } \n    }\n    \n    sse <- sum(weights * (actual - pred)^2)\n    \n    rmse <- sqrt(sse/length(weights))\n    \n    if ((totalparams > 0) && (totalparams > freeparams)) {\n        adj.rmse <- sqrt(sse/(totalparams - freeparams))\n        aic <- (totalparams * log(sse/totalparams)) - (freeparams * log(totalparams))\n        bic <- (totalparams * log(sse/totalparams)) - (freeparams * 2)\n    } else adj.rmse <- aic <- bic <- NULL\n    \n    model.error.stats <- list(rmse = rmse, adj.rmse = adj.rmse, aic = aic, bic = bic)\n    \n    return(model.error.stats)\n} \n",
+    "created" : 1521236547006.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4195717331",
+    "id" : "71B2093E",
+    "lastKnownWriteTime" : 1521236754,
+    "path" : "C:/Cello/cello-it-dev/trunk/Research/AgencyPrepayment/Baton2/batonutil/R/ModelErrorStats.R",
+    "project_path" : "R/ModelErrorStats.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

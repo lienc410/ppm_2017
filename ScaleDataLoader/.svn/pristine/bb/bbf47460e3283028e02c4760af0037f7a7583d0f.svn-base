@@ -1,0 +1,861 @@
+-- Freddie Conventional
+-- Loan Level
+-- Part 2 of 7
+-- Script to update HARPed Percentage (Step 1)
+-- Updates percentHARPed
+
+
+-- Before execute the script, need to set the appType to run for
+DROP TABLE IF EXISTS #tmp_appType;
+SELECT '#####APPTYPE#####' AS appType INTO #tmp_appType
+--SELECT '9.98' AS appType INTO #tmp_appType
+;
+
+-- Before execute the script, need to set the dates to run for
+DROP TABLE IF EXISTS #tmp_asOf;
+SELECT 
+CAST('#####ASOF#####' AS DATE) asOf, 
+CAST('#####LAST#####' AS DATE) asOf_last,
+CAST('2006-08-01' AS DATE) asOf_start
+INTO #tmp_asOf
+--SELECT CAST ('2018-06-01' AS DATE) asOf INTO #tmp_asOf
+;
+
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+)
+;
+INSERT #ticker SELECT 'FGLMC', 'CONVENTIONAL_30YR';   --30 Yr Conventional Freddie
+INSERT #ticker SELECT 'FGT6', 'JUMBO_30YR';           --30 Yr Jumbo Freddie
+INSERT #ticker SELECT 'FGU6', 'CONVENTIONAL_30YR';    --30 Yr CQ Freddie High LTV[105-125]
+INSERT #ticker SELECT 'FGU9', 'CONVENTIONAL_30YR';    --30 Yr CR Freddie High LTV[125-150]
+--INSERT #ticker SELECT 'FGTW', 'CONVENTIONAL_20YR';    --20 Yr Conventional Freddie
+--INSERT #ticker SELECT 'FGCI', 'CONVENTIONAL_15YR';    --15 Yr Conventional Freddie
+COMMIT;
+
+CREATE LF INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT mvc.tickerName, mvc.appType, mvc.originationVersion_LL as originationVersion 
+INTO #tmp_version
+FROM scale.ModelVersionConfig mvc
+JOIN #tmp_appType tat
+     ON mvc.appType = tat.appType
+JOIN #ticker tk
+     ON mvc.tickerName = tk.tickerName
+;
+COMMIT;
+
+-- Part ONE. Update percentHARPed
+------------------------------------------------------
+-- Assigning harp Pct of 100 for HARPed Loans
+-- Assigning harp Pct of 0 for Non-HARPed Loans
+-- NULL to Loans which are Unknown and have an MHA-ELIGIBLE Status
+------------------------------------------------------
+DROP TABLE IF EXISTS #FHL_HARPStatus;
+SELECT
+    loanSeqNum,
+    marketTicker,
+    CASE 
+        WHEN ( ( HARPStatus = 'HARP')  OR  ( HARPStatus = 'Unknown' and MHAStatus = 'MHA-ELIGIBLE')) THEN 100.0
+        WHEN ( HARPStatus IN ('< 2009-06', 'NON-HARP', 'N/A')) THEN 0.0
+        ELSE NULL
+    END as percentHARPed
+INTO #FHL_HARPStatus
+FROM fhl.Cello_Loan l
+JOIN #ticker tk
+    ON l.marketTicker = tk.tickerName
+;
+
+COMMIT;
+CREATE HG INDEX loan_id_idx ON #FHL_HARPStatus(loanSeqNum);
+CREATE LF INDEX ticker_idx ON #FHL_HARPStatus(marketTicker);
+COMMIT;
+
+-----------------------------------------------------------------------
+-- Update Cello_Loan with percentHARPed for Jumbo and High-LTV
+----------------------------------------------------------------------- 
+UPDATE #FHL_HARPStatus l
+SET percentHARPed = 0.0
+WHERE marketTicker = 'FGT6'
+;
+UPDATE #FHL_HARPStatus l
+SET percentHARPed = 100.0
+WHERE marketTicker in ('FGU6','FGU9')
+;
+COMMIT;
+
+-- Part TWO: Calculate MI-related
+
+-- Part 1. clean pctMtgIns
+-- Calculate MI
+DROP TABLE IF EXISTS #FHL_MIClean;
+SELECT
+lh.loanseqnum,
+lh.asof,
+lh.currentRPB,
+CAST(NULL as int) as pctMtgIns
+INTO #FHL_MIClean
+FROM fhl.cello_loanhist lh
+WHERE  lh.asOf >= (select asOf_start from #tmp_asOf)
+AND lh.asOf <= (select asOf_last from #tmp_asOf);
+COMMIT;
+
+UPDATE #FHL_MIClean m SET m.pctMtgIns=h.pctMtgIns
+FROM fhl.cello_loanhist h WHERE m.loanseqnum=h.loanseqnum AND m.asof=h.asof;
+
+-- set pctMtgIns to be NULL for paid-off loans
+UPDATE #FHL_MIClean SET pctMtgIns=NULL WHERE currentRPB=0;
+COMMIT;
+
+-- Compare current month MI against previous month MI
+DROP TABLE IF EXISTS #FHL_MIComparison;
+SELECT 
+    c.loanseqnum,
+	c.asOf,
+	c.pctMtgIns as CurrentMI,
+	p.pctMtgIns as PreviousMI
+INTO #FHL_MIComparison
+FROM #FHL_MIClean c
+JOIN  #FHL_MIClean p
+ON c.loanseqnum = p.loanseqnum
+AND c.asof = dateadd(month,1,p.asof);
+COMMIT;
+
+-- Forward-Clean-Up
+-- Pick up those loans with pctMtgIns changing from >=0 to NULL/negative in history 
+DROP TABLE IF EXISTS #update_forward;
+SELECT
+    loanseqnum,
+	asOf,
+	CurrentMI,
+	PreviousMI
+INTO #update_forward
+FROM #FHL_MIComparison
+WHERE (CurrentMI <0 or CurrentMI is NULL)
+AND PreviousMI >= 0;
+COMMIT;
+
+INSERT INTO scale.fhl_MI_update_list
+SELECT * FROM #update_forward WHERE asOf=(select dateadd(month,-1,asOf_last) from #tmp_asOf);
+COMMIT;
+
+DELETE FROM scale.fhl_MI_update_list 
+WHERE loanseqnum in (select loanseqnum from scale.fhl_loanhist where cltv<=0.01 and asOf=(select dateadd(month,-1,asOf_last) from #tmp_asOf));
+COMMIT;
+
+UPDATE #FHL_MIClean mh SET mh.pctMtgIns=f.PreviousMI
+FROM #update_forward f WHERE mh.loanseqnum=f.loanseqnum and mh.asOf>=f.asOf and (mh.pctMtgIns<0 or mh.pctMtgIns is NULL);
+COMMIT;
+
+-- Backward-Clean-Up
+-- Pick up those loans with jumps in history (jumps from 0/NULL/negative to non-zero or from one level positive to higher level positive)
+DROP TABLE IF EXISTS #update_history;
+SELECT
+    loanseqnum,
+	asOf,
+	CurrentMI,
+	PreviousMI
+INTO #update_history
+FROM #FHL_MIComparison
+WHERE (CurrentMI > 0 AND (PreviousMI <= 0 OR PreviousMI is NULL))
+OR (CurrentMI > 0 AND PreviousMI > 0 AND CurrentMI>PreviousMI);
+COMMIT;
+
+INSERT INTO scale.fhl_MI_update_list
+SELECT * FROM #update_history WHERE asOf=(select dateadd(month,-1,asOf_last) from #tmp_asOf);
+COMMIT;
+
+-- Find out jump time, use 2 jumps at most
+drop table if exists #FHL_jump_summary;
+select 
+loanseqnum, 
+min(asOf) as first_jump, 
+NULL as first_currentMI, 
+NULL as first_previousmi, 
+case when max(asof) <> first_jump then max(asof) else NULL end as second_jump, 
+NULL as second_currentMI, 
+NULL as second_previousmi
+into #FHL_jump_summary
+from #update_history
+group by loanseqnum;
+commit;
+
+update #FHL_jump_summary t set first_currentMI=currentMI,first_previousmi=previousmi
+from #update_history h where t.loanseqnum=h.loanseqnum and t.first_jump=h.asof;
+commit;
+
+update #FHL_jump_summary t set second_currentMI=currentMI,second_previousmi=previousmi
+from #update_history h where t.loanseqnum=h.loanseqnum and t.second_jump=h.asof;
+commit;
+
+-- clean up historical MI with jumps
+update #FHL_MIClean h set h.pctMtgIns = t.first_currentMI
+from #FHL_jump_summary t where ((h.pctMtgIns<=0) or (h.pctMtgIns is NULL) or (h.pctMtgIns>0 and h.pctMtgIns<t.first_currentMI)) and h.loanseqnum=t.loanseqnum and h.asOf<t.first_jump;
+commit;
+
+update #FHL_MIClean h set h.pctMtgIns = t.second_currentMI
+from #FHL_jump_summary t where ((h.pctMtgIns<=0) or (h.pctMtgIns is NULL) or (h.pctMtgIns>0 and h.pctMtgIns<t.second_currentMI)) and h.loanseqnum=t.loanseqnum and h.asOf<t.second_jump and h.asOf>=t.first_jump;
+commit;
+
+-- Save cleaned pctMtgIns into prepay month table
+DROP TABLE IF EXISTS #FHL_MIHist;
+SELECT
+lh.loanseqnum,
+lh.asof,
+lh.cltv,
+l.origLTV,
+cast (NULL as int) as pctMtgIns,
+cast (NULL as varchar(10)) as actual_trigger,
+cast (NULL as varchar(10)) as model_trigger,
+cast (NULL as varchar(10)) as MICancelFlag_unlagged,
+cast (NULL as varchar(10)) as MICancelFlag_lagged,
+cast (NULL as int) as projected_month_unlagged,
+cast (NULL as int) as projected_month_lagged
+INTO #FHL_MIHist
+FROM scale.fhl_loanhist lh
+JOIN fhl.cello_loan l ON lh.loanseqnum=l.loanseqnum
+WHERE  lh.asOf >= (select asOf_start from #tmp_asOf)
+AND lh.asOf <= (select asOf_last from #tmp_asOf)
+AND l.origLTV>=80;
+COMMIT;
+
+UPDATE #FHL_MIHist mh SET mh.pctMtgIns=h.pctMtgIns
+FROM #FHL_MIClean h WHERE mh.loanseqnum=h.loanseqnum and mh.asof=dateadd(month, -1, h.asof);
+COMMIT;
+
+-- For OLTV=80 loans, maximum possible pctMtgIns is 12, if pctMtgIns>12, we set it to 6
+UPDATE #FHL_MIHist mh SET mh.pctMtgIns=6
+WHERE mh.pctMtgIns>12 and origLTV=80;
+COMMIT;
+
+UPDATE #FHL_MIHist SET pctMtgIns=NULL WHERE cltv<=0.01;
+COMMIT;
+
+-- Forward Clean Up for latest prepay month
+DROP TABLE IF EXISTS #FHL_MIComparison_2;
+SELECT 
+    c.loanseqnum,
+	c.asOf,
+	c.pctMtgIns as CurrentMI,
+	p.pctMtgIns as PreviousMI
+INTO #FHL_MIComparison_2
+FROM #FHL_MIHist c
+JOIN  #FHL_MIHist p
+ON c.loanseqnum = p.loanseqnum
+AND c.asof = dateadd(month,1,p.asof)
+WHERE (CurrentMI <0 or CurrentMI is NULL)
+AND PreviousMI >= 0;
+COMMIT;
+
+-- SECOND-Forward-Clean-Up
+UPDATE #FHL_MIHist mh SET mh.pctMtgIns=f.PreviousMI
+FROM #FHL_MIComparison_2 f WHERE mh.loanseqnum=f.loanseqnum and mh.asOf>=f.asOf and (mh.pctMtgIns<0 or mh.pctMtgIns is NULL);
+COMMIT;
+
+-- Part 2. Fill up actual trigger with cleaned pctMtgIns
+UPDATE #FHL_MIHist SET actual_trigger='Y' WHERE pctMtgIns=0;
+COMMIT;
+
+UPDATE #FHL_MIHist SET actual_trigger='N' WHERE actual_trigger is NULL;
+COMMIT;
+
+-- Part 3. Fill up model trigger with automatic cancellation rule
+DROP TABLE IF EXISTS #FHL_ELIGIBLE;
+SELECT
+l.loanseqnum,
+cast(cast(l.calcorigmonth_ll*100+1 as char) as date) as origDate,
+case when (l.numUnits < 0) then 1 else l.numUnits end as numUnits,
+l.occType
+INTO #FHL_ELIGIBLE
+from fhl.cello_loan l
+where l.occtype in ('OWNER','2ND')
+and numUnits>=1
+and origDate >= '1999-08-01'
+and loanseqnum in (select loanseqnum from #FHL_MIHist);
+COMMIT;
+
+DELETE FROM #FHL_ELIGIBLE WHERE occType='OWNER' and numUnits>1;
+COMMIT;
+
+-- for loans not eligible for Automatic Cancellation, model trigger is the same as actual trigger
+UPDATE #FHL_MIHist h set model_trigger=actual_trigger
+WHERE loanseqnum not in (select loanseqnum from #FHL_ELIGIBLE);
+COMMIT;
+
+-- for loans eligible for Automatic Cancellation, apply automatic cancellation rule
+DROP TABLE if EXISTS #FHL_Model_Cancel;
+SELECT
+h.loanseqnum,
+h.asof,
+cast(cast(l.calcorigmonth_ll*100+1 as char) as date) as origDate,
+l.origTerm,
+dateadd(month,origTerm/2,origDate) as midMonth,
+case when (l.numUnits < 0) then 1 else l.numUnits end as numUnits,
+l.occType,
+h.currentRPB,
+l.origLTV,
+lh.cltv,
+l.originalLoanAmount,
+cast((CASE WHEN (l.origLTV IS NOT NULL AND l.origLTV>0) THEN l.originalLoanAmount*100/l.origLTV ELSE NULL END) as numeric(14,2)) as appraised,
+cast((CASE WHEN (l.origLTV IS NOT NULL AND l.origLTV>0) THEN 0.78*l.originalLoanAmount*100/l.origLTV ELSE NULL END) as numeric(14,2)) as threshold,
+cast(h.currentRPB/appraised as numeric(6,2)) as cltv_appraised
+INTO #FHL_Model_Cancel
+from fhl.cello_loan l
+join fhl.cello_loanhist h on l.loanseqnum=h.loanseqnum
+join scale.fhl_loanhist lh on h.loanseqnum=lh.loanseqnum and h.asof=lh.asof
+where h.currentRPB > 0
+and (h.currentRPB <= threshold or h.asof>midMonth)
+and h.loanseqnum in (select loanseqnum from #FHL_ELIGIBLE);
+COMMIT;
+
+DROP table if exists #FHL_Model_Cancel_Time;
+SELECT
+loanseqnum,
+min(asof) as first_asof
+INTO #FHL_Model_Cancel_Time
+FROM #FHL_Model_Cancel
+GROUP BY loanseqnum;
+COMMIT;
+
+UPDATE #FHL_MIHist mh SET model_trigger='Y'
+FROM #FHL_Model_Cancel_Time c 
+WHERE mh.loanseqnum=c.loanseqnum 
+AND mh.asOf>=c.first_asOf
+COMMIT;
+
+UPDATE #FHL_MIHist mh SET model_trigger='N'
+WHERE model_trigger is NULL;
+COMMIT;
+
+-- Part 4. Determine Lender-paid Loans
+-- filter out those loans with bad data on 2017-09-01
+DROP TABLE IF EXISTS #BadData;
+SELECT loanseqnum
+INTO #BadData
+FROM fhl.cello_loanhist 
+WHERE currentRPB>0 
+and asof='2017-09-01' 
+and loanseqnum in (select loanseqnum from fhl.cello_loanhist where currentRpb=0 and asof<'2017-09-01');
+COMMIT;
+
+--filter out potential lender-paid MI loans
+DROP TABLE if EXISTS #Lender;
+SELECT
+h.loanseqnum,
+h.asof,
+cast(cast(l.calcorigmonth_ll*100+1 as char) as date) as origDate,
+l.origTerm,
+dateadd(month,origTerm/2,origDate) as midMonth,
+case when (l.numUnits < 0) then 1 else l.numUnits end as numUnits,
+l.occType,
+h.currentRPB,
+l.origLTV,
+l.originalLoanAmount,
+cast((CASE WHEN (l.origLTV IS NOT NULL AND l.origLTV>0) THEN 0.78*l.originalLoanAmount*100/l.origLTV ELSE NULL END) as numeric(14,2)) as appraised_value_threshold,
+mh.pctMtgIns
+INTO #Lender
+from fhl.cello_loan l
+join fhl.cello_loanhist h on l.loanseqnum=h.loanseqnum
+join #FHL_MIHist mh on l.loanseqnum=mh.loanseqnum and h.asof=dateadd(month,1,mh.asof)
+where l.occtype in ('OWNER','2ND')
+and l.origLTV > 80
+and numUnits>=1
+and origDate >= '1999-08-01'
+and l.latestasOf >= '20170901'
+and mh.pctMtgIns >= 0
+and h.currentRPB > 0.01
+and (h.currentRPB <= appraised_value_threshold or h.asof>midMonth)
+and h.loanseqnum not in (select loanseqnum from #BadData)
+and h.asOf<(select asof_last from #tmp_asOf);
+COMMIT;
+
+DELETE FROM #Lender WHERE occType='OWNER' and numUnits>1;
+COMMIT;
+
+DROP TABLE if EXISTS #lender_paid;
+SELECT distinct(loanseqnum) as loanseqnum into #lender_paid
+from #Lender where loanseqnum not in (select distinct(loanseqNum) from #Lender where pctMtgIns = 0);
+COMMIT;
+
+-- Save lender-paid MI loans into list table
+DROP TABLE if EXISTS scale.fhl_lender_paid_previous;
+SELECT * INTO scale.fhl_lender_paid_previous FROM scale.fhl_lender_paid;
+DROP TABLE if EXISTS scale.fhl_lender_paid;
+SELECT 
+loanseqnum,
+CAST (NULL as date) as asOf
+into scale.fhl_lender_paid from #lender_paid;
+COMMIT;
+
+UPDATE scale.fhl_lender_paid p SET p.asOf=(select asOf_last from #tmp_asOf);
+COMMIT;
+
+
+-- Filter Haircut Loan
+DROP TABLE IF EXISTS #last_record;
+SELECT
+loanseqnum, 
+lastPrepaymonth=max(asof), 
+cast (NULL as varchar(10)) as actual_trigger,
+cast (NULL as varchar(10)) as model_trigger
+into #last_record
+from #FHL_MIHist 
+where cltv>0.01
+and asof>='2017-08-01'
+and asof< (select asof_last from #tmp_asOf)
+group by loanseqnum;
+commit;
+
+update #last_record d set d.actual_trigger=c.actual_trigger, d.model_trigger=c.model_trigger
+from #FHL_MIHIST c where d.loanseqnum=c.loanseqnum and d.lastprepaymonth=c.asof;
+commit;
+
+DROP TABLE IF EXISTS scale.fhl_mi_haircut_previous;
+SELECT * INTO scale.fhl_mi_haircut_previous FROM scale.fhl_mi_haircut;
+
+DROP TABLE IF EXISTS scale.fhl_mi_haircut;
+SELECT 
+loanseqnum,
+cast (NULL as date) as asOf
+INTO scale.fhl_mi_haircut
+FROM #last_record d
+WHERE d.actual_trigger='N'
+AND d.model_trigger='N'
+AND loanseqnum in (select loanseqnum from #FHL_ELIGIBLE);
+COMMIT;
+
+UPDATE scale.fhl_mi_haircut h SET h.asof=(select asOf_last from #tmp_asOf);
+COMMIT;
+
+--Update the refresh Loans list.
+--This will run only when updating Monthly data, not for changing any information in the past.(asof == asOf_last)
+IF (SELECT asOf FROM #tmp_asOf) = (SELECT asOf_last FROM #tmp_asOf)
+    BEGIN
+	    DROP TABLE IF EXISTS #RefreshLoans
+		
+		SELECT distinct loanSeqNum INTO #RefreshLoans
+		FROM scale.fhl_lender_paid_previous
+		WHERE loanSeqNum not in (SELECT loanSeqNum FROM scale.fhl_lender_paid)
+		
+		INSERT INTO #RefreshLoans
+		SELECT distinct loanSeqNum FROM scale.fhl_mi_haircut_previous
+		WHERE loanSeqNum not in (SELECT loanSeqNum FROM scale.fhl_mi_haircut)
+		
+		DROP TABLE IF EXISTS scale.FHL_RefreshLoans
+		SELECT distinct loanSeqNum INTO scale.FHL_RefreshLoans FROM #RefreshLoans
+		GRANT SELECT ON scale.FHL_RefreshLoans TO PUBLIC
+	END
+;
+
+-- Save Not Cancellable Flag in Scale Loan Table
+UPDATE scale.fhl_loan_dev l SET Not_Cancellable_Flag=NULL
+WHERE l.marketTicker IN (SELECT tickerName FROM #ticker) AND l.version in (SELECT originationVersion from #tmp_version);
+COMMIT;
+
+UPDATE scale.fhl_loan_dev l SET Not_Cancellable_Flag='Y'
+WHERE loanseqnum in (SELECT loanseqnum from scale.fhl_lender_paid) 
+AND version in (SELECT originationVersion from #tmp_version)
+AND marketTicker IN (SELECT tickerName FROM #ticker)
+;
+COMMIT;
+
+UPDATE scale.fhl_loan_dev l SET Not_Cancellable_Flag='NA'
+WHERE loanseqnum in (SELECT loanseqnum from scale.fhl_mi_haircut) 
+AND version in (SELECT originationVersion from #tmp_version)
+AND marketTicker IN (SELECT tickerName FROM #ticker)
+;
+COMMIT;
+
+UPDATE scale.fhl_loan_dev l SET Not_Cancellable_Flag='N'
+WHERE Not_Cancellable_Flag is NULL 
+AND version in (SELECT originationVersion from #tmp_version)
+AND marketTicker IN (SELECT tickerName FROM #ticker)
+;
+COMMIT;
+
+
+-- Part 5. Determine unlagged Flag
+-- LENDER loans: always 'Y'
+UPDATE #FHL_MIHist mh SET MICancelFlag_unlagged='Y'
+WHERE loanseqnum in (SELECT loanseqnum from scale.fhl_lender_paid);
+COMMIT;
+
+-- NOT ELIGIBLE loans: always actual trigger
+UPDATE #FHL_MIHist mh SET MICancelFlag_unlagged=actual_trigger
+WHERE loanseqnum not in (select loanseqnum from #FHL_ELIGIBLE);
+COMMIT;
+
+-- BORDER POSITIVE loans: use actual_trigger
+DROP TABLE if EXISTS #border_positive;
+SELECT
+    loanseqnum,
+	asOf,
+	pctMtgIns
+INTO #border_positive
+FROM #FHL_MIHist
+WHERE asOf='2017-08-01'
+and pctMtgIns>0
+and cltv>0.01
+and MICancelFlag_unlagged is NULL;
+COMMIT;
+
+UPDATE #FHL_MIHist mh SET MICancelFlag_unlagged=actual_trigger
+WHERE loanseqnum in (select loanseqnum from #border_positive);
+COMMIT;
+
+-- ALL OTHER loans: use actual trigger on/after 2017-08-01, use model/actual trigger before 2017-08-01
+UPDATE #FHL_MIHist mh SET MICancelFlag_unlagged=actual_trigger
+WHERE MICancelFlag_unlagged is NULL AND asOf>='2017-08-01';
+COMMIT;
+
+UPDATE #FHL_MIHist mh SET MICancelFlag_unlagged='Y'
+WHERE MICancelFlag_unlagged is NULL AND (actual_trigger='Y' or model_trigger='Y');
+COMMIT;
+
+UPDATE #FHL_MIHist mh SET MICancelFlag_unlagged='N'
+WHERE MICancelFlag_unlagged is NULL;
+COMMIT;
+
+
+-- Part 6. Determine lagged Flag
+-- Filter Seasoned Loans
+DROP TABLE if EXISTS #Seasoned;
+SELECT
+h.loanseqnum,
+h.asof,
+cast((CASE WHEN (l.origLTV IS NOT NULL AND l.origLTV>0) THEN l.originalLoanAmount*100/l.origLTV ELSE NULL END) as numeric(14,2)) as appraised,
+cast(h.currentRPB/appraised as numeric(4,3)) as cltv_appraised
+INTO #Seasoned
+from fhl.cello_loan l
+join fhl.cello_loanhist h on l.loanseqnum=h.loanseqnum
+join #FHL_MIHist lh on h.loanseqnum=lh.loanseqnum and h.asof=lh.asof;
+COMMIT;
+
+DROP TABLE if EXISTS #first_asof;
+SELECT
+loanseqnum,
+min(asOf) as first_asof,
+cast(NULL as numeric(4,3)) as cltv_appraised
+INTO #first_asof
+FROM #Seasoned
+GROUP BY loanseqnum;
+COMMIT;
+
+UPDATE #first_asof f set f.cltv_appraised=s.cltv_appraised
+FROM #Seasoned s WHERE f.loanseqnum=s.loanseqnum and f.first_asof=s.asof;
+COMMIT;
+
+DROP TABLE IF EXISTS #Lag;
+SELECT
+loanseqnum,
+min(asof) as first_yes,
+cast(NULL as int) as lag
+into #Lag
+FROM #FHL_MIHist
+WHERE MICancelFlag_unlagged='Y'
+GROUP BY loanseqnum;
+COMMIT;
+
+UPDATE #Lag l SET lag=0
+FROM #first_asof f WHERE l.loanseqnum=f.loanseqnum and l.first_yes=f.first_asof and f.cltv_appraised<=0.70;
+COMMIT;
+
+UPDATE #Lag l SET lag=1
+FROM #first_asof f WHERE l.loanseqnum=f.loanseqnum and l.first_yes=f.first_asof and f.cltv_appraised<=0.74 and l.lag is NULL;
+COMMIT;
+
+UPDATE #Lag l SET lag=2
+WHERE lag is NULL;
+COMMIT;
+
+UPDATE #FHL_MIHist mh SET MICancelFlag_lagged='Y'
+FROM #Lag l WHERE mh.loanseqnum=l.loanseqnum and mh.asof>=dateadd(month, l.lag, l.first_yes);
+COMMIT;
+
+UPDATE #FHL_MIHist mh SET MICancelFlag_lagged='Y'
+WHERE loanseqnum in (SELECT loanseqnum from scale.fhl_lender_paid);
+COMMIT;
+
+UPDATE #FHL_MIHist mh SET MICancelFlag_lagged='N'
+WHERE MICancelFlag_lagged is NULL;
+COMMIT;
+
+-- Part 7. Calculate unlagged/lagged projected_month
+-- Load Input for MI Cancellation Projection
+DROP TABLE IF EXISTS #Projected_MI_Cancel;
+SELECT
+l.loanseqnum,
+lh.asOf,
+l.origTerm,
+(l.origTerm-lh.loanAge) as remain,
+lh.remTerm as life,
+l.occType,
+case when (l.numUnits < 0) then 1 else l.numUnits end as numUnits,
+cast(cast(l.calcorigmonth_ll*100+1 as char) as date) as origDate,
+(1+l.origNoteRate/1200) as R,
+case when lh.currentRPB<=0 then 0.01 else lh.currentRPB end as currentBalance,
+cast((CASE WHEN (l.origLTV IS NOT NULL AND l.origLTV>0) THEN 0.78*l.originalLoanAmount*100/l.origLTV ELSE NULL END) as numeric(14,2)) as threshold,
+cast((CASE WHEN (l.origLTV IS NOT NULL AND l.origLTV>0) THEN l.originalLoanAmount*100/l.origLTV ELSE NULL END) as numeric(14,2)) as appraised,
+cast(NULL as numeric(30,15)) as factor,
+mh.MICancelFlag_unlagged,
+mh.projected_month_unlagged,
+mh.projected_month_lagged
+INTO #Projected_MI_Cancel
+FROM fhl.cello_loan l
+JOIN fhl.cello_loanhist lh on l.loanseqnum=lh.loanseqnum
+JOIN #FHL_MIHist mh on lh.loanseqnum=mh.loanseqnum and lh.asof=mh.asof
+WHERE l.loanseqnum in (select loanseqnum from #FHL_ELIGIBLE);
+COMMIT;
+
+
+-- Calculate Threshold factor
+update #Projected_MI_Cancel set factor=CASE WHEN currentBalance>=threshold THEN (Power(R,life)-threshold*(Power(R,life)-1)/currentBalance) ELSE 1 END;
+COMMIT;
+
+-- Calculate Projected month to MI cancellation 
+update #Projected_MI_Cancel set projected_month_unlagged=CASE WHEN currentBalance>=threshold THEN (ceil(log(factor)/log(R))) ELSE 0 END;
+COMMIT;
+
+-- Unlagged Project Month should be capped at midpoint of amortization
+update #Projected_MI_Cancel set projected_month_unlagged=(remain-(origTerm/2)+1)
+WHERE remain>=origTerm/2 and projected_month_unlagged>=(remain-(origTerm/2)+1);
+COMMIT;
+
+update #Projected_MI_Cancel set projected_month_unlagged=0
+WHERE MICancelFlag_unlagged='Y' and projected_month_unlagged>0;
+COMMIT;
+
+
+-- Calculate Lag, always 2-month lag unless seasoned
+DROP TABLE IF EXISTS #month_lag;
+SELECT
+loanseqnum,
+min(asOf) as first_0,
+cast (NULL as int) as lag
+INTO #month_lag
+FROM #Projected_MI_Cancel
+WHERE projected_month_unlagged=0
+GROUP BY loanseqnum;
+COMMIT;
+
+UPDATE #month_lag l SET lag=0
+FROM #first_asof f WHERE l.loanseqnum=f.loanseqnum and l.first_0=f.first_asof and f.cltv_appraised<=0.70;
+COMMIT;
+
+UPDATE #month_lag l SET lag=1
+FROM #first_asof f WHERE l.loanseqnum=f.loanseqnum and l.first_0=f.first_asof and f.cltv_appraised<=0.74 and l.lag is NULL;
+COMMIT;
+
+UPDATE #month_lag l SET lag=2
+WHERE lag is NULL;
+COMMIT;
+
+-- Calculate Lagged projected_month
+UPDATE #Projected_MI_Cancel set projected_month_lagged=projected_month_unlagged;
+COMMIT;
+
+UPDATE #Projected_MI_Cancel set projected_month_lagged=projected_month_lagged + 2
+WHERE projected_month_lagged > 0;
+COMMIT;
+
+UPDATE #Projected_MI_Cancel c set projected_month_lagged=projected_month_lagged + l.lag
+FROM #month_lag l 
+WHERE c.loanseqnum=l.loanseqnum and c.asof=l.first_0 and c.projected_month_lagged=0;
+COMMIT;
+
+UPDATE #Projected_MI_Cancel c set projected_month_lagged=projected_month_lagged + l.lag - 1
+FROM #month_lag l 
+WHERE c.loanseqnum=l.loanseqnum and c.asof=dateadd(month, 1, l.first_0) and c.projected_month_lagged=0 and l.lag>=1;
+COMMIT;
+
+-- Lagged Project Month should be capped at midpoint of amortization
+update #Projected_MI_Cancel set projected_month_lagged=(remain-(origTerm/2)+3)
+WHERE remain>=origTerm/2 and projected_month_lagged>=(remain-(origTerm/2)+3);
+COMMIT;
+
+update #Projected_MI_Cancel set projected_month_lagged=0
+WHERE loanseqnum in (select loanseqnum from scale.fhl_lender_paid);
+COMMIT;
+
+
+-- Save data into #FHL_MIHist
+update #FHL_MIHist mh SET mh.projected_month_unlagged=c.projected_month_unlagged, mh.projected_month_lagged=c.projected_month_lagged
+FROM #Projected_MI_Cancel c WHERE mh.loanseqnum=c.loanseqnum AND mh.asof=c.asof;
+COMMIT;
+
+-- For loans not eligible for automatic cancellation, use wam as projected_month
+update #FHL_MIHist mh set mh.projected_month_unlagged=h.remTerm, projected_month_lagged=h.remTerm
+FROM fhl.cello_loanhist h
+WHERE mh.loanseqnum=h.loanseqnum AND mh.asof=h.asOf AND mh.projected_month_unlagged is NULL;
+COMMIT;
+
+update #FHL_MIHist set projected_month_unlagged=0, projected_month_lagged=0
+WHERE MICancelFlag_unlagged='Y' and projected_month_unlagged>0 and loanseqnum not in (select loanseqnum from #Projected_MI_Cancel);
+COMMIT;
+
+delete from #FHL_MIHist where projected_month_lagged is NULL;
+COMMIT;
+
+
+-- Tests
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  NULL percentHARPed
+----------------------------------------------------------------------------------------------
+        declare   @cnt int
+        SELECT
+            @cnt =  count(1)
+        FROM #FHL_HARPStatus  WHERE percentHARPed IS NULL and marketTicker in ( 'FGT6','FGU6','FGU9')
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of FHL JUMBO/High LTV Loans with NULL Value for HARPed precentage: %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if percentHARPed is in valid range
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #FHL_HARPStatus  WHERE percentHARPed < 0.0 OR percentHARPed > 100
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of FHL JUMBO/High LTV Loans with INVALID Value for HARPed precentage: %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if there are any NULL values
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(distinct(loanseqnum))
+        FROM #FHL_MIHist WHERE MICancelFlag_lagged is NULL
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of FHL Loans with NULL Value for MICancelFlag: %1!', @cnt
+           RETURN
+       END	   
+----------------------------------------------------------------------------------------------
+-- Check to see if burnout is in valid range
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM
+            #FHL_MIHist
+        WHERE projected_month_lagged is NULL
+		
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of FHL Loans with NULL Value for Projected MI Cancellation Month: %1!', @cnt
+            RETURN
+        END
+-- End Tests
+
+
+
+-- Update Scale Loan Table
+
+UPDATE scale.FHL_Loan_Dev
+SET percentHARPed = NULL
+WHERE marketTicker IN (SELECT tickerName FROM #ticker)
+AND version in (select originationVersion from  #tmp_version);
+COMMIT;
+
+UPDATE scale.FHL_Loan_Dev l
+SET l.percentHARPed = hs.percentHARPed
+FROM #FHL_HARPStatus hs
+WHERE hs.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND l.loanSeqNum = hs.loanSeqNum
+    AND version in (select originationVersion from  #tmp_version);
+COMMIT;
+
+UPDATE scale.fhl_loan_dev l SET Not_Cancellable_Flag=NULL
+WHERE l.marketTicker IN (SELECT tickerName FROM #ticker) 
+AND l.version in (SELECT originationVersion from #tmp_version);
+COMMIT;
+
+UPDATE scale.fhl_loan_dev l SET Not_Cancellable_Flag='Y'
+WHERE loanseqnum in (SELECT loanseqnum from scale.fhl_lender_paid) 
+AND version in (SELECT originationVersion from #tmp_version)
+AND marketTicker IN (SELECT tickerName FROM #ticker)
+;
+COMMIT;
+
+UPDATE scale.fhl_loan_dev l SET Not_Cancellable_Flag='NA'
+WHERE loanseqnum in (SELECT loanseqnum from scale.fhl_mi_haircut) 
+AND version in (SELECT originationVersion from #tmp_version)
+AND marketTicker IN (SELECT tickerName FROM #ticker)
+;
+COMMIT;
+
+UPDATE scale.fhl_loan_dev l SET Not_Cancellable_Flag='N'
+WHERE Not_Cancellable_Flag is NULL 
+AND version in (SELECT originationVersion from #tmp_version)
+AND marketTicker IN (SELECT tickerName FROM #ticker)
+;
+COMMIT;
+
+-- Update Scale LoanHist Table
+update scale.fhl_loanhist lh 
+SET 
+lh.pctMtgIns=NULL, 
+lh.actual_trigger=NULL, 
+lh.model_trigger=NULL, 
+lh.MICancelFlag_unlagged=NULL,
+lh.MICancelFlag_lagged=NULL,
+lh.projected_month_unlagged=NULL,
+lh.projected_month_lagged=NULL
+WHERE lh.asOf >= (select asOf_start from #tmp_asOf)
+AND lh.asOf <= (select asOf_last from #tmp_asOf);
+COMMIT;
+
+update scale.fhl_loanhist lh 
+SET 
+lh.pctMtgIns=mh.pctMtgIns, 
+lh.actual_trigger=mh.actual_trigger, 
+lh.model_trigger=mh.model_trigger, 
+lh.MICancelFlag_unlagged=mh.MICancelFlag_unlagged,
+lh.MICancelFlag_lagged=mh.MICancelFlag_lagged,
+lh.projected_month_unlagged=mh.projected_month_unlagged,
+lh.projected_month_lagged=mh.projected_month_lagged
+FROM #FHL_MIHist mh
+WHERE lh.loanseqnum=mh.loanseqnum 
+AND lh.asof=mh.asof
+AND lh.asOf >= (select asOf_start from #tmp_asOf)
+AND lh.asOf <= (select asOf_last from #tmp_asOf);
+COMMIT;
+
+update scale.fhl_loanhist lh 
+SET 
+lh.pctMtgIns=0,
+lh.actual_trigger='N', 
+lh.model_trigger='N', 
+lh.MICancelFlag_unlagged='N',
+lh.MICancelFlag_lagged='N',
+lh.projected_month_unlagged=0, 
+lh.projected_month_lagged=0
+WHERE lh.loanseqnum not in (select loanseqnum from #FHL_MIHist)
+AND lh.asOf >= (select asOf_start from #tmp_asOf)
+AND lh.asOf <= (select asOf_last from #tmp_asOf);
+COMMIT;
+
+update scale.fhl_loanhist lh 
+SET 
+lh.pctMtgIns=NULL, 
+lh.actual_trigger=NULL, 
+lh.model_trigger=NULL,  
+lh.MICancelFlag_unlagged=NULL,
+lh.MICancelFlag_lagged=NULL,
+lh.projected_month_unlagged=NULL,
+lh.projected_month_lagged=NULL
+WHERE cltv<=0.01
+AND lh.asOf >= (select asOf_start from #tmp_asOf)
+AND lh.asOf <= (select asOf_last from #tmp_asOf);
+COMMIT;
+

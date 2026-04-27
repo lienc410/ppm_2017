@@ -1,0 +1,449 @@
+-- Ginnie
+-- Loan Level
+-- Part 3 of 6
+-- Script to update the loan hist metric
+
+-- Before execute the script, need to set the dates to run for
+DROP TABLE IF EXISTS #tmp_asOf;
+SELECT CAST('#####ASOF#####' AS DATE) asOf INTO #tmp_asOf
+--SELECT CAST ('1979-05-01' AS DATE) asOf INTO #tmp_asOf
+;
+
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT CAST ('2.50' AS varchar(5)) version INTO #tmp_version
+;
+
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+)
+;
+INSERT #ticker SELECT 'GNSF', 'GINNIE_30YR';   -- Ginnie 1
+INSERT #ticker SELECT 'G2SF', 'GINNIE_30YR';   -- Ginnie 2
+INSERT #ticker SELECT 'G2SF-JM', 'GINNIE_30YR';-- Ginnie Jumbo
+COMMIT;
+
+CREATE LF INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+-- Create Loan Historical Data
+DROP TABLE IF EXISTS #GNM_LoanHist_Actual;
+SELECT
+    l.loanSeqNum,
+    l.marketTicker,
+    lh.asOf as asOf,
+    lh.currentRpb as currentBalance,
+    CASE WHEN lh.calcScham = NULL THEN lh.schamBalance ELSE lh.calcScham END as schamBalance,
+    CASE WHEN loanAge IS NULL THEN NULL ELSE 1.0 - (POWER(1.0 + l.origNoteRate / 1200.0,lh.loanAge) - 1.0) / (POWER(1.0 + l.origNoteRate / 1200.0, 360) - 1.0) END as factor,
+    l.origLTV,
+    CASE WHEN cltv = -999 THEN NULL ELSE cltv END as cltv,
+    CASE WHEN lh.loanAge = -999 OR lh.loanAge = -998 THEN NULL ELSE lh.loanAge END as loanAge,
+    lh.delMonths as delMonths,
+    lh.removalReasonType,
+    'N' as celloDerived,
+    cast(NULL as numeric(10, 4)) as HPA,
+    cast(NULL as numeric(10, 4)) as HPI,
+    cast(NULL as numeric(10, 4)) as HPA_1YR,
+    cast(NULL as numeric(10, 4)) as HPA_2YR
+INTO #GNM_LoanHist_Actual
+FROM scale.gnm_loan_Dev l
+JOIN gnm.Cello_LoanHist lh
+    ON l.loanSeqNum = lh.loanSeqNum
+WHERE 1=1
+    AND lh.asOf >= (select asOf from #tmp_asOf)
+    AND l.version >= (select version from #tmp_version)
+;
+COMMIT;
+
+-- Create history of asOf dates
+DROP TABLE IF EXISTS #unique_dates;
+SELECT convert(date,dateadd(month, -num, mn.asOf)) as asOf
+INTO #unique_dates
+FROM report.nums,
+(SELECT convert(date, dateadd(day, -datepart(day, getdate()) + 1, getdate())) asOf) mn
+;
+COMMIT;
+
+-- Find First AsOf for Each Loan
+DROP TABLE IF EXISTS #first_asOf;
+SELECT
+    loanSeqNum,
+    min(asOf) as first_asOf
+INTO #first_asOf
+FROM #GNM_LoanHist_Actual 
+GROUP BY loanSeqNum
+;
+COMMIT;
+
+-- Create Loan Historical Data From The Origination Date
+DROP TABLE IF EXISTS #GNM_Loan_MissingHist;
+SELECT
+    l.loanSeqNum,
+    l.marketTicker,
+    t.asOf as asOf,
+    currentBalance = NULL,
+    schamBalance = NULL,
+    factor = NULL,
+    l.origLTV,
+    cltv = NULL,
+    loanAge = NULL,
+    delMonths = 0,
+    (CASE WHEN lh.removalReasonType IS NULL THEN lh.removalReasonType ELSE NULL END) as removalReasonType,
+    'Y' as celloDerived,
+    HPA = NULL,
+    HPI = NULL,
+    HPA_1YR = NULL,
+    HPA_2YR = NULL
+INTO #GNM_Loan_MissingHist
+FROM scale.gnm_loan_Dev l
+JOIN #first_asOf o
+    ON l.loanSeqNum = o.loanSeqNum
+JOIN #unique_dates t
+    ON t.asOf >= l.originationDate
+    AND t.asOf < o.first_asOf 
+JOIN #GNM_LoanHist_Actual lh
+    ON l.loanSeqNum = lh.loanSeqNum
+    AND lh.asof = o.first_asOf
+WHERE 1=1
+    AND version = (select version from #tmp_version)
+;
+COMMIT;
+
+-- Create Loan Historical Data
+DROP TABLE IF EXISTS #GNM_LoanHist;
+SELECT *
+INTO #GNM_LoanHist
+FROM
+(
+    SELECT * FROM #GNM_LoanHist_Actual
+    UNION
+    SELECT * FROM #GNM_Loan_MissingHist
+) o;
+COMMIT;
+
+CREATE HG INDEX loan_id_idx ON #GNM_LoanHist(loanSeqNum);
+CREATE LF INDEX begin_date_idx ON #GNM_LoanHist(asOf);
+CREATE LF INDEX ticker_idx ON #GNM_LoanHist(marketTicker);
+COMMIT;
+
+-- Update bad data
+UPDATE #GNM_LoanHist SET cltv = NULL
+WHERE cltv < 0.0 OR cltv > 250
+;
+COMMIT;
+
+
+-----------------------------------------
+--  loanAge
+-----------------------------------------
+-- need to fill in all loan age numbers then recalculate factor for the cases with missing loanAge
+--      The dependency is loanAge -> factor -> cltv
+UPDATE #GNM_LoanHist lh SET loanAge = CONVERT(NUMERIC(5, 1), datediff(month, l.originationDate, asof))
+FROM scale.gnm_loan_Dev l
+WHERE l.loanSeqNum = lh.loanSeqNum
+    AND loanAge IS NULL
+    AND version = (select version from #tmp_version)
+;
+COMMIT;
+
+-- Some loan age greater than 360, mark them to 360
+UPDATE #GNM_LoanHist lh SET loanAge = 360
+WHERE loanAge > 360
+;
+COMMIT;
+
+-- update factor
+UPDATE #GNM_LoanHist lh SET factor = 1.0 - (POWER(1.0 + l.origNoteRate / 1200.0,lh.loanAge) - 1.0) / (POWER(1.0 + l.origNoteRate / 1200.0, 360) - 1.0)
+FROM scale.gnm_loan_Dev l
+WHERE l.loanSeqNum = lh.loanSeqNum
+    AND factor IS NULL
+    AND version = (select version from #tmp_version)
+;
+COMMIT;
+
+-- Update bad data
+UPDATE #GNM_LoanHist SET factor = 1.0
+WHERE factor > 1.0
+;
+COMMIT;
+
+-----------------------------------------
+--  schamBalance
+-----------------------------------------
+-- When both calcScham and schamBalance are missing, will use current balance as an estimation
+UPDATE #GNM_LoanHist lh SET schamBalance = currentBalance
+WHERE schamBalance IS NULL
+;
+COMMIT;
+
+-- For the missing period, use the amortization formula to calculate schamBalance and assume no prepayment
+UPDATE #GNM_LoanHist lh SET schamBalance = origLoanSize * factor, currentBalance = origLoanSize * factor
+FROM scale.gnm_loan_DEV l
+WHERE l.loanSeqNum = lh.loanSeqNum
+    AND schamBalance IS NULL
+    AND version = (select version from #tmp_version)
+;
+COMMIT;
+
+
+-----------------------------------------
+--  HPA
+-----------------------------------------
+-- Create Monthly HPI data
+-- Requires Extending the Time Series to the latest factor date using an assumption of 3% HPA
+DROP TABLE IF EXISTS #t;
+CREATE TABLE #t(
+    projected_month int
+)
+;    
+INSERT #t SELECT 1;
+INSERT #t SELECT 2;
+INSERT #t SELECT 3;
+INSERT #t SELECT 4;
+INSERT #t SELECT 5;
+INSERT #t SELECT 6;
+COMMIT;
+
+DROP TABLE IF EXISTS #HPI_Latest_Date;
+SELECT
+    TimeSeriesMetaId,
+    max(AsOfDate) as latest_asOf
+INTO #HPI_Latest_Date
+FROM report.TimeSeries
+WHERE TimeSeriesMetaId = (SELECT TimeSeriesMetaId FROM report.TimeSeriesMeta WHERE Source = 'CELLO' AND TickerName = 'HPI_USA_ALL_TRANSACTIONS' AND Category = 'HPI' AND SeriesType = 'HPIndex')
+GROUP BY TimeSeriesMetaId
+;
+COMMIT;
+
+DROP TABLE IF EXISTS #HomePriceIndex_projected;
+SELECT
+    dateadd(MONTH, t.projected_month, ts.AsOfDate) as asOf,
+    ts.SeriesNumValue * power(1.0 + 3.0 / 100.0, t.projected_month / 12.0) as HPIndex
+INTO #HomePriceIndex_projected
+FROM report.TimeSeries ts
+JOIN #HPI_Latest_Date ld
+    ON ts.AsOfDate = ld.latest_asOf
+    AND ts.TimeSeriesMetaId = ld.TimeSeriesMetaId
+CROSS JOIN #t t
+;
+COMMIT;
+
+DROP TABLE IF EXISTS #HomePriceIndex_monthly;
+SELECT
+    t.asOf,
+    t.HPIndex
+INTO #HomePriceIndex_monthly
+FROM(
+    SELECT asOfDate as asOf, SeriesNumValue as HPIndex FROM report.TimeSeries WHERE TimeSeriesMetaId = (SELECT TimeSeriesMetaId FROM #HPI_Latest_Date)
+    
+    UNION
+    
+    SELECT asOf, HPIndex FROM #HomePriceIndex_projected
+) t
+;
+COMMIT;
+
+DROP TABLE IF EXISTS #HPA_MA;
+SELECT
+    'USA' as Region,
+    t1.asOf,
+    t1.HPIndex as HPIndex,
+    t2.HPIndex as HPIndex_1YR,
+    t3.HPIndex as HPIndex_2YR,
+    CASE WHEN t2.HPIndex IS NULL THEN NULL ELSE t1.HPIndex / t2.HPIndex END as HPA_1YR,
+    CASE WHEN t3.HPIndex IS NULL THEN NULL ELSE t1.HPIndex / t3.HPIndex END as HPA_2YR
+INTO #HPA_MA
+FROM #HomePriceIndex_monthly t1
+LEFT JOIN #HomePriceIndex_monthly t2
+    ON t1.asOf = dateadd(month, 12, t2.asOf)
+LEFT JOIN #HomePriceIndex_monthly t3
+    ON t1.asOf = dateadd(month, 24, t3.asOf)
+;
+COMMIT;
+
+CREATE LF INDEX asOf_idx ON #HPA_MA(asOf);
+COMMIT;
+
+DELETE FROM #HPA_MA WHERE HPA_1YR IS NULL;
+COMMIT;
+
+DELETE FROM #HPA_MA WHERE HPA_2YR IS NULL;
+COMMIT;
+
+DROP TABLE IF EXISTS #HPI_Earliest;
+SELECT
+    min(asOf) as hpi_earliest_date,
+    cast(NULL as numeric(8, 4)) as hpi_earliest_value
+INTO #HPI_Earliest
+FROM #HPA_MA
+WHERE Region = 'USA'
+;
+COMMIT;
+
+UPDATE #HPI_Earliest he SET he.hpi_earliest_value = hpi.HPIndex
+FROM #HPA_MA hpi
+WHERE he.hpi_earliest_date = hpi.asOf
+    AND Region = 'USA'
+;
+COMMIT;
+
+
+-- Update HPA_XYR and HPI
+UPDATE #GNM_LoanHist perf SET perf.HPA_2YR = hpi.HPA_2YR, perf.HPA_1YR = hpi.HPA_1YR, perf.HPI = hpi.HPIndex
+FROM #HPA_MA hpi
+WHERE perf.asOf = hpi.asOf 
+    AND hpi.Region = 'USA'
+;
+
+-- Update HPA
+UPDATE #GNM_LoanHist lh SET lh.HPA = lh.HPI / l.HPI_orig
+FROM scale.gnm_loan_Dev l
+WHERE lh.loanSeqNum = l.loanSeqNum 
+    AND version = (select version from #tmp_version)
+;
+
+
+-----------------------------------------
+--  CLTV
+-----------------------------------------
+-- Update CLTV based on factor and HPA
+UPDATE #GNM_LoanHist lh SET lh.cltv = l.origLTV * lh.factor / lh.HPA
+FROM scale.gnm_loan_Dev l
+WHERE lh.loanSeqNum = l.loanSeqNum 
+    AND lh.cltv IS NULL
+    AND version = (select version from #tmp_version) 
+;
+
+
+
+
+-- Tests
+--SELECT l.marketTicker, originationDate, count(1), sum(currentBalance), sum(currentBalance * cltv) / sum(currentBalance) as wavg_cltv FROM scale.gnm_loan l JOIN #GNM_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum GROUP BY l.marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+--SELECT marketTicker, asOf, count(1), sum(currentBalance), sum(currentBalance * cltv) / sum(currentBalance) as wavg_cltv FROM #GNM_LoanHist GROUP BY marketTicker, asOf ORDER BY asOf
+
+--SELECT l.marketTicker, originationDate, count(1), sum(currentBalance), sum(currentBalance * hpa) / sum(currentBalance) as wavg_hpa FROM scale.gnm_loan l JOIN #GNM_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum GROUP BY l.marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+--SELECT marketTicker, asOf, count(1), sum(currentBalance), sum(currentBalance * hpa) / sum(currentBalance) as wavg_hpa FROM #GNM_LoanHist GROUP BY marketTicker, asOf ORDER BY asOf
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  currentBalance IS NULL OR currentBalance < 0.0
+----------------------------------------------------------------------------------------------
+        declare   @cnt int
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_LoanHist  WHERE currentBalance IS NULL OR currentBalance < 0.0
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of GNM Loans with INVALID VALUE for current Balance: %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  schamBalance IS NULL OR schamBalance < 0.0
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_LoanHist  WHERE schamBalance IS NULL OR schamBalance < 0.0
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of GNM Loans with INVALID VALUE for scheduled Balance: %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  cltv IS NULL OR cltv < 0.0 OR cltv > 1000
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_LoanHist  WHERE cltv IS NULL OR cltv < 0.0 OR cltv > 1000
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of GNM Loans with INVALID VALUE for CLTV: %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  hpa IS NULL  OR hpa < 0.5 OR hpa > 10
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_LoanHist  WHERE  hpa IS NULL OR hpa < 0.5 OR hpa > 10
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of GNM Loans with INVALID VALUE for HPA: %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  hpa_2yr IS NULL OR hpa_2yr < 0.50 OR hpa_2yr > 1.5
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_LoanHist  WHERE  hpa_2yr IS NULL OR hpa_2yr < 0.50 OR hpa_2yr > 1.5
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of GNM Loans with INVALID VALUE for 2-year relative HPA: %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  loanAge IS NULL OR loanAge < 0.0 OR loanAge > 1000
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_LoanHist  WHERE loanAge IS NULL OR loanAge < 0.0 OR loanAge > 360
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of GNM Loans with INVALID VALUE for loan age: %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if count of current month changes in a noticeable amount compare with previous month
+----------------------------------------------------------------------------------------------
+        declare   @cnt_previous int
+        SELECT
+            @cnt =  count(1)
+        FROM #GNM_LoanHist WHERE asof = (SELECT asOf FROM #tmp_asOf)
+
+        SELECT
+            @cnt_previous =  count(1)
+        FROM scale.GNM_LoanHist WHERE asof = (SELECT dateadd(month, -1, asOf) FROM #tmp_asOf)
+        
+        if (@cnt - @cnt_previous > 0.1 * @cnt_previous OR @cnt_previous - @cnt > 0.1 * @cnt_previous)
+        BEGIN
+            RAISERROR 99999 'The number of GNM loans of current month is significantly different from that of previous month. Current month count: %1!; Previous month count: %2!', @cnt, @cnt_previous
+            RETURN
+        END 
+-- End Tests
+
+
+
+-- Load Data into Scale Tables
+DELETE FROM scale.GNM_LoanHist
+FROM scale.GNM_LoanHist slh, #GNM_LoanHist lh
+WHERE 1=1
+    AND slh.loanSeqNum = lh.loanSeqNum
+    AND slh.asOf = lh.asOf
+    AND lh.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND slh.asOf >= (SELECT asOf from #tmp_asOf)
+;
+
+INSERT INTO scale.GNM_LoanHist (loanSeqNum, asOf, currentBalance, schamBalance, cltv, hpa, loanAge, delMonths, removalReasonType, celloDerived)
+SELECT
+    loanSeqNum,
+    asOf,
+    currentBalance,
+    schamBalance,
+    cltv,
+    hpa,
+    loanAge, 
+    delMonths, 
+    removalReasonType,
+    celloDerived
+FROM #GNM_LoanHist
+WHERE marketTicker IN (SELECT tickerName FROM #ticker)
+    AND asOf >= (SELECT asOf from #tmp_asOf)
+;

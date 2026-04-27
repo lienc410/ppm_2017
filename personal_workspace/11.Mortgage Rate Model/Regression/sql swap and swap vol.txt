@@ -1,0 +1,23 @@
+The query for swap 2yr and 10yr:
+
+select m.TickerName, d.asOfDate, d.SeriesNumValue
+    from TimeSeriesMeta m, TimeSeries d
+    where m.TimeSeriesMetaId = d.TimeSeriesMetaId
+    and m.StatusCode = 'ACTIVE'
+	and m.source = 'YIELDBOOK'
+	and d.AsOfDate <= '20131231'
+	and m.TickerName in ('2yr Swap Rate', '10yr Swap Rate')
+	and m.SeriesType = 'Rate'
+	and m.Category = 'SWAPRATE'
+
+The query for swation vol 3y7y:
+
+select m.TickerName, d.asOfDate, m.SeriesType, d.SeriesNumValue
+    from TimeSeriesMeta m, TimeSeries d
+    where m.TimeSeriesMetaId = d.TimeSeriesMetaId
+    and m.StatusCode = 'ACTIVE'
+	and m.source = 'YIELDBOOK'
+	and d.AsOfDate <= '20150202'
+	and m.TickerName = '3y7y_ATM'
+	and m.SeriesType = 'Normalized_Volatility'
+	and m.Category = 'Rate'

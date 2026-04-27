@@ -1,0 +1,426 @@
+-- Ginnie
+-- Pool Level
+-- Part 6 of 6
+-- Script to update the burnout metrics
+-- Updates Burnout
+
+-- Before execute the script, need to set the dates to run for
+DROP TABLE IF EXISTS #tmp_asOf;
+SELECT CAST('#####ASOF#####' AS DATE) asOf INTO #tmp_asOf
+--SELECT CAST ('1994-02-01' AS DATE) asOf INTO #tmp_asOf
+;
+
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT CAST ('2.00' AS varchar(5)) version INTO #tmp_version
+;
+
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+)
+;
+INSERT #ticker SELECT 'GNSF', 'GINNIE_30YR';   -- Ginnie 1
+INSERT #ticker SELECT 'G2SF', 'GINNIE_30YR';   -- Ginnie 2
+INSERT #ticker SELECT 'G2SF-JM', 'GINNIE_30YR';-- Ginnie Jumbo
+COMMIT;
+
+CREATE INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+
+-- Creates the 30 YR FRM Rate (point adjusted)
+DROP TABLE IF EXISTS #Mtg30YrRates_monthly;
+SELECT
+    TickerName as SeriesName,
+    AsOfDate as asOf, 
+    convert(date, dateadd(month, +1, AsOfDate)) as asOf_lag1,
+    convert(date, dateadd(month, +2, AsOfDate)) as asOf_lag2,
+    SeriesNumValue as MtgRate
+INTO #Mtg30YrRates_monthly
+FROM report.TimeSeries ts
+JOIN report.TimeSeriesMeta tsm
+    ON ts.TimeSeriesMetaId = tsm.TimeSeriesMetaId
+WHERE 1=1
+    AND SeriesType = 'MONTHLY_MTG_RATE'
+	AND ModelType = 'ScaleMtgRateModel v1.0'
+;
+COMMIT;
+
+CREATE INDEX series_idx ON #Mtg30YrRates_monthly(SeriesName);
+CREATE INDEX asOf_idx ON #Mtg30YrRates_monthly(asOf);
+CREATE INDEX asOf_lag1_idx ON #Mtg30YrRates_monthly(asOf_lag1);
+CREATE INDEX asOf_lag2_idx ON #Mtg30YrRates_monthly(asOf_lag2);
+
+COMMIT;
+
+-- Create history of asOf dates
+DROP TABLE IF EXISTS #unique_dates;
+SELECT convert(date,dateadd(month, -num, mn.asOf)) as asOf
+INTO #unique_dates
+FROM report.nums,
+(SELECT convert(date, dateadd(day, -datepart(day, getdate()) + 1, getdate())) asOf) mn
+;
+COMMIT;
+
+-- Create Pool Historical Data
+DROP TABLE IF EXISTS #GNM_PoolBurnout;
+SELECT
+    ph.marketTicker,
+    ph.issueId,
+    ph.asOf,
+    ph.originationDate,
+    ph.balance,
+    p.issueDate,
+    ph.origNoteRate, 
+    pe.HARP_eligible,
+    pe.conventional_eligible,
+    pe.fha_eligible,
+    pe.refi_eligible,
+    mr.MtgRate,
+    cast(0 as tinyint) as has_loan_data,
+    spi.origPMI,
+    spi.currPMI,
+    spi.currLLPA,
+    spi.currMIP,
+    cast(NULL as NUMERIC(10,4)) as burnout
+INTO #FHL_PoolBurnout
+FROM scale.FHL_PoolHist ph
+JOIN #ticker tk
+    ON ph.marketTicker = tk.tickerName
+JOIN fhl.sec p
+    ON ph.issueId = p.issueId
+JOIN fhl.Prefix x
+    ON p.prefix = x.prefix
+    AND p.product = x.product
+JOIN scale.FHL_PoolEligibility pe
+    ON ph.issueId = pe.issueId
+    AND ph.asOf = pe.asOf
+JOIN scale.FHL_PoolIncentive spi
+    ON ph.issueId = spi.issueId
+    AND ph.asOf = spi.asOf
+JOIN #Mtg30YrRates_monthly mr
+    ON mr.asOf_lag1 = spi.asOf
+    AND mr.SeriesName = tk.mtgRateSeries
+WHERE 1=1
+    AND ph.asOf >= (select asOf from #tmp_asOf)
+    AND spi.version = (select version from #tmp_version)
+;
+COMMIT;
+
+CREATE INDEX issueId_idx ON #FHL_PoolBurnout(issueId);
+CREATE INDEX asOf_idx ON #FHL_PoolBurnout(asOf);
+COMMIT;
+
+
+------------------------------------------------------------
+-- Step 1: Compute Burnout by Rolling up Loan Data
+------------------------------------------------------------
+DROP TABLE IF EXISTS #FHL_LoanBasedBurnout;
+SELECT
+    pb.issueId,
+    pb.asOf,
+    sum(slb.burnout * slh.balance) / sum(CASE WHEN slb.burnout IS NULL THEN 0.0 ELSE slh.balance END) as wavg_burnout
+INTO #FHL_LoanBasedBurnout
+FROM #FHL_PoolBurnout pb
+JOIN fhl.PIV_Loan cl
+    ON pb.issueId = cl.issueId
+JOIN scale.FHL_Loan sl
+    ON cl.loanSeqNum = sl.loanSeqNum
+JOIN scale.FHL_LoanHist slh
+    ON sl.loanSeqNum = slh.loanSeqNum
+    AND pb.asOf = slh.asOf
+JOIN scale.FHL_LoanBurnout slb
+    ON slh.loanSeqNum = slb.loanSeqNum
+    AND slh.asOf = slb.asOf
+WHERE 1=1
+    AND slb.version = (select version from #tmp_version)
+GROUP BY pb.issueId, pb.asOf
+;
+COMMIT;
+
+---------------------------------------------------------
+-- Step 2: Update Pool Burnout with Loan Level Burnout
+---------------------------------------------------------
+UPDATE #FHL_PoolBurnout pb SET
+    pb.burnout = lb.wavg_burnout
+FROM #FHL_LoanBasedBurnout lb
+WHERE pb.issueId = lb.issueId
+    AND pb.asOf = lb.asOf
+;
+
+UPDATE #FHL_PoolBurnout pb SET has_loan_data = 1
+WHERE pb.issueId IN (SELECT distinct issueId FROM #FHL_LoanBasedBurnout WHERE wavg_burnout IS NOT NULL)
+COMMIT;
+
+---------------------------------------------------------
+-- Step 3: Update Missing Burnout Data (Latest Date)
+---------------------------------------------------------
+DROP TABLE IF EXISTS #FHL_LoanLatestBurnout;
+SELECT
+    pb.issueId,
+    o.max_asOf,
+    pb.burnout as max_burnout
+INTO #FHL_LoanLatestBurnout
+FROM #FHL_PoolBurnout pb
+JOIN (
+        SELECT
+            issueId,
+            max(asOf) as max_asOf
+        FROM #FHL_PoolBurnout
+        WHERE has_loan_data = 1
+            AND burnout IS NOT NULL
+        GROUP BY issueId
+    ) o
+    ON pb.issueId = o.issueId
+    AND pb.asOf = o.max_asOf
+;
+
+DROP TABLE IF EXISTS #FHL_PoolLastDate;
+SELECT
+    issueId,
+    max(asOf) as max_asOf
+INTO #FHL_PoolLastDate
+FROM #FHL_PoolBurnout 
+WHERE has_loan_data = 1
+GROUP BY issueId
+;
+
+UPDATE #FHL_PoolBurnout pb SET burnout = llb.max_burnout 
+    + 100.0 * log(CASE WHEN (origNoteRate + (origPMI / 100.0)) / (MtgRate + (currLLPA / 400.0) + (currPMI / 100.0)) <= 1.0 
+                       THEN 1.0 ELSE (origNoteRate + (origPMI / 100.0)) / (MtgRate + (currLLPA / 400.0) + (currPMI / 100.0)) 
+                  END)
+FROM #FHL_LoanLatestBurnout llb, #FHL_PoolLastDate pld
+WHERE 1=1
+    AND llb.issueId = pld.issueId
+    AND pb.issueId = llb.issueId
+    AND pb.asOf = pld.max_asOf
+    AND llb.max_asOf != pld.max_asOf
+    AND pb.has_loan_data = 1
+    AND pb.burnout IS NULL
+;
+COMMIT;
+
+---------------------------------------------------------------
+-- Step 4: Update Missing Burnout Data (Earliest Dates)
+---------------------------------------------------------------
+DROP TABLE IF EXISTS #FHL_LoanRelativeIncentive;
+SELECT
+    issueId,
+    asOf,
+    (origNoteRate + (origPMI / 100.0)) / (MtgRate + (currLLPA / 400.0) + (currPMI / 100.0)) as relative_incentive
+INTO #FHL_LoanRelativeIncentive
+FROM #FHL_PoolBurnout
+WHERE 1=1
+    AND has_loan_data = 1
+    AND burnout IS NULL
+;
+COMMIT;
+
+------------------------------------------------------------
+-- Step 5: Calculate Burnout from Relative Incentive
+------------------------------------------------------------
+DROP TABLE IF EXISTS #FHL_EarliestLoanBasedBurnout;
+SELECT  
+    t0.issueId,
+    t0.asOf as asOf,
+    sum(log(CASE 
+                    WHEN t1.relative_incentive <= 1.0 THEN 1.0
+                    ELSE t1.relative_incentive
+                END)) as burnout
+INTO #FHL_EarliestLoanBasedBurnout
+FROM #FHL_LoanRelativeIncentive t0
+JOIN #FHL_LoanRelativeIncentive t1
+    ON t0.issueId = t1.issueId
+    AND t0.asOf >= t1.asOf
+WHERE 1=1
+GROUP BY t0.issueId, t0.asOf
+;
+COMMIT;
+
+------------------------------------------------------------
+-- Step 6: Update Pool Burnout with Earliest Loan Burnout
+------------------------------------------------------------
+UPDATE #FHL_PoolBurnout pb SET
+    pb.burnout = 100.0 * elb.burnout
+FROM #FHL_EarliestLoanBasedBurnout elb
+WHERE pb.issueId = elb.issueId
+    AND pb.asOf = elb.asOf
+    AND pb.burnout IS NULL
+;
+COMMIT;
+
+
+----------------------------------------------------------------------------------
+-- Step 1: Calculate Relative Incentive for Pools (w/ no burnout from loans)
+----------------------------------------------------------------------------------
+DROP TABLE IF EXISTS #FHL_PoolRelativeIncentive;
+SELECT
+    issueId,
+    asOf,
+    (origNoteRate + (origPMI / 100.0)) / (MtgRate + (currLLPA / 400.0) + (currPMI / 100.0)) as relative_incentive
+INTO #FHL_PoolRelativeIncentive
+FROM #FHL_PoolBurnout
+WHERE 1=1
+    AND burnout IS NULL
+    AND has_loan_data = 0
+;
+COMMIT;
+
+CREATE INDEX issueId_idx ON #FHL_PoolRelativeIncentive(issueId);
+CREATE INDEX asOf_idx ON #FHL_PoolRelativeIncentive(asOf);
+COMMIT;
+
+------------------------------------------------------------
+-- Step 2: Calculate Burnout from Relative Incentive
+------------------------------------------------------------
+DROP TABLE IF EXISTS #FHL_PoolBasedBurnout;
+SELECT  
+    t0.issueId,
+    t0.asOf as asOf,
+    sum(log(CASE 
+                    WHEN t1.relative_incentive <= 1.0 THEN 1.0
+                    ELSE t1.relative_incentive
+                END)) as burnout
+INTO #FHL_PoolBasedBurnout
+FROM #FHL_PoolRelativeIncentive t0
+JOIN #FHL_PoolRelativeIncentive t1
+    ON t0.issueId = t1.issueId
+    AND t0.asOf >= t1.asOf
+WHERE 1=1
+GROUP BY t0.issueId, t0.asOf
+;
+COMMIT;
+
+------------------------------------------------------------
+-- Step 3: Calculate Burnout for Missing Early Dates
+------------------------------------------------------------
+DROP TABLE IF EXISTS #FHL_Earliest;
+SELECT
+    pbb.issueId,
+    o.first_asOf,
+    pb.issueDate as originationDate,
+    pb.origNoteRate,
+    pb.marketTicker,
+    cast(0.0 as numeric(10, 4)) as burnout
+INTO #FHL_Earliest
+FROM #FHL_PoolBasedBurnout pbb
+JOIN #FHL_PoolBurnout pb
+    ON pbb.issueId = pb.issueId
+    AND pbb.asOf = pb.asOf 
+JOIN (
+        SELECT
+            issueId,
+            min(asOf) as first_asOf
+        FROM #FHL_PoolBasedBurnout
+        GROUP BY issueId
+    ) o
+    ON pb.issueId = o.issueId
+    AND pb.asOf = o.first_asOf
+;
+COMMIT;
+
+-- Create missing periods from origination date to first asOf date
+DROP TABLE IF EXISTS #FHL_MissingHist;
+SELECT 
+    e.issueId, 
+    t.asOf, 
+    e.origNoteRate,
+    mtg.MtgRate
+INTO #FHL_MissingHist
+FROM #FHL_Earliest e
+JOIN #unique_dates t
+    ON t.asOf > e.originationDate
+    AND t.asOf <= e.first_asOf
+JOIN #ticker tk
+    ON e.marketTicker = tk.tickerName
+JOIN #Mtg30YrRates_monthly mtg
+    ON mtg.asOf_lag1 = t.asOf
+    AND mtg.SeriesName = tk.mtgRateSeries
+;
+COMMIT;
+
+CREATE INDEX issueId_idx ON #FHL_MissingHist(issueId);
+CREATE INDEX asOf_idx ON #FHL_MissingHist(asOf);
+COMMIT;
+
+-- Historical Burnout computation
+-- Simple Calculation involving MortgageRate and Note Rate
+DROP TABLE IF EXISTS #FHL_PoolBurnoutHist;
+SELECT 
+    t0.issueId,
+    t0.asOf,
+    sum(log(CASE WHEN t1.origNoteRate / t1.MtgRate <= 1 THEN 1 ELSE t1.origNoteRate / t1.MtgRate END)) as burnout
+INTO #FHL_PoolBurnoutHist
+FROM #FHL_MissingHist t0
+JOIN #FHL_MissingHist t1
+    ON t0.issueId = t1.issueId
+    AND t0.asOf >= t1.asOf
+GROUP BY t0.issueId, t0.asOf
+;
+COMMIT;
+
+-- Update Burnout for first instance
+UPDATE #FHL_Earliest e SET e.burnout = bh.burnout
+FROM #FHL_PoolBurnoutHist bh
+WHERE bh.issueId = e.issueId
+    AND bh.asOf = e.first_asOf;
+COMMIT;
+
+-- Update Burnout with Historical Burnout
+UPDATE #FHL_PoolBasedBurnout b SET b.burnout = b.burnout + e.burnout
+FROM #FHL_Earliest e
+WHERE b.issueId = e.issueId
+;
+COMMIT;
+
+-- Update FHL_PoolBurnout Table
+UPDATE #FHL_PoolBurnout pb SET pb.burnout = 100.0 * pbb.burnout
+FROM #FHL_PoolBasedBurnout pbb
+WHERE pb.issueId = pbb.issueId
+    AND pb.asOf = pbb.asOf
+    AND pb.burnout IS NULL
+    AND pb.has_loan_data = 0
+;
+COMMIT;
+
+
+
+-- Tests
+
+-- Bad Data Tests
+-- No nulls for: burnout
+SELECT count(1) FROM #FHL_PoolBurnout WHERE burnout IS NULL OR burnout < 0.0 OR burnout > 25000;
+
+-- Time Series Tests
+-- History for: burnout
+SELECT marketTicker, originationDate, count(1), sum(balance), sum(balance * burnout) / sum(CASE WHEN burnout IS NULL THEN 0.0 ELSE balance END) as wavg_burnout FROM #FHL_PoolBurnout GROUP BY marketTicker, originationDate ORDER BY originationDate
+SELECT marketTicker, asOf, count(1), sum(balance), sum(balance * burnout) / sum(CASE WHEN burnout IS NULL THEN 0.0 ELSE balance END) as wavg_burnout FROM #FHL_PoolBurnout GROUP BY marketTicker, asOf ORDER BY asOf
+
+
+
+-- Load Data into Scale Burnout Table
+DELETE FROM scale.FHL_PoolBurnout
+FROM scale.FHL_PoolBurnout spb, #FHL_PoolBurnout pb
+WHERE 1=1
+    AND spb.issueId = pb.issueId
+    AND spb.asOf = pb.asOf
+    AND pb.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND version = (SELECT version from #tmp_version)
+;
+
+DECLARE @version varchar(5)
+SELECT @version = (select * from #tmp_version)
+
+INSERT INTO scale.FHL_PoolBurnout (issueId, asOf, version, burnout)
+SELECT
+    issueId,
+    asOf,
+    @version,
+    burnout
+FROM #FHL_PoolBurnout
+WHERE marketTicker IN (SELECT tickerName FROM #ticker)
+; 
+

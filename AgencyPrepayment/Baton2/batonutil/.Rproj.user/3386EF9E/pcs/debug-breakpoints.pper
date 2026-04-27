@@ -1,0 +1,36 @@
+{
+    "debugBreakpointsState" : {
+        "breakpoints" : [
+            {
+                "editor_line_number" : 57,
+                "editor_state" : 1,
+                "function_name" : "trackr",
+                "function_steps" : "16",
+                "id" : 3,
+                "is_package_breakpoint" : false,
+                "is_pending_debug_completion" : true,
+                "line_number" : 57,
+                "needs_updated_steps" : false,
+                "package_name" : "",
+                "path" : "C:/Cello/cello-it-dev/trunk/Research/AgencyPrepayment/Baton2/batonutil/R/trackr.R",
+                "state" : 1,
+                "type" : 0
+            },
+            {
+                "editor_line_number" : 103,
+                "editor_state" : 1,
+                "function_name" : "ModelProj",
+                "function_steps" : "4,4,9,4,21",
+                "id" : 13,
+                "is_package_breakpoint" : true,
+                "is_pending_debug_completion" : false,
+                "line_number" : 103,
+                "needs_updated_steps" : false,
+                "package_name" : "batonutil",
+                "path" : "C:/Cello/cello-it-dev/trunk/Research/AgencyPrepayment/Baton2/batonutil/R/ModelProjections.R",
+                "state" : 1,
+                "type" : 0
+            }
+        ]
+    }
+}

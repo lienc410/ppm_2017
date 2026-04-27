@@ -1,0 +1,252 @@
+#include "stdafx.h"
+
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>	
+#include <iostream>
+
+using namespace std;
+
+/*
+#include <gsl/gsl_sf_gamma.h>
+#include <gsl/gsl_sf_expint.h>
+
+// gsl_sf_gamma_inc - upper incomplete gamma function (uigf)
+double g1(double Y, double x) {
+
+	if (Y == 0) 
+		return exp(-x);
+	else if (Y > 0 && Y < 1) 
+		return gsl_sf_gamma_inc(1-Y, x);
+	else{
+		printf("Error in g1(%f, %f)\n", Y, x);
+		exit(1);
+	}
+}
+
+double g2(double Y, double x) {
+
+	if (Y == 0)
+		return gsl_sf_expint_E1(x);
+	else if (Y > 0 && Y < 1)
+		return (exp(-x) * pow(x, -Y) - gsl_sf_gamma_inc(1-Y, x)) / Y;
+	else {
+		printf("Error in g2(%f, %f)\n", Y, x);
+		exit(2);
+	}
+}
+
+int main(int, char**) 
+{
+	double Y = 0.3, x = 0.9;
+	double g1out = g1(Y, x);
+	double g2out = g2(Y, x);
+	printf("g1(%f,%f) = %f, g2(%f,%f) = %f\n", Y, x, g1out, Y, x, g2out);
+	Y = 3.0;
+	g1out = g1(Y, x);
+	return 0;
+}
+*/
+///////////////////////////////////////////
+
+double g1(double Y, double x) {
+
+	if (Y == 0) 
+		return exp(-x);
+
+}
+
+double g2(double Y, double x) {
+
+	if (Y == 0)
+		return x;
+	
+}
+
+class PIDEsolver{
+	double S0, K, r, q, T, vol, eta, theta, Y;
+	int M, N;
+	double **w;
+	double lambdaP, lambdaN, Bl, Bu;
+	double *gridX, *gridT;
+	double dx, dt;
+	//double g11, g12, g21, g22, g23, g24;
+	double alpha;
+
+public:
+	PIDEsolver();
+	int precalculate();		//pre-calculate the constate parameters and build boundury conditions
+	double sigmasqr(double e);
+	double omiga(double e);
+	double IntegralCalculate(int i, int j);
+	double DifferenceEquation();
+	~PIDEsolver();
+
+};
+
+PIDEsolver::PIDEsolver(){
+	S0 = 200; K = 200; r = 0.0025; q = 0.015; T = 0.5; vol = 0.3; eta = 0.4; theta = -0.3; Y = 0.5;
+	M = 100; N = 80;
+	alpha = Y;			//***need to update
+
+	//initialize the grid boundary ***need to update the max x, max t
+	gridX = new double [M];
+	gridT = new double [N];
+
+	//initialize the grid  
+	w = new double* [M];
+	for (int i2=0; i2<M; i2++){
+		w[i2] = new double [N];
+	}
+
+	int result1 = precalculate();
+}
+
+double PIDEsolver::sigmasqr(double e){
+	double res = 1/eta * pow(lambdaP, Y-2)*(-pow((lambdaP*e), 1-Y) * exp(-lambdaP*e) + (1-Y)*(g1(alpha, 0) - g1(alpha, lambdaP*e)))
+				+ 1/eta * pow(lambdaN, Y-2)*(-pow((lambdaN*e), 1-Y) * exp(-lambdaN*e) + (1-Y)*(g1(alpha, 0) - g1(alpha, lambdaN*e)));
+	return res;
+}
+
+double PIDEsolver::omiga(double e){
+	double res = pow(lambdaP, Y)/eta * g2(alpha, lambdaP*e) - pow(lambdaP - 1, Y)/eta *g2(alpha, (lambdaP-1)*e) 
+				+ pow(lambdaN, Y)/eta * g2(alpha, lambdaN*e) - pow(lambdaN + 1, Y)/eta *g2(alpha, (lambdaN+1)*e);
+	return res;
+}
+
+int PIDEsolver::precalculate(){
+	double tempVal;
+
+	lambdaP = pow((pow(theta,2)/pow(vol,4) + 2/(pow(vol,2)*eta)), 0.5) - theta/pow(vol,2);
+	lambdaN = pow((pow(theta,2)/pow(vol,4) + 2/(pow(vol,2)*eta)), 0.5) + theta/pow(vol,2);
+
+	//initialize the grid boundary ***need to update the max x, max t	
+	gridX[M/2] = log(S0);
+	for(int i1=0; i1<M; i1++){
+		gridX[i1] = gridX[M/2] / (M/2) * i1;
+	}
+
+	gridT[N] = T;
+	for(int i3 = 0; i3 < N; i3++){
+		gridT[i3] = gridT[N]/N *i3;
+	}
+
+	dx = gridX[M]/M;
+	dt = T / N;
+
+	//set up initial condition
+	for(int i4 = 0; i4<M; i4++){
+		tempVal = exp(gridX[i4]) - K;
+		
+		if(tempVal >= 0)
+			w[i4][0] = tempVal;
+		else 
+			w[i4][0] = 0;
+	}
+
+	//set up boundary conditions
+	for(int i5 = 0; i5<M; i5++){
+		w[N/2][i5] = 0;
+		w[N][i5] = exp(gridX[N]-q*i5) - K*exp(-r*i5);
+	}
+
+	//Bl and Bu
+	Bl = sigmasqr(dx)*dt/(2*pow(dx,2)) - (r-q+omiga(dx)-0.5*sigmasqr(dx))*dt/(2*dx);
+	Bu = sigmasqr(dx)*dt/(2*pow(dx,2)) + (r-q+omiga(dx)-0.5*sigmasqr(dx))*dt/(2*dx);
+
+	return 0;
+}
+
+PIDEsolver::~PIDEsolver(){
+	
+	for (int i1=0; i1<M; i1++)
+		delete [] w[i1];
+	delete [] w;
+
+	delete [] gridT;
+	delete [] gridX;
+}
+
+double PIDEsolver::IntegralCalculate(int i, int j){
+	double intg1, intg2, intg3, intg4, integral;
+	double temp1 = 0.0, temp2 = 0.0;
+
+
+	//calculate the integral part 2
+	for(int k = 1; k<i-1; k++)
+	{
+		temp1 = temp1 + pow(lambdaN, Y)/eta * (w[i-k][j] - w[i][j] - k*(w[i-k-1][j] - w[i-k][j])) * (g2(alpha,k*lambdaN*dx) - g2(alpha, (k+1)*lambdaN*dx));
+		temp2 = (w[i-k-1][j] - w[i-k][j]) / pow(lambdaN, 1-Y) * (g1(alpha, k*dx*lambdaN) - g1(alpha, (k+1)*dx*lambdaN));
+	}
+	intg2 = temp1 + temp2;
+
+	//calculate the integral part 3
+	temp1 = 0.0; temp2 = 0.0;
+
+	for(int k = 1; k<N-i-1; k++)
+	{
+		temp1 = temp1 + pow(lambdaP, Y)/eta * (w[i+k][j] - w[i][j] - k*(w[i+k+1][j] - w[i+k][j])) * (g2(alpha,k*lambdaP*dx) - g2(alpha, (k+1)*lambdaP*dx));
+		temp2 = (w[i+k+1][j] - w[i+k][j]) / pow(lambdaP, 1-Y) * (g1(alpha, k*dx*lambdaP) - g1(alpha, (k+1)*dx*lambdaP));
+	}
+	intg3 = temp1 + temp2;
+
+	//calculate the integral part 1
+	intg1 = pow(lambdaN, Y)/eta *(K-w[i][j]) * g2(alpha, i*dx*lambdaN) - pow((lambdaN + 1), Y)/eta * exp(gridX[i]) * g2(alpha, i*dx*(lambdaN+1));
+
+	//calculate the integral part 1
+	intg4 = -pow(lambdaP,Y)/eta * w[i][j] * g2(alpha, (N-i)*dx*lambdaP);
+
+	integral = intg1 + intg2 + + intg3 + intg4;
+
+	return integral;
+}
+
+double PIDEsolver::DifferenceEquation(){
+	double *vecl = new double [M];
+	double *vecd = new double [M];
+	double *vecu = new double [M];
+
+	double *R = new double [M];
+
+	//matrix inicialization
+	for(int i2=0; i2<M; i2++){
+		if(i2 == 0) vecl[i2] = 0;
+		else		vecl[i2] = -Bl;
+
+		vecd[i2] = 1 + r*dt + Bl + Bu + dt/eta*(pow(lambdaN,Y) * g2(alpha, i2*dx*lambdaN) + pow(lambdaP,Y) * g2(alpha, (M-i2)*dx*lambdaP));
+		
+		if (i2 == M-1)	vecu[i2] = 0;
+		else	vecu[i2] = -Bu;
+	}
+
+	//transfer the variable matrix into upper triangular matrix
+	for(int i3=1; i3<M; i3++){
+		vecd[i3] = vecd[i3] - vecl[i3]/vecd[i3-1]*vecu[i3-1];
+	}
+
+	
+	for(int j1=0; j1<N; j1++){
+		for(int i1 = N; i1>0; i1--){
+			R[i1] = IntegralCalculate(i1,j1);
+
+			w[i1][j1+1] = (w[i1][j1] + (dt * R[i1] / eta) - vecu[i1]*w[i1+1][j1+1]) / vecd[i1];
+
+		}
+	}
+
+	delete [] vecl, vecd, vecu, R;
+
+	return w[M/2][N];
+}
+
+
+
+
+void main(){
+	PIDEsolver case2;
+	double result;
+
+	result = case2.DifferenceEquation();
+
+	cout<< "The PIDE result is: "<<result<<endl;
+}

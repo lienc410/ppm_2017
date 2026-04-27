@@ -1,0 +1,31 @@
+50.28.74.235\PIV-MSSQL,1433
+report
+
+50.28.74.237\PIV-MSSQL,1433
+dev
+
+gm4SJDw4
+ufmg71dkiw
+
+
+Query For Current Coupon Raw Input (TBA prices)
+
+select d.AsOfDate, m.TickerName, m.SeriesType, d.SeriesNumValue, d.SeriesCharValue,d.InTime
+	from TimeSeriesMeta as m,TimeSeries as d
+    where m.TimeSeriesMetaId = d.TimeSeriesMetaId
+    and d.AsOfDate = '20141112'
+	and m.source = 'CITI' 
+	and (m.TickerName like 'GN%' OR m.TickerName like 'FN%')
+	and m.TickerName not like '%GEN'
+	order by d.AsOfDate, m.TickerName
+
+
+
+select d.AsOfDate, m.TickerName, d.SeriesNumValue
+ from TimeSeriesMeta as m,TimeSeries as d
+               where m.TimeSeriesMetaId = d.TimeSeriesMetaId
+               and d.AsOfDate <= '20141203'
+				and m.source = 'PIV' 
+				and m.TickerName like'%CMM%' 
+				and m.category = 'MTG' 
+				order by d.AsOfDate

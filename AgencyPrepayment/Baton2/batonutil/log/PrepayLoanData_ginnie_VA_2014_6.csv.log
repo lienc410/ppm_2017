@@ -1,0 +1,127 @@
+WARNING: unknown option '--4.70'
+
+WARNING: unknown option '--GINNIE'
+
+WARNING: unknown option '--PrepayLoanData_ginnie_VA_2014_6.csv'
+
+WARNING: unknown option '--H:/tempExtract/PrepayLoanData/GINNIE/Model_4.70/20190401/model_input_split/'
+
+WARNING: unknown option '--H:/tempExtract/PrepayLoanData/GINNIE/Model_4.70/20190401/model_output/'
+
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 248598 13.3     608334 32.5   406898 21.8
+Vcells 401280  3.1    8388608 64.0  1604079 12.3
+Loading required package: data.table
+Loading required package: lubridate
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:data.table':
+
+    hour, isoweek, mday, minute, month, quarter, second, wday, week,
+    yday, year
+
+The following object is masked from 'package:base':
+
+    date
+
+Loading required package: jsonlite
+Loading required package: dplyr
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:lubridate':
+
+    intersect, setdiff, union
+
+The following objects are masked from 'package:data.table':
+
+    between, first, last
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+AddMonths.R :
+AggregateData.R :
+AggregatePrepayData.R :
+BuildSpline.R :
+CalculateEQLODMultiplier.R :
+CalculateNewBurnout.R :
+CalculateRefiCosts.R :
+CheckMontone.R :
+config.R :
+CreateCombJSON.R :
+glf.R :
+ImportData.R :
+lis.R :
+main.R :
+ManageNAs.R :
+ModelErrorStats.R :
+ModelEstimator.R :
+ModelProjections.R :
+ModelProjectionsDriver.R :
+ModelSplineDiff.R :
+ParseModelJSON.R :
+PredictDflt.R :
+PredictDflt_2.R :
+PredictDflt_conv.R :
+PredictSubmodel_4_50_interpolation.R :
+PredictSubmodel_4_60_interpolation.R :
+PredictSubmodel_4_60_interpolation_VA.R :
+PredictSubmodel_4_70_interpolation.R :
+PredictSubmodel_4_70_interpolation_VA.R :
+PrepayComponents.R :
+PrepayConversion.R :
+SeasonalAdjustment.R :
+SplineToGLF.R :
+TidyData.R :
+trackr.R :
+TransformData.R :
+tuner.R :
+Visualize.R :
+Model.version:  v4.70 
+input.file:  PrepayLoanData_ginnie_VA_2014_6.csv 
+output.file PrepayLoanData_ginnie_VA_2014_6.out 
+data.input H:/tempExtract/PrepayLoanData/GINNIE/Model_4.70/20190401/model_input_split//PrepayLoanData_ginnie_VA_2014_6.csv 
+data.output H:/tempExtract/PrepayLoanData/GINNIE/Model_4.70/20190401/model_output//PrepayLoanData_ginnie_VA_2014_6.out 
+[1] "using GNMandolin_v4.70.json"
+input data: Start 
+Using VA Model 
+input data: Done 
+Cleaning data: Start 
+Cleaning data: Done 
+Calculate Curtailment: Start 
+Curtailment SMM set to NULL!! 
+Calculate Default: Start 
+running d0 mdl 
+d0  0.3231773 
+running d30 mdl 
+d30  0.3184907 
+running d60 mdl 
+d60  0.3145832 
+running cure mdl
+running buyout mdl
+buyout  0.01510445 
+Calculate Default: Done 
+Calculate Cashout: Start 
+Cashout SMM set to NULL!! 
+Calculate Turnover: Start 
+Turnover SMM set to NULL!! 
+Calculate Refinance: Start 
+Refinance SMM set to NULL!! 
+Calculate Credit Curing: Start 
+Credit Curing SMM set to NULL!! 
+Calculate Fixed To ARM: Start 
+Fixed To Arm SMM set to NULL!! 
+Calculate Model SMM: Start 
+Total SMM set to NULL!! 
+Storing Results: Start 
+Storing Results: Done 
+> proc.time()
+   user  system elapsed 
+  91.75   21.39  141.23 

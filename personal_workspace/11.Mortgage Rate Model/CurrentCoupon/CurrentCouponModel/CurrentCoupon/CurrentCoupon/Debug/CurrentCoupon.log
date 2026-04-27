@@ -1,0 +1,49 @@
+﻿Build started 12/4/2014 2:50:42 PM.
+     1>Project "C:\Rwd\MortgageRateModel\CurrentCoupon\CurrentCouponModel\CurrentCoupon\CurrentCoupon\CurrentCoupon.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _SCL_SECURE_NO_WARNINGS /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt CurrentCoupon.cpp
+         CurrentCoupon.cpp
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(106): warning C4244: 'argument' : conversion from 'google::protobuf::int64' to 'int', possible loss of data
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(136): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(151): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(195): warning C4101: 'p' : unreferenced local variable
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(210): warning C4101: 'p' : unreferenced local variable
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(236): warning C4101: 'daysToBack' : unreferenced local variable
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(236): warning C4101: 'daysToFront' : unreferenced local variable
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(299): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(301): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(315): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(316): warning C4244: 'argument' : conversion from '__int64' to 'int', possible loss of data
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(291): warning C4101: 'daysToSettle' : unreferenced local variable
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(344): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(363): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(368): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(382): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(392): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(421): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(328): warning C4101: 'minCoupon' : unreferenced local variable
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(328): warning C4101: 'maxCoupon' : unreferenced local variable
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(447): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(462): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(428): warning C4101: 'day' : unreferenced local variable
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(428): warning C4101: 'month' : unreferenced local variable
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(432): warning C4101: 'daysToSettle' : unreferenced local variable
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(428): warning C4101: 'year' : unreferenced local variable
+     1>c:\rwd\mortgageratemodel\currentcoupon\currentcouponmodel\currentcoupon\currentcoupon\currentcoupon.cpp(531): warning C4018: '<' : signed/unsigned mismatch
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Rwd\MortgageRateModel\CurrentCoupon\CurrentCouponModel\CurrentCoupon\Debug\CurrentCoupon.exe" /INCREMENTAL /NOLOGO "C:\PIV\PIV-it-dev\trunk\External\protobuf\2.5.0\lib\Win32\Debug\libprotobuf.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Rwd\MortgageRateModel\CurrentCoupon\CurrentCouponModel\CurrentCoupon\Debug\CurrentCoupon.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Rwd\MortgageRateModel\CurrentCoupon\CurrentCouponModel\CurrentCoupon\Debug\CurrentCoupon.lib" /MACHINE:X86 Debug\CurrentCoupon.obj
+         Debug\CurrentCoupon.pb.obj
+         Debug\MyDate.obj
+         Debug\Date.obj
+         Debug\DateConvention.obj
+         Debug\HolidayList.obj
+         Debug\Tenor.obj
+         Debug\Exception.obj
+         Debug\SimpleUtils.obj
+         Debug\stdafx.obj
+         CurrentCoupon.vcxproj -> C:\Rwd\MortgageRateModel\CurrentCoupon\CurrentCouponModel\CurrentCoupon\Debug\CurrentCoupon.exe
+     1>Done Building Project "C:\Rwd\MortgageRateModel\CurrentCoupon\CurrentCouponModel\CurrentCoupon\CurrentCoupon\CurrentCoupon.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.69

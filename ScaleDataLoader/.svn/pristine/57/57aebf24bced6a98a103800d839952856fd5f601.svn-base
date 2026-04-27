@@ -1,0 +1,195 @@
+-- Freddie Conventional
+-- Loan Level
+-- Part 6 of 7
+-- Script to update HARPed Percentage (Step 2)
+-- Updates percentHARPed
+
+
+-- Before execute the script, need to set the appType to run for
+DROP TABLE IF EXISTS #tmp_appType;
+SELECT '#####APPTYPE#####' AS appType INTO #tmp_appType
+--SELECT '9.98' AS appType INTO #tmp_appType
+;
+
+
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20)
+)
+;
+INSERT #ticker SELECT 'FGLMC';   --30 Yr Conventional Freddie
+INSERT #ticker SELECT 'FGT6';           --30 Yr Jumbo Freddie
+INSERT #ticker SELECT 'FGU6';    --30 Yr CQ Freddie High LTV[105-125]
+INSERT #ticker SELECT 'FGU9';    --30 Yr CR Freddie High LTV[125-150]
+--INSERT #ticker SELECT 'FGTW';    --20 Yr Conventional Freddie
+--INSERT #ticker SELECT 'FGCI';    --15 Yr Conventional Freddie
+COMMIT;
+
+CREATE LF INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT mvc.tickerName, mvc.appType, mvc.incentiveVersion_LL as incentiveVersion, mvc.originationVersion_LL as originationVersion
+INTO #tmp_version
+FROM scale.ModelVersionConfig mvc
+JOIN #tmp_appType tat
+     ON mvc.appType = tat.appType
+JOIN #ticker tk
+     ON mvc.tickerName = tk.tickerName
+;
+COMMIT;
+
+-----------------------------------------------------------------------
+-- 1. Create index for HARP eligible percentage
+--    HARP eligible ratio = (pre-HARP loans with incentive >= 50) / (all loans with incentive >= 50)
+-----------------------------------------------------------------------    
+DROP TABLE IF EXISTS #FHL_pctPreHARP;
+SELECT 
+    i.asOf,
+    l.marketTicker,
+    refinancible = sum(CASE WHEN i.conventional_refi_incentive >= 50.0 THEN clh.currentRpb ELSE 0.0 END),
+    pre_refinancible = sum(CASE WHEN i.conventional_refi_incentive >= 50.0 AND l.originationDate <= '2009-06-01' AND i.asof >= '2009-06-01' THEN clh.currentRpb ELSE 0.0 END),
+    pctPreHARP = CASE WHEN refinancible = 0.0 THEN 0.0 ELSE pre_refinancible / refinancible END
+INTO #FHL_pctPreHARP
+FROM scale.FHL_Loan_Dev l
+JOIN fhl.Cello_LoanHist clh
+    ON l.loanSeqNum = clh.loanSeqNum
+JOIN scale.FHL_LoanIncentive i
+    ON clh.loanSeqNum = i.loanSeqNum
+    AND clh.asOf = i.asOf
+WHERE 1=1
+    AND i.version  IN (select  incentiveVersion from #tmp_version)
+    AND l.version  IN (select  originationVersion from #tmp_version)
+    AND l.marketTicker in ('FGLMC', 'FGTW', 'FGCI')
+GROUP BY i.asOf, l.marketTicker
+;
+COMMIT;
+
+-----------------------------------------------------------------------
+-- 2. Create tmp table for monthly average and standard deviation 
+--    Prepare for the z-score calculation
+-----------------------------------------------------------------------  
+-- Regression based on % diff of the monthly avg
+DROP TABLE IF EXISTS #FHL_statistics;
+SELECT
+    sl.originationDate, 
+    sl.marketTicker,    
+	avg(sl.origFICO) as avg_FICO,
+    avg(sl.origLTV) as avg_OLTV,
+    avg(sl.origNoteRate) as avg_origNoteRate,
+    avg(sl.origLoanSize) as avg_origLoanSize,
+    stddev(sl.origFICO) as std_FICO,
+    stddev(sl.origLTV) as std_OLTV,
+    stddev(sl.origNoteRate) as std_origNoteRate,
+    stddev(sl.origLoanSize) as std_origLoanSize
+INTO #FHL_statistics
+FROM fhl.Cello_Loan cl
+JOIN scale.FHL_Loan_Dev sl
+    ON cl.loanSeqNum = sl.loanSeqNum
+WHERE sl.originationDate > '2009-06-01'
+    AND sl.marketticker in ('FGLMC', 'FGTW', 'FGCI')
+    AND sl.origLTV <=80
+    AND sl.origFICO > 300
+    AND sl.origNoteRate > 0
+    AND sl.origLoanSize > 0
+    AND sl.origLTV > 0
+    AND cl.loanpurposeType = 'RE-FI-NCO'
+    AND sl.version IN (select originationVersion from #tmp_version)
+    AND cl.coupon > 0
+GROUP BY sl.originationDate, sl.marketTicker
+;
+COMMIT;
+
+
+-----------------------------------------------------------------------
+-- 3. Create percentHARPed estimate from regression
+----------------------------------------------------------------------- 
+DROP TABLE IF EXISTS #FHL_regression;
+SELECT 
+    loanseqNum,
+    FICO_zs = (l.origFICO - s.avg_FICO) / s.std_FICO, 
+    SATO_zs = (l.origNoteRate - avg_origNoteRate) / std_origNoteRate, 
+    loanSize_zs = (l.origLoanSize - avg_origLoanSize) / std_origLoanSize,
+    h.pctPreHARP,
+    pctHARPed = exp(rg.Intercept + rg.cs * FICO_zs + rg.SATO * SATO_zs + rg.LoanSize * loanSize_zs + rg.RefiPct * 0.0 + rg.PreHARPPct * h.pctPreHARP) 
+                / (1 + exp(rg.Intercept + rg.cs * FICO_zs + rg.SATO * SATO_zs + rg.LoanSize * loanSize_zs + rg.RefiPct * 0.0 + rg.PreHARPPct * h.pctPreHARP))
+INTO #FHL_regression
+FROM scale.FHL_Loan_dev l
+JOIN #FHL_statistics s
+    ON l.originationDate = s.originationDate
+    AND l.marketTicker = s.marketTicker
+JOIN #FHL_pctPreHARP h
+    ON l.originationDate = h.asOf
+    AND l.marketTicker = h.marketTicker
+, report.RegressionParameter_HARPIdentify rg
+WHERE 1=1
+    AND l.marketticker in ('FGLMC', 'FGTW', 'FGCI')
+    AND rg.status = 'ACTIVE'
+    AND rg.Agency = 'FHL'
+    AND l.version IN (select originationVersion from #tmp_version)
+    AND l.percentHARPed IS NULL
+;
+COMMIT;
+
+
+
+
+-- Tests
+
+--SELECT marketTicker, originationDate, count(1), sum(origLoanSize), sum(origLoanSize * percentHARPed) / sum(origLoanSize) as wavg_pct_harped FROM scale.FHL_Loan GROUP BY marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+--SELECT l.marketTicker, asOf, count(1), sum(balance), sum(balance * percentHARPed) / sum(balance) as wavg_pct_harped FROM scale.FHL_Loan l JOIN fhl.Cello_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum GROUP BY l.marketTicker, asOf HAVING count(1) > 10 ORDER BY asOf
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have pctHARPed populated
+----------------------------------------------------------------------------------------------
+        declare   @cnt int
+        SELECT
+            @cnt =  count(1)
+        FROM #FHL_regression WHERE pctHARPed IS NULL
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of FHL Loans with NULL Value for HARPed precentage: %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if pctHARPed is in valid range
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM
+           #FHL_regression
+        WHERE
+            pctHARPed < 0.0 OR pctHARPed > 1
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'Number of FHL Loans with INVALID Value for HARPed precentage: %1!', @cnt
+            RETURN
+        END
+
+-- End Tests
+
+
+   
+
+-- Update Scale Loan Table
+-- Only update percentHARPed for NULL values
+UPDATE scale.FHL_Loan_Dev l
+SET l.percentHARPed = r.pctHARPed * 100.0
+FROM #FHL_regression r
+WHERE l.loanSeqNum = r.loanSeqNum
+    AND l.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND l.percentHARPed IS NULL
+    AND version in (select originationVersion from  #tmp_version)
+;
+
+UPDATE scale.FNM_Loan_Dev 
+SET percentHARPed = 0
+WHERE 1=1
+    AND marketTicker IN (SELECT tickerName FROM #ticker)
+    AND version in (select originationVersion from #tmp_version)
+	AND percentHARPed IS NULL;
+COMMIT;

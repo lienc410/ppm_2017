@@ -1,0 +1,155 @@
+Prod:
+"lomedia_incentive": [
+        {
+          "Knots": -200,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -50,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 0.1712
+        },
+        {
+          "Knots": 25,
+          "KnotValues": 0.4134
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 0.6814
+        },
+        {
+          "Knots": 75,
+          "KnotValues": 1.4035
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.6235
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.6235
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1.6235
+        }
+      ],
+      "himedia_incentive": [
+        {
+          "Knots": -200,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -50,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 0.1712
+        },
+        {
+          "Knots": 25,
+          "KnotValues": 0.4134
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 0.6814
+        },
+        {
+          "Knots": 75,
+          "KnotValues": 1.4035
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 1.6235
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.6235
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1.6235
+        }
+      ],
+
+Dev:
+      "lomedia_incentive": [
+        {
+          "Knots": -200,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -50,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -16,
+          "KnotValues": 0.1712
+        },
+        {
+          "Knots": 9,
+          "KnotValues": 0.4134
+        },
+        {
+          "Knots": 34,
+          "KnotValues": 0.6814
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.4035
+        },
+        {
+          "Knots": 85,
+          "KnotValues": 1.6235
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.6235
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1.6235
+        }
+      ],
+      "himedia_incentive": [
+        {
+          "Knots": -200,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -50,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -16,
+          "KnotValues": 0.1712
+        },
+        {
+          "Knots": 9,
+          "KnotValues": 0.4134
+        },
+        {
+          "Knots": 34,
+          "KnotValues": 0.6814
+        },
+        {
+          "Knots": 60,
+          "KnotValues": 1.4035
+        },
+        {
+          "Knots": 85,
+          "KnotValues": 1.6235
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 1.6235
+        },
+        {
+          "Knots": 300,
+          "KnotValues": 1.6235
+        }
+      ],

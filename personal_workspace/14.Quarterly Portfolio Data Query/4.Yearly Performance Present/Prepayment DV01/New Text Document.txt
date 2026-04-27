@@ -1,0 +1,7 @@
+Prepayment DV01 
+For PIV Portfolio
+
+make a copy of 
+S:\IT\Production\Monthly Reports\Portfolio Risk Exposure\2015-12\PIV Portfolio Risk Exposure Report 2015-12-31.xlsm 
+
+and go to Report (Prepay DV01) tab

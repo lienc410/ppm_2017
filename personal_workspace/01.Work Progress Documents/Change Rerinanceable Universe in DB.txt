@@ -1,0 +1,42 @@
+
+if exists (select * from RefinancibleUniverse_RateChanges where Scenario = 'LoanLevel' and asof = '20160418') 
+	begin
+		update RefinancibleUniverse_RateChanges
+	
+        drop table if exists 	#returnResult;
+select asof = '20160419', Scenario,
+        "-50" = r."-50",
+		"-40" = r."-40",
+		"-30" = r."-30",
+		"-20" = r."-20",
+		"-10" = r."-10",
+		"0" = r."0",
+		"10" = r."10",
+		"20" = r."20",
+		"30" = r."30",
+		"40" = r."40",
+		"50" = r."50"
+        into #returnResult
+		from RefinancibleUniverse_RateChanges r
+		where r.Scenario = 'LoanLevel'
+		and r.asof = '20160420'		
+        ;
+		commit;
+
+		insert into RefinancibleUniverse_RateChanges (asOf, Scenario, "-50", "-40", "-30", "-20", "-10", "0", "10", "20", "30", "40", "50")
+		select *
+		from #returnResult
+		;
+		commit;
+
+		select *
+		from RefinancibleUniverse_RateChanges r
+        		where r.Scenario = 'LoanLevel'
+		and r.asof = '20160511'	
+        
+        
+        delete from RefinancibleUniverse_RateChanges r
+        		where r.Scenario = 'LoanLevel'
+		and r.asof = '20160419';
+        commit;	
+        and "0" = 0.0

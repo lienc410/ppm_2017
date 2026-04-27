@@ -1,0 +1,26 @@
+Package: batonutil
+Type: Package
+Title: Utilities for Fitting and Tracking a Repline-level Prepayment Model
+Version: 0.0.0.9000
+Date: 2016-12-05
+Authors@R: person("Chaudhary", "Sharad", email="sharad.chaudhary@PIVcapital.com",
+  role=c("aut", "cre"))
+Description: Import, tidy and transform a prepayment data set in preparation
+    for modeling. Estimate the relevant submodel (curtailment, default, refinancing,
+    turnover) depending on the user's preference (different input files are required
+    for curtailment and default data). The model is calibrated using an iterative
+    scheme and tracking results are output.
+License: file LICENSE
+LazyData: true
+Imports:
+    data.table,
+    dplyr,
+    Hmisc,
+    jsonlite,
+    leaps,
+    lubridate
+RoxygenNote: 5.0.1
+Suggests: testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

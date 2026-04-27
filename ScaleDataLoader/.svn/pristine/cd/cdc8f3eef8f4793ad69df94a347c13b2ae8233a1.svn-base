@@ -1,0 +1,172 @@
+-- Fannie Conventional
+-- Loan Level
+-- Part 6 of 7
+-- Script to update HARPed Percentage (Step 2)
+-- Updates percentHARPed
+
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT CAST ('2.50' AS varchar(5)) version INTO #tmp_version
+;
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20)
+)
+;
+INSERT #ticker SELECT 'FNCL';   --Conventional Fannie
+INSERT #ticker SELECT 'FNCK';     --Jumbo Fannie
+INSERT #ticker SELECT 'FNCQ30';     --CQ Fannie High LTV[105-125]
+INSERT #ticker SELECT 'FNCR';     --CR Fannie High LTV[125-150]
+COMMIT;
+
+CREATE LF INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+
+-----------------------------------------------------------------------
+-- 1. Create index for HARP eligible percentage
+--    HARP eligible ratio = (pre-HARP loans with incentive >= 50) / (all loans with incentive >= 50)
+-----------------------------------------------------------------------    
+DROP TABLE IF EXISTS #FNM_pctPreHARP;
+SELECT 
+    i.asOf,
+    refinancible = sum(CASE WHEN i.conventional_refi_incentive >= 50.0 THEN clh.currentRpb ELSE 0.0 END),
+    pre_refinancible = sum(CASE WHEN i.conventional_refi_incentive >= 50.0 AND l.originationDate <= '2009-06-01' THEN clh.currentRpb ELSE 0.0 END),
+    pctPreHARP = CASE WHEN refinancible = 0.0 THEN 0.0 ELSE pre_refinancible / refinancible END
+INTO #FNM_pctPreHARP
+FROM scale.FNM_Loan_Dev l
+JOIN
+(
+    SELECT loanSeqNum, asOf, currentRPB FROM fnm.Cello_LoanHist WHERE asOf >= '20140101'
+    
+    UNION ALL
+    
+    SELECT loanSeqNum, asOf, currentRPB FROM fnm.Cello_Derived_LoanHist
+) clh
+    ON l.loanSeqNum = clh.loanSeqNum
+JOIN scale.FNM_LoanIncentive i
+    ON clh.loanSeqNum = i.loanSeqNum
+    AND clh.asOf = i.asOf
+WHERE 1=1
+    AND i.version = (select  version from #tmp_version)
+    AND l.marketTicker in ('FNCL')
+    AND l.version = (select version from #tmp_version)
+GROUP BY i.asOf
+;
+COMMIT;
+
+-----------------------------------------------------------------------
+-- 2. Create tmp table for monthly average and standard deviation 
+--    Prepare for the z-score calculation
+-----------------------------------------------------------------------  
+-- Regression based on % diff of the monthly avg
+DROP TABLE IF EXISTS #FNM_statistics;
+SELECT
+    sl.originationDate, 
+    avg(sl.origFICO) as avg_FICO,
+    avg(sl.origLTV) as avg_OLTV,
+    avg(sl.origNoteRate) as avg_origNoteRate,
+    avg(sl.origLoanSize) as avg_origLoanSize,
+    stddev(sl.origFICO) as std_FICO,
+    stddev(sl.origLTV) as std_OLTV,
+    stddev(sl.origNoteRate) as std_origNoteRate,
+    stddev(sl.origLoanSize) as std_origLoanSize
+INTO #FNM_statistics
+FROM fnm.Cello_Loan cl
+JOIN scale.FNM_Loan_Dev sl
+    ON cl.loanSeqNum = sl.loanSeqNum
+WHERE sl.originationDate >= '2005-01-01'
+    AND sl.marketticker = 'FNCL'
+    AND sl.origLTV <=80
+    AND sl.origFICO > 300
+    AND sl.origNoteRate > 0
+    AND sl.origLoanSize > 0
+    AND sl.origLTV > 0
+    AND cl.loanpurposeType = 'RE-FI'
+    AND cl.HARPStatus not in ('< 2009-06')
+    AND sl.version = (select version from #tmp_version)
+    AND cl.coupon > 0
+GROUP BY sl.originationDate 
+;
+COMMIT;
+
+-----------------------------------------------------------------------
+-- 3. Create percentHARPed estimate from regression
+----------------------------------------------------------------------- 
+DROP TABLE IF EXISTS #FNM_regression;
+SELECT 
+    loanseqNum,
+    FICO_zs = (l.origFICO - s.avg_FICO) / s.std_FICO, 
+    SATO_zs = (l.origNoteRate - avg_origNoteRate) / std_origNoteRate, 
+    loanSize_zs = (l.origLoanSize - avg_origLoanSize) / std_origLoanSize,
+    h.pctPreHARP,
+    pctHARPed = exp(rg.Intercept + rg.cs * FICO_zs + rg.SATO * SATO_zs + rg.LoanSize * loanSize_zs + rg.RefiPct * 0.0 + rg.PreHARPPct * h.pctPreHARP) 
+                / (1 + exp(rg.Intercept + rg.cs * FICO_zs + rg.SATO * SATO_zs + rg.LoanSize * loanSize_zs + rg.RefiPct * 0.0 + rg.PreHARPPct * h.pctPreHARP))
+INTO #FNM_regression
+FROM scale.FNM_Loan_Dev l
+JOIN #FNM_statistics s
+    ON l.originationDate = s.originationDate
+JOIN #FNM_pctPreHARP h
+    ON l.originationDate = h.asOf
+, report.RegressionParameter_HARPIdentify rg
+WHERE 1=1
+    AND l.marketticker = 'FNCL'
+    AND rg.status = 'ACTIVE'
+    AND rg.Agency = 'FNM'
+    AND l.percentHARPed IS NULL
+    AND l.version = (select version from #tmp_version)
+;
+COMMIT;
+
+
+
+-- Tests
+
+--SELECT marketTicker, originationDate, count(1), sum(origLoanSize), sum(origLoanSize * percentHARPed) / sum(origLoanSize) as wavg_pct_harped FROM scale.FNM_Loan GROUP BY marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+--SELECT l.marketTicker, asOf, count(1), sum(balance), sum(balance * percentHARPed) / sum(balance) as wavg_pct_harped FROM scale.FNM_Loan l JOIN fnm.Cello_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum GROUP BY l.marketTicker, asOf HAVING count(1) > 10 ORDER BY asOf
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have pctHARPed populated
+----------------------------------------------------------------------------------------------
+        declare   @cnt int
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_regression WHERE pctHARPed IS NULL
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FNM Loans with NULL pctHARPed LoanCount : %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if pctHARPed is in valid range
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM
+           #FNM_regression
+        WHERE
+            pctHARPed < 0.0 OR pctHARPed > 1
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FNM Loans with Invalid pctHARPed Range LoanCount : %1!', @cnt
+            RETURN
+        END
+
+-- End Tests
+
+
+
+-- Update Scale Loan Table
+-- Only update percentHARPed for NULL values
+UPDATE scale.FNM_Loan_Dev l
+SET l.percentHARPed = r.pctHARPed * 100.0
+FROM #FNM_regression r
+WHERE l.loanSeqNum = r.loanSeqNum
+    AND l.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND l.version = (select version from #tmp_version)
+    AND l.percentHARPed IS NULL
+;
+

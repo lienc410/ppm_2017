@@ -1,0 +1,123 @@
+import pyodbc
+import sys
+import ConfigParser
+import re
+import EmailUtil
+import email.mime.text
+import os
+import logging
+import ast
+
+# ---------------------------------------------------------------------------------
+# --- Following script runs jobs specified for a given process, agency and asOf.
+# --- Sequence of Jobs are defined under config/ProcessConfig
+# --- .eg.  python ScaleValidation.py SCALE_JOBS FHL  20160801
+# ---------------------------------------------------------------------------------
+def usage(function_name):
+    print("Usage: %s LOAN_SCALE_DB FHL 20161201" % function_name)
+
+
+def main(argv):
+
+    # Get the User Options for the Run
+    if len(argv) < 4:
+        usage(argv[0])
+        exit(-1)
+
+    processType = argv[1]
+    agency = argv[2].upper()
+    asOf = argv[3]
+    appType = argv[4]
+    dbUser = "Scale"
+    print agency, asOf, appType
+    config = ConfigParser.RawConfigParser()
+    config.read('../config/DbConfig.properties')
+    logFileName = 'S:/IT/Production/Scripts/python/ScaleDataLoader/log/ScaleDataLoaderErrorLog.log'
+# -----------------------------
+# ------ Db Settings ----------
+# -----------------------------
+     
+    IQ_DSN = config.get('IQDatabaseSection', 'database.'+dbUser+'.DSN')
+    IQ_user = config.get('IQDatabaseSection', 'database.'+dbUser+'.user')
+    IQ_passwd = config.get('IQDatabaseSection', 'database.'+dbUser+'.password')
+    IQ_dbName = config.get('IQDatabaseSection', 'database.'+dbUser+'.dbname')
+# -----------------------------
+# ------ process settings --------
+# -----------------------------
+    jobName = agency + "_" + processType
+    config_dict = {}
+    sqlList = []
+    with open('../config/JobConfig.properties', 'r') as inp:
+        file_contents = inp.read().replace(" ", "").replace("\t", "").replace("\n", "")
+        config_dict = ast.literal_eval(file_contents)
+
+    if jobName in config_dict.keys():
+        sqlList = config_dict[jobName]
+    else:
+        print("Job Key not found: " + jobName)
+        exit(-1)
+
+    print("Running Job: " + jobName)
+    print("  Contains these scripts: " + ', '.join(sqlList))
+
+# -----------------------------
+# ------ Db Connection --------
+# -----------------------------
+    print 'DSN='+IQ_DSN+';UID='+IQ_user+';PWD='+IQ_passwd+';DATABASE='+IQ_dbName
+    IQConnection = pyodbc.connect('DSN='+IQ_DSN+';UID='+IQ_user+';PWD='+IQ_passwd+';DATABASE='+IQ_dbName)
+    IQCursor = IQConnection.cursor()
+# ------------------------------------------------
+# ------ Set up logging config --------
+# ------------------------------------------------
+    logging.basicConfig(filename=logFileName,level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',datefmt='%m/%d/%Y %H:%M:%S ')
+# ------------------------------------------------
+# ------ Processing each  sql for job --------
+# ------------------------------------------------
+
+    for sqlFile in sqlList:
+        sqlFile1 =  "../sql/"+appType+"/"+sqlFile.rstrip()+".sql"
+        print sqlFile1 
+        with open(sqlFile1, 'r') as updateFile:
+            updateSQLStmt=updateFile.read()
+
+        updateSQLStmt = updateSQLStmt.replace(";", "")
+        updateSQLStmt = updateSQLStmt.replace("#####ASOF#####", asOf)
+        updateSQLStmt = updateSQLStmt.replace("#####APPTYPE#####", appType)
+        print "  Running the update stmt for " + sqlFile1.rstrip()
+# -----------------------------
+# ------ update Db table ------
+# -----------------------------
+        try:
+            IQCursor.execute(updateSQLStmt)
+        except pyodbc.Error, err:
+            msgStr = str(err[1])
+            if re.search(r'RAISERROR', msgStr, flags=0):
+                errString = msgStr[msgStr.index(':')+1:msgStr.index('\n')-1] + " (" + __file__ + ")"
+                # ----------------------------------------------------------
+                #       Composing Email
+                # ----------------------------------------------------------
+                em = EmailUtil.EmailUtil()
+                # make up message
+                msg = email.mime.text.MIMEText(errString)
+                em.sendMessage('chen.yang@cellocapital.com, Purvi.Mehta@cellocapital.com', 'Error: ' + errString   , errString)
+
+                # ----------------------------------------------------------
+                #       Log
+                # ----------------------------------------------------------
+                logging.error('[%s] {%s} %s', agency, asOf, errString)
+                exit(-1)
+            else:
+                msgStr=str(err[1])
+                em = EmailUtil.EmailUtil()
+                # make up message
+                msg = email.mime.text.MIMEText(msgStr)
+                em.sendMessage('chen.yang@cellocapital.com, Purvi.Mehta@cellocapital.com', 'Error: ' + 'Executing sql for '+ processType    , msgStr)
+                exit(-1)
+
+        IQConnection.commit()
+        print "  Completed update stmt for " + sqlFile1
+    print "Completed Job " + jobName
+    exit(0)
+    
+if __name__ == "__main__":
+    main(sys.argv[0:])

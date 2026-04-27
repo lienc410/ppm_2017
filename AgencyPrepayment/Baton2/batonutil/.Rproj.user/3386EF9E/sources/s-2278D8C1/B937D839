@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1531341091353.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "B937D839",
+    "lastKnownWriteTime" : 1525101509,
+    "last_content_update" : 1525101509,
+    "path" : "C:/Cello/cello-it-dev/trunk/Research/AgencyPrepayment/Baton2/batonutil/R/ParseModelJSON.R",
+    "project_path" : "R/ParseModelJSON.R",
+    "properties" : {
+        "cursorPosition" : "18,27",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 10,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

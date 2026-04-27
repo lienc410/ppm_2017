@@ -1,0 +1,20 @@
+//Current Coupon Model Input
+//Author: 	Lien Chen
+//Desc:   	Serialization encoding for C++
+//Date:   	11/18/2014
+//Release: 	
+
+package ccm.quantlib.input;
+
+
+option optimize_for = SPEED;
+ 
+message CurrentCoupon {
+	required int64 as_of_date = 1;
+	required string TickerName = 2;	
+	required string SeriesType = 3;
+
+	optional double SeriesNumValue = 4;
+	optional int64 SeriesCharValue = 5;
+}
+

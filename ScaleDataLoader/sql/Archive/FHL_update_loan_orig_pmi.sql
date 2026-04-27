@@ -1,0 +1,201 @@
+-- Freddie Conventional
+-- Loan Level
+-- Part 3 of 7
+-- Script to update origination PMI
+-- Updates origPMI
+
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT CAST ('2.50' AS varchar(5)) version INTO #tmp_version
+;
+
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+)
+;
+INSERT #ticker SELECT 'FGLMC', 'CONVENTIONAL_30YR';   --Conventional Freddie
+INSERT #ticker SELECT 'FGT6', 'JUMBO_30YR';           --Jumbo Freddie
+INSERT #ticker SELECT 'FGU6', 'CONVENTIONAL_30YR';    --CQ Freddie High LTV[105-125]
+INSERT #ticker SELECT 'FGU9', 'CONVENTIONAL_30YR';    --CR Freddie High LTV[125-150]
+COMMIT;
+
+CREATE LF INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+
+-- Create Loan Origination Data
+DROP TABLE IF EXISTS #FHL_OrigPMI;
+SELECT
+    cl.loanSeqNum ,
+    cl.marketTicker,
+    sl.originationDate,
+    sl.origLoanSize,
+    sl.origFICO,
+    sl.origLTV,
+    sl.miLevel,
+    sl.percentHARPed,
+    cl.occType as occupancyStatus,
+    cl.loanPurposeType,
+    
+    cast(NULL as numeric(8, 4)) as pmi_begin_base,
+    cast(NULL as numeric(8, 4)) as pmi_begin_occ,
+    cast(NULL as numeric(8, 4)) as pmi_begin_size,
+    cast(NULL as numeric(8, 4)) as pmi_begin
+    
+INTO #FHL_OrigPMI
+FROM fhl.sec p
+JOIN #ticker tk
+    ON p.marketTicker = tk.tickerName
+JOIN fhl.PIV_Loan cl
+    ON p.issueId = cl.issueId
+JOIN scale.FHL_Loan_Dev sl
+    ON cl.loanSeqNum = sl.loanSeqNum
+WHERE 1=1
+    AND p.collateralType = 'LOAN'
+    AND sl.origLoanSize > 0.01
+    AND sl.version = (select version from #tmp_version)
+    --AND sl.loanSeqNum = 'A40218000022'
+;
+
+COMMIT;
+CREATE HG INDEX loan_id_idx ON #FHL_OrigPMI(loanSeqNum);
+CREATE LF INDEX ticker_idx ON #FHL_OrigPMI(marketTicker);
+CREATE LF INDEX origination_date_idx ON #FHL_OrigPMI(originationDate);
+CREATE HG INDEX bal_idx ON #FHL_OrigPMI(origLoanSize);
+CREATE LF INDEX occ_idx ON #FHL_OrigPMI(occupancyStatus);
+CREATE LF INDEX fico_idx ON #FHL_OrigPMI(origFICO);
+CREATE LF INDEX ltv_idx ON #FHL_OrigPMI(origLTV);
+COMMIT;
+
+
+-- Update pmi_begin_base
+UPDATE #FHL_OrigPMI inc 
+SET inc.pmi_begin_base = (PMI_LL_FL * (LTV_H - inc.origLTV) * (FICO_H - inc.origFICO) + PMI_LH_FL * (inc.origLTV - LTV_L) * (FICO_H - inc.origFICO) 
+      + PMI_LL_FH * (LTV_H - inc.origLTV) * (inc.origFICO - FICO_L) + PMI_LH_FH * (inc.origLTV - LTV_L) * (inc.origFICO - FICO_L)
+      ) / ((LTV_H - LTV_L) * (FICO_H - FICO_L)) 
+FROM report.PIV_PMI_Base_Bilinear_Interpolation pmi
+WHERE 1=1
+    AND pmi.LoanPurpose = CASE WHEN inc.loanPurposeType = 'PURCH' THEN 'PURCH' ELSE 'REFI' END
+    AND inc.originationDate >= pmi.startDate and inc.originationDate < pmi.endDate 
+    AND inc.origFICO >= pmi.FICO_L and inc.origFICO < pmi.FICO_H
+    AND inc.origLTV > pmi.LTV_L and inc.origLTV <= pmi.LTV_H
+;
+UPDATE #FHL_OrigPMI inc SET inc.pmi_begin_base = 0 WHERE inc.pmi_begin_base IS NULL;
+
+-- Update pmi_begin_occ
+UPDATE #FHL_OrigPMI inc 
+SET inc.pmi_begin_occ = (PMI_LL_FL * (LTV_H - origLTV) * (FICO_H - origFICO) + PMI_LH_FL * (origLTV - LTV_L) * (FICO_H - origFICO) 
+      + PMI_LL_FH * (LTV_H - origLTV) * (origFICO - FICO_L) + PMI_LH_FH * (origLTV - LTV_L) * (origFICO - FICO_L)
+      ) / ((LTV_H - LTV_L) * (FICO_H - FICO_L)) 
+FROM report.PIV_PMI_Occupancy_Bilinear_Interpolation pmi
+WHERE 1=1
+    AND inc.occupancyStatus = pmi.OccType
+    AND inc.originationDate >= pmi.startDate and inc.originationDate < pmi.endDate 
+    AND inc.origFICO >= pmi.FICO_L and inc.origFICO < pmi.FICO_H
+    AND inc.origLTV > pmi.LTV_L and inc.origLTV <= pmi.LTV_H
+;
+
+UPDATE #FHL_OrigPMI inc SET inc.pmi_begin_occ = 0 WHERE inc.pmi_begin_occ IS NULL;
+
+-- Update pmi_begin_size
+UPDATE #FHL_OrigPMI inc 
+SET inc.pmi_begin_size = (PMI_LL_FL * (LTV_H - origLTV) * (FICO_H - origFICO) + PMI_LH_FL * (origLTV - LTV_L) * (FICO_H - origFICO) 
+      + PMI_LL_FH * (LTV_H - origLTV) * (origFICO - FICO_L) + PMI_LH_FH * (origLTV - LTV_L) * (origFICO - FICO_L)
+      ) / ((LTV_H - LTV_L) * (FICO_H - FICO_L)) 
+FROM report.PIV_PMI_LoanSize_Bilinear_Interpolation pmi
+WHERE 1=1
+    AND inc.origLoanSize > pmi.LoanSize_L and inc.origLoanSize <= LoanSize_H
+    AND inc.originationDate >= pmi.startDate and inc.originationDate < pmi.endDate 
+    AND inc.origFICO >= pmi.FICO_L and inc.origFICO < pmi.FICO_H
+    AND inc.origLTV > pmi.LTV_L and inc.origLTV <= pmi.LTV_H
+;
+
+UPDATE #FHL_OrigPMI inc 
+SET inc.pmi_begin_size = (inc.origLoanSize - LoanSize_L) / (LoanSize_H - LoanSize_L) * (inc.pmi_begin_size - 0.0)
+FROM report.PIV_PMI_LoanSize_Bilinear_Interpolation pmi
+WHERE 1=1
+    AND inc.origLoanSize > pmi.LoanSize_L and inc.origLoanSize <= LoanSize_H
+    AND inc.originationDate >= pmi.startDate and inc.originationDate < pmi.endDate 
+    AND inc.origLTV > pmi.LTV_L AND inc.origLTV <= pmi.LTV_H 
+    AND inc.origFICO > pmi.FICO_L AND inc.origFICO <= pmi.FICO_H
+    AND needExtraInterp = 1
+;
+
+UPDATE #FHL_OrigPMI inc SET inc.pmi_begin_size = 0 WHERE inc.pmi_begin_size IS NULL;
+COMMIT;
+
+-- Update PMI
+UPDATE #FHL_OrigPMI inc SET
+pmi_begin = (CASE
+                when miLevel > 0 then (pmi_begin_base + pmi_begin_occ + pmi_begin_size) / 100 
+                else 0 
+            END)
+;
+
+-- Update origPMI based on HARP Percent
+UPDATE #FHL_OrigPMI
+SET pmi_begin = CASE 
+                        WHEN percentHARPed IS NULL THEN 0.0
+                        WHEN percentHARPed = 0.0 THEN pmi_begin
+                        WHEN percentHARPed = 100.0 THEN m.PMI
+                    END
+FROM report.PIV_PMI_HARP_MtgIns_Map m
+WHERE 1=1
+    AND miLevel > pctMtgInsLow
+    AND miLevel <= pctMtgInsHigh
+;
+COMMIT;
+
+-- Tests
+
+--SELECT marketTicker, originationDate, count(1), sum(origLoanSize), sum(origLoanSize * pmi_begin) / sum(origLoanSize) as wavg_orig_pmi FROM #FHL_OrigPMI GROUP BY marketTicker, originationDate HAVING count(1) > 10 ORDER BY originationDate
+--SELECT l.marketTicker, asOf, count(1), sum(balance), sum(balance * pmi_begin) / sum(balance) as wavg_orig_pmi FROM #FHL_OrigPMI l JOIN #FHL_LoanHist lh ON l.loanSeqNum = lh.loanSeqNum GROUP BY l.marketTicker, asOf HAVING count(1) > 10 ORDER BY asOf
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Loans have  NULL pmi_begin
+----------------------------------------------------------------------------------------------
+        declare   @cnt int
+        SELECT
+            @cnt =  count(1)
+        FROM #FHL_OrigPMI  WHERE pmi_begin IS NULL
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FHL Loans with NULL VALUE for  pmi_begin LoanCount : %1!', @cnt
+            RETURN
+        END
+----------------------------------------------------------------------------------------------
+-- Check to see if pmi_begin is in valid range
+----------------------------------------------------------------------------------------------
+        SELECT
+            @cnt =  count(1)
+        FROM #FHL_OrigPMI  WHERE pmi_begin < 0.0 OR pmi_begin > 5
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FHL Loans with INVALID RANGE VALUE for  pmi_begin LoanCount : %1!', @cnt
+            RETURN
+        END
+
+-- End Tests
+
+
+
+-- Update Scale Loan Table
+UPDATE scale.FHL_Loan_Dev
+SET origPMI = NULL
+WHERE marketTicker IN (SELECT tickerName FROM #ticker)
+    AND version = (SELECT version from #tmp_version)
+;
+
+UPDATE scale.FHL_Loan_Dev l
+SET l.origPMI = i.pmi_begin * 100.0
+FROM #FHL_OrigPMI i
+WHERE i.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND l.loanSeqNum = i.loanSeqNum
+    AND version = (SELECT version from #tmp_version)
+;
+

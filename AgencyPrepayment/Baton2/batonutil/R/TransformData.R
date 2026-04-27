@@ -1,0 +1,97 @@
+#' @title Transform prepayment data 
+#' 
+#' @description
+#' \code{tfrmr} adds new variables that are combinations of existing columns. It also filters the prepayment data frame
+#' if necessary.
+#'  
+#' @param configData  configuration data for the prepayment model
+#' @param ppdata  Data frame of prepayment data
+#' 
+#' @details
+#' (1) Modify the incentive by a cost function. 
+#' (2) Add weights that correspond to the relative balance of each data point. 
+#' (3) Apply data filters where appropriate
+#' 
+#' @return 
+#' ppdata Transformed prepayment data frame
+#' 
+#' @examples
+#'  tfrmr(configData=configData, ppdata=ppdata)
+#'  
+#' @export
+
+tfrmr <- function(configData, ppdata) {
+  
+    coll        <- configData$FitParam$coll
+    submodel    <- configData$FitParam$submodel
+    gnmaProgram <- configData$FitParam$gnmaProgram
+    aggType     <- configData$FitParam$aggType
+    
+    cat("**Transforming prepayment data**", "\n")
+    cat("________________________________", "\n")
+    
+    if (configData$FitParam$useAltDfltFile) {
+      cat("Processing monthsSince DfltRschGrid File\n")
+      ppdata$smm <- ppdata$mdr
+    } else if (all(c("year", "month", "day") %in% colnames(ppdata))) {
+        # Transform: Create columns in date format 
+        #            Create column for month corresponding to date
+        #            Create date in integer format so that it can be used for spline interpolations
+       cat("Creating asofdate column with dates in R Date format\n")
+       cat("Creating month column corresponding to the dates\n")
+       cat("Converting dates to an integer format so that they can be used for tax effect spline interpolations\n")
+       asofdateInteger    <- (ppdata$year * 10000) + (ppdata$month * 100) + ppdata$day
+       ppdata$asofdate    <- lubridate::ymd(asofdateInteger)
+       ppdata$monthBucket <- as.character(lubridate::month(ppdata$asofdate, label=TRUE, abbr=TRUE))
+       ppdata$tax         <- asofdateInteger
+    } else {
+        stop("Need year, month and day columns in ppdata dataframe\n")
+    }
+    
+    # Transform: Add elbow shift for incentive
+    cat("Adding column for refi costs\n")
+    cat("Subtracting refi costs from incentive\n")
+    ppdata <- CalculateRefiCosts(ppdata=ppdata, configData=configData)
+    ppdata$incentive.store <- ppdata$incentive
+    ppdata$incentive <- ppdata$incentive - ppdata$reficost
+    ppdata$lomedia_incentive <- ppdata$incentive
+    ppdata$himedia_incentive <- ppdata$incentive
+    
+    ppdata$lohpa_wala <- ppdata$wala
+    ppdata$hihpa_wala <- ppdata$wala
+    ppdata$pct_hihpa_wala <- ppdata$hpa_annual
+     
+    # Filter for GNMA program (if available)
+    if ((coll == "gnma30") & (gnmaProgram != "")) {
+      cat("Filtering for GNMA program: ", gnmaProgram, "\n")
+      ppdata <- ppdata %>% dplyr::filter(ppdata$loanType == gnmaProgram)
+    }
+    
+    if (submodel == "turn") {
+      cat("Filtering Data: Removing rate-driven refinancings\n")
+      ppdata <- ppdata %>% dplyr::filter(ppdata$incentive.store < configData$FitParam$refiCutoff)
+    }
+    else if (submodel == "cout") {
+      cat("Filtering Data: Isolating OTM Prepayments\n")
+      ppdata <- ppdata %>% dplyr::filter(ppdata$incentive.store < configData$FitParam$cashoutCutoff)
+    }
+    else if (submodel == "dfltcurr") {
+      # Subset default data set into pools that were/are *initially* all current
+      cat("Filtering Data: Keeping all initially current\n")
+      ppdata <- ppdata %>% dplyr::filter(ppdata$pct_dq == 0)
+    }
+    else if (submodel == "dfltdelq") {
+      # Subset default data set into pools that were/are not *initially* all current
+      cat("Filtering Data: Keeping all *not* initially current\n")
+      ppdata <- ppdata %>% dplyr::filter(ppdata$pct_dq > 0)
+    }
+    else if (submodel == "dflt") {
+     # Do nothing 
+    }
+    else {
+      # Do nothing
+    }
+    
+    return(ppdata)
+    
+} 

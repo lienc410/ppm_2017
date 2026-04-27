@@ -1,0 +1,14 @@
+{
+"parameters": {
+    "uid":"@UID@",
+    "input_file_name":"@INPUT_FILE@",
+    "input_path":"@INPUT_PATH@",
+    "output_path":"@OUTPUT_PATH@",
+    "repline_collateral_type":"@COLLATERAL@",
+    "function_name":"SYMPHONY_TRACKING_REQUEST",
+    "prepay_model": {
+        "model_version": "@PREPAY_MODEL_VERSION@"
+    },
+    "prepay_model_type":"@PREPAY_MODEL_TYPE@"
+    }
+}

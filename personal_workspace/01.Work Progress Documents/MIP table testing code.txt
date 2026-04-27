@@ -1,0 +1,87 @@
+---- Step 1: mapping
+-- temp table for the old MIP matix
+DROP table if exists #old_mip;
+Select t.loanSeqNum,
+    t.asof,
+    t.cltv, t.balance, sl.OriginationDate,
+    mip.AnnualMIPPoints as AnnualMIPPoints_o,
+    mip.UpfrontMIPPoints as UpfrontMIPPoints_o,
+    ROUND(mip.AnnualMIPPoints + mip.UpfrontMIPPoints / 12.0, 2) as MIP_o
+into #old_mip
+from scale.fhl_loanHist t
+join gnm.MIPRulesMatrix mip on t.cltv > mip.LTVLowBound
+    and t.cltv <= mip.LTVHighBound
+    and t.balance > mip.LoanOrigAmountLowBound
+    and t.balance <= mip.LoanOrigAmountHighBound
+    and t.asof > mip.CaseAssignDateLowBound
+    and t.asof <= mip.CaseAssignDateHighBound
+join scale.fhl_loan sl on t.loanSeqNum = sl.loanSeqNum
+    and sl.OriginationDate > mip.LoanOrigDateLowBound
+    and sl.OriginationDate <= mip.LoanOrigDateHighBound
+join scale.fhl_loanIncentive si on t.loanSeqNum = si.loanSeqNum
+    and t.asof = si.asof
+where mip.origTermLowBound <= 360
+    and mip.origTermHighBound >= 360
+;
+
+-- temp table for the new MIP matix
+DROP table if exists #new_mip;
+Select t.loanSeqNum,
+    t.asof,
+    t.cltv, t.balance, sl.OriginationDate,
+    mip_base.AnnualMIPPoints as AnnualMIPPoints_n,
+    mip_base.UpfrontMIPPoints as UpfrontMIPPoints_n,
+    ROUND(mip_base.AnnualMIPPoints + mip_base.UpfrontMIPPoints / 12.0, 2) as MIP_n
+into #new_mip
+from scale.fhl_loanHist t
+join report.PIV_MIP_Base mip_base on 	 t.cltv >  mip_base.LTVBucketStart
+	AND t.cltv              <= mip_base.LTVBucketEnd
+	AND t.balance           > mip_base.LoanSizeBucketStart
+	AND t.balance           <= mip_base.LoanSizeBucketEnd
+	AND t.asOf              >  mip_base.StartDate
+	AND t.asOf              <= mip_base.EndDate
+join scale.fhl_loan sl on t.loanSeqNum = sl.loanSeqNum
+    AND sl.originationDate   >  mip_base.OriginationStartDate
+	AND sl.originationDate   <= mip_base.OriginationEndDate
+join scale.fhl_loanIncentive si on t.loanSeqNum = si.loanSeqNum
+    and t.asof = si.asof
+where mip_base.TermBucketStart <= 360
+    and mip_base.TermBucketEnd >= 360
+;
+
+---- Step 2: sum mapping result
+DROP table if exists #sum_old;
+select o.loanSeqNum, 
+    o.asof,
+    sum(AnnualMIPPoints_o) as AnnualMIP_o,
+    sum(UpfrontMIPPoints_o) as UpfrontMIP_o,
+    sum(AnnualMIPPoints_o + UpfrontMIPPoints_o / 12.0) as MIP_o
+into #sum_old
+from #old_mip o
+group by loanSeqNum, asof
+;
+
+DROP table if exists #sum_new;
+select loanSeqNum, 
+    asof,
+    sum(AnnualMIPPoints_n) as AnnualMIP_n,
+    sum(UpfrontMIPPoints_n) as UpfrontMIP_n,
+    sum(AnnualMIPPoints_n + UpfrontMIPPoints_n / 12.0) as MIP_n
+into #sum_new
+from #new_mip o
+group by loanSeqNum, asof
+;
+
+---- Step 3: data exam
+-- check mapping to exam the table value
+select *
+from #new_mip n
+join #old_mip o on o.loanSeqNum = n.loanSeqNum and o.asof = n.asof
+where MIP_o <> MIP_n
+
+
+-- check sum to exam duplication
+select *
+from #sum_new n
+join #sum_old o on o.loanSeqNum = n.loanSeqNum and o.asof = n.asof
+where MIP_o <> MIP_n

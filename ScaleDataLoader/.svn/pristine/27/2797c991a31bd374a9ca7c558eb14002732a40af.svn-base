@@ -1,0 +1,777 @@
+-------------------------------------------------
+-- LLPA
+-------------------------------------------------
+---- LLPA Base
+-- Step 0: Fix Base LLPA Nulls, handle corner cases
+DROP TABLE IF EXISTS #Cello_LLPA_Base;
+SELECT 
+    FicoStart as FICOBucketStart,
+    FicoEnd as FICOBucketEnd,
+    LTVStart as LTVBucketStart,
+    LTVEnd as LTVBucketEnd,
+    startDate,
+    endDate,
+    LLPA
+INTO #Cello_LLPA_Base
+FROM report.Cello_LLPA_Base_Raw
+;
+-- Update the lower FICO cases, set to be the max of save LTV group
+UPDATE #Cello_LLPA_Base c SET LLPA = max.max_llpa
+FROM (SELECT  startDate, endDate, LTVBucketStart, max(LLPA) as max_llpa FROM #Cello_LLPA_Base group by startDate, endDate, LTVBucketStart) max
+WHERE LLPA IS NULL
+    AND c.FICOBucketStart < 500
+    AND max.startDate = c.startDate
+    AND max.endDate = c.endDate
+    AND max.LTVBucketStart = c.LTVBucketStart
+;
+-- Update the higher LTV cases, set to be the max of save FICO group
+UPDATE #Cello_LLPA_Base c SET LLPA = max.max_llpa
+FROM (SELECT  startDate, endDate, FICOBucketEnd, max(LLPA) as max_llpa FROM #Cello_LLPA_Base group by startDate, endDate, FICOBucketEnd) max
+WHERE LLPA IS NULL
+    AND c.LTVBucketEnd > 200
+    AND max.startDate = c.startDate
+    AND max.endDate = c.endDate
+    AND max.FICOBucketEnd = c.FICOBucketEnd
+;
+COMMIT;
+
+
+-- Step 1: create the middle point for CLTV and FICO
+DROP TABLE IF EXISTS #LLPA_Base_middle_point;
+SELECT 
+*,
+FICO = CASE WHEN FICOBucketEnd > 800 THEN FICOBucketStart + 10
+        ELSE CASE WHEN FICOBucketStart < 500 THEN FICOBucketEnd - 10
+        ELSE 0.5 * (FICOBucketStart + FICOBucketEnd) END END,
+LTV = CASE WHEN LTVBucketEnd > 150 THEN LTVBucketStart
+        ELSE CASE WHEN LTVBucketStart < 60 THEN LTVBucketEnd - 2.5
+        ELSE 0.5 * (LTVBucketStart + LTVBucketEnd) END END
+INTO #LLPA_Base_middle_point
+FROM #Cello_LLPA_Base
+--WHERE enddate = '2100-01-01'
+;
+
+-- Step 2: Join the four corner points for the interpolation later
+--  2-1: join point 1(CLTV_low,FICO_low) and 2(CLTV_high,FICO_low)
+DROP TABLE IF EXISTS #LLPA_Base_points_12;
+SELECT 
+FICOBucketStart = CASE WHEN p1.FICOBucketStart IS NOT NULL THEN p1.FICOBucketStart ELSE p2.FICOBucketStart END,
+FICOBucketEnd   = CASE WHEN p1.FICOBucketEnd IS NOT NULL THEN p1.FICOBucketEnd ELSE p2.FICOBucketEnd END,
+startDate       = CASE WHEN p1.startDate IS NOT NULL THEN p1.startDate ELSE p2.startDate END,
+endDate	        = CASE WHEN p1.endDate IS NOT NULL THEN p1.endDate ELSE p2.endDate END,
+FICO            = CASE WHEN p1.FICO IS NOT NULL THEN p1.FICO ELSE p2.FICO END,
+LTV_L           = CASE WHEN p1.LTV IS NOT NULL THEN p1.LTV ELSE p2.LTVBucketStart END,
+LTV_H           = CASE WHEN p2.LTV IS NOT NULL THEN p2.LTV ELSE p1.LTVBucketEnd END,
+LLPA_LL         = CASE WHEN p1.LLPA IS NOT NULL THEN p1.LLPA ELSE p2.LLPA END,
+LLPA_LH         = CASE WHEN p2.LLPA IS NOT NULL THEN p2.LLPA ELSE p1.LLPA END
+INTO #LLPA_Base_points_12
+FROM #LLPA_Base_middle_point p1
+FULL OUTER JOIN #LLPA_Base_middle_point p2 
+ON p1.FICOBucketStart = p2.FICOBucketStart 
+AND p1.FICOBucketEnd = p2.FICOBucketEnd 
+AND p1.LTVBucketEnd = p2.LTVBucketStart
+AND p1.startDate = p2.startDate
+ORDER BY LTV_L, FICO
+;
+
+-- 2-2: Join point 3(CLTV_low,FICO_high) and 4(CLTV_high,FICO_high) with p1 and p2
+DROP TABLE IF EXISTS report.Cello_LLPA_Base_Bilinear_Interpolation;
+SELECT 
+startDate   = CASE WHEN p12.startDate IS NOT NULL THEN p12.startDate ELSE p34.startDate END,
+endDate     = CASE WHEN p12.endDate IS NOT NULL THEN p12.endDate ELSE p34.endDate END,
+FICO_L      = CASE WHEN p12.FICO IS NOT NULL THEN p12.FICO ELSE p34.FICOBucketStart END,
+FICO_H      = CASE WHEN p34.FICO IS NOT NULL THEN p34.FICO ELSE p12.FICOBucketEnd END,
+LTV_L       = CASE WHEN p12.LTV_L IS NOT NULL THEN p12.LTV_L ELSE p34.LTV_L END,
+LTV_H       = CASE WHEN p12.LTV_H IS NOT NULL THEN p12.LTV_H ELSE p34.LTV_H END,
+LLPA_LL_FL  = CASE WHEN p12.LLPA_LL IS NOT NULL THEN p12.LLPA_LL ELSE p34.LLPA_LL END,
+LLPA_LH_FL  = CASE WHEN p12.LLPA_LH IS NOT NULL THEN p12.LLPA_LH ELSE p34.LLPA_LH END,
+LLPA_LL_FH  = CASE WHEN p34.LLPA_LL IS NOT NULL THEN p34.LLPA_LL ELSE p12.LLPA_LL END,
+LLPA_LH_FH  = CASE WHEN p34.LLPA_LH IS NOT NULL THEN p34.LLPA_LH ELSE p12.LLPA_LH END
+INTO report.Cello_LLPA_Base_Bilinear_Interpolation
+FROM #LLPA_Base_points_12 p12
+FULL OUTER JOIN #LLPA_Base_points_12 p34 
+ON p12.FICOBucketEnd = p34.FICOBucketStart
+AND p12.LTV_L = p34.LTV_L
+AND p12.startDate = p34.startDate
+ORDER BY LTV_L, FICO_L
+;
+
+
+---- LLPA ADMC
+-- Constant number, doesn't need to apply interpolation
+DROP TABLE IF EXISTS report.Cello_LLPA_ADMC;
+SELECT * 
+INTO report.Cello_LLPA_ADMC
+FROM report.Cello_LLPA_ADMC_Raw
+;
+COMMIT;
+
+
+---- LLPA Occupancy 
+-- Step 0: Fix Nulls: 
+DROP TABLE IF EXISTS #Cello_LLPA_Occupancy;
+SELECT 
+    CASE WHEN OccType like ('%OWNER%') THEN 'OWNER' 
+         WHEN OccType like ('%2ND%') THEN '2ND' 
+         WHEN OccType like ('%INV%') THEN 'INV' 
+         WHEN OccType like ('%N/A%') THEN 'N/A' ELSE NULL END as OccType,
+    LtvStart as LTVBucketStart,
+    LtvEnd as LTVBucketEnd,
+    StartDate,
+    EndDate,
+    LLPA
+INTO #Cello_LLPA_Occupancy
+FROM report.Cello_LLPA_Occupancy_Raw
+;
+
+UPDATE #Cello_LLPA_Occupancy o SET LLPA = m.max_llpa
+FROM (SELECT startDate, endDate, max(LLPA) as max_llpa, OccType FROM #Cello_LLPA_Occupancy group by OccType, startDate, endDate) m
+WHERE o.LLPA IS NULL 
+    AND m.OccType = o.OccType 
+    AND m.startDate = o.startDate 
+    AND  m.endDate = o.endDate
+;
+COMMIT;
+
+-- Step 1: create the middle point for CLTV
+DROP TABLE IF EXISTS #LLPA_Occupancy_middle_point;
+SELECT 
+*,
+LTV = CASE WHEN LTVBucketEnd > 150 THEN LTVBucketStart
+        ELSE CASE WHEN LTVBucketStart < 60 THEN LTVBucketEnd - 2.5
+        ELSE 0.5 * (LTVBucketStart + LTVBucketEnd) END END
+INTO #LLPA_Occupancy_middle_point
+FROM #Cello_LLPA_Occupancy
+;
+
+-- Step 2: Join the two points for the interpolation later
+--         join point 1(CLTV_low) and 2(CLTV_high)
+DROP TABLE IF EXISTS report.Cello_LLPA_Occupancy_Linear_Interpolation;
+SELECT 
+OccType     = CASE WHEN p1.OccType IS NOT NULL THEN p1.OccType ELSE p2.OccType END,
+startDate   = CASE WHEN p1.startDate IS NOT NULL THEN p1.startDate ELSE p2.startDate END,
+endDate	    = CASE WHEN p1.endDate IS NOT NULL THEN p1.endDate ELSE p2.endDate END,
+LTV_L       = CASE WHEN p1.LTV IS NOT NULL THEN p1.LTV ELSE p2.LTVBucketStart END,
+LTV_H       = CASE WHEN p2.LTV IS NOT NULL THEN p2.LTV ELSE p1.LTVBucketEnd END,
+LLPA_LL     = CASE WHEN p1.LLPA IS NOT NULL THEN p1.LLPA ELSE p2.LLPA END,
+LLPA_LH     = CASE WHEN p2.LLPA IS NOT NULL THEN p2.LLPA ELSE p1.LLPA END
+INTO report.Cello_LLPA_Occupancy_Linear_Interpolation
+FROM #LLPA_Occupancy_middle_point p1
+FULL OUTER JOIN #LLPA_Occupancy_middle_point p2 
+ON p1.LTVBucketEnd = p2.LTVBucketStart
+AND p1.startDate = p2.startDate
+AND p1.OccType = p2.OccType
+ORDER BY OccType, LTV_L
+;
+
+
+
+---- LLPA Unit 
+-- Step 0: Fix Nulls:
+DROP TABLE IF EXISTS #Cello_LLPA_Units;
+SELECT 
+    numUnits as numUnitsStart,
+    CASE WHEN numUnits = 4 THEN 999 ELSE numUnits + 1 END as numUnitsEnd,
+    LtvStart as LTVBucketStart,
+    LtvEnd as LTVBucketEnd,
+    StartDate,
+    EndDate,
+    LLPA
+INTO #Cello_LLPA_Units
+FROM report.Cello_LLPA_Units_Raw
+WHERE numUnits > 0
+;
+UPDATE #Cello_LLPA_Units c SET LLPA = max.max_llpa
+FROM (SELECT  startDate, endDate, max(LLPA) as max_llpa, numUnitsStart FROM #Cello_LLPA_Units group by numUnitsStart, startDate, endDate ) max
+WHERE LLPA IS NULL
+    AND max.numUnitsStart = c.numUnitsStart
+    AND max.startDate = c.startDate
+    AND max.endDate = c.endDate
+;
+COMMIT;
+
+-- Step 1: create the middle point for CLTV
+DROP TABLE IF EXISTS #LLPA_Units_middle_point;
+SELECT 
+*,
+LTV = CASE WHEN LTVBucketEnd > 150 THEN LTVBucketStart
+        ELSE CASE WHEN LTVBucketStart < 60 THEN LTVBucketEnd - 2.5
+        ELSE 0.5 * (LTVBucketStart + LTVBucketEnd) END END
+INTO #LLPA_Units_middle_point
+FROM #Cello_LLPA_Units
+;
+
+-- Step 2: Join the two points for the interpolation later
+--         join point 1(CLTV_low) and 2(CLTV_high)
+DROP TABLE IF EXISTS report.Cello_LLPA_Units_Linear_Interpolation;
+SELECT 
+numUnitsStart   = CASE WHEN p1.numUnitsStart IS NOT NULL THEN p1.numUnitsStart ELSE p2.numUnitsStart END,
+numUnitsEnd     = CASE WHEN p1.numUnitsEnd IS NOT NULL THEN p1.numUnitsEnd ELSE p2.numUnitsEnd END,
+startDate       = CASE WHEN p1.startDate IS NOT NULL THEN p1.startDate ELSE p2.startDate END,
+endDate	        = CASE WHEN p1.endDate IS NOT NULL THEN p1.endDate ELSE p2.endDate END,
+LTV_L           = CASE WHEN p1.LTV IS NOT NULL THEN p1.LTV ELSE p2.LTVBucketStart END,
+LTV_H           = CASE WHEN p2.LTV IS NOT NULL THEN p2.LTV ELSE p1.LTVBucketEnd END,
+LLPA_LL         = CASE WHEN p1.LLPA IS NOT NULL THEN p1.LLPA ELSE p2.LLPA END,
+LLPA_LH         = CASE WHEN p2.LLPA IS NOT NULL THEN p2.LLPA ELSE p1.LLPA END
+INTO report.Cello_LLPA_Units_Linear_Interpolation
+FROM #LLPA_Units_middle_point p1
+FULL OUTER JOIN #LLPA_Units_middle_point p2 
+ON p1.LTVBucketEnd = p2.LTVBucketStart
+AND p1.startDate = p2.startDate
+AND p1.numUnitsStart = p2.numUnitsStart
+ORDER BY numUnitsStart, LTV_L
+;
+
+
+---- LLPA LTV
+-- not active after 2015-09
+-- Step 0: Fix Nulls:
+DROP TABLE IF EXISTS report.Cello_LLPA_LTV;
+SELECT 
+    LtvStart as LTVBucketStart,
+    LtvEnd as LTVBucketEnd,
+    StartDate,
+    EndDate,
+    LLPA
+INTO report.Cello_LLPA_LTV
+FROM report.Cello_LLPA_LTV_Raw
+;
+UPDATE report.Cello_LLPA_LTV c SET LLPA = max.max_llpa
+FROM (SELECT  startDate, endDate, max(LLPA) as max_llpa FROM report.Cello_LLPA_LTV group by startDate, endDate ) max
+WHERE LLPA IS NULL
+    AND max.startDate = c.startDate
+    AND max.endDate = c.endDate
+;
+COMMIT;
+
+
+---- LLPA Loan Size 
+-- Step 0: Fix Nulls:
+DROP TABLE IF EXISTS #Cello_LLPA_LoanSize;
+SELECT 
+    LoanSizeStart as LoanSizeBucketStart,
+    LoanSizeEnd as LoanSizeBucketEnd,
+    LtvStart as LTVBucketStart,
+    LtvEnd as LTVBucketEnd,
+    StartDate,
+    EndDate,
+    LLPA
+INTO #Cello_LLPA_LoanSize
+FROM report.Cello_LLPA_LoanSize_Raw
+;
+UPDATE #Cello_LLPA_LoanSize c SET LLPA = max.max_llpa
+FROM (SELECT startDate, endDate, max(LLPA) as max_llpa FROM #Cello_LLPA_LoanSize group by  startDate, endDate) max
+WHERE LLPA IS NULL
+    AND  max.startDate = c.startDate 
+    AND  max.endDate = c.endDate
+;
+COMMIT;
+
+
+-- Step 1: create the middle point for Loan Size
+DROP TABLE IF EXISTS #LLPA_LoanSize_middle_point;
+SELECT 
+*,
+LoanSize = CASE WHEN LoanSizeBucketEnd > 1000000 THEN LoanSizeBucketStart 
+        ELSE CASE WHEN LoanSizeBucketStart < 10000 THEN LoanSizeBucketEnd - 10000
+        ELSE 0.5 * (LTVBucketStart + LTVBucketEnd) END END
+INTO #LLPA_LoanSize_middle_point
+FROM #Cello_LLPA_LoanSize
+;
+
+-- Step 2: Join the two points for the interpolation later
+--         join point 1(LoanSize_low) and 2(CLTV_high)
+DROP TABLE IF EXISTS report.Cello_LLPA_LoanSize_Interpolation;
+SELECT 
+LTVBucketStart = CASE WHEN p1.LTVBucketStart IS NOT NULL THEN p1.LTVBucketStart ELSE p2.LTVBucketStart END,
+LTVBucketEnd   = CASE WHEN p1.LTVBucketEnd IS NOT NULL THEN p1.LTVBucketEnd ELSE p2.LTVBucketEnd END,
+startDate      = CASE WHEN p1.startDate IS NOT NULL THEN p1.startDate ELSE p2.startDate END,
+endDate	       = CASE WHEN p1.endDate IS NOT NULL THEN p1.endDate ELSE p2.endDate END,
+LoanSize_L     = CASE WHEN p1.LoanSize IS NOT NULL THEN p1.LoanSize ELSE p2.LoanSizeBucketStart END,
+LoanSize_H     = CASE WHEN p2.LoanSize IS NOT NULL THEN p2.LoanSize ELSE p1.LoanSizeBucketEnd END,
+LLPA_LL        = CASE WHEN p1.LLPA IS NOT NULL THEN p1.LLPA ELSE p2.LLPA END,
+LLPA_LH        = CASE WHEN p2.LLPA IS NOT NULL THEN p2.LLPA ELSE p1.LLPA END
+INTO report.Cello_LLPA_LoanSize_Interpolation
+FROM #LLPA_LoanSize_middle_point p1
+FULL OUTER JOIN #LLPA_LoanSize_middle_point p2 
+ON p1.LoanSizeBucketEnd = p2.LoanSizeBucketStart
+AND p1.startDate = p2.startDate
+AND p1.LTVBucketStart = p2.LTVBucketStart
+;
+
+
+-------------------------------------------------
+-- PMI
+-------------------------------------------------
+---- PMI Base
+-- Step 0: Fix Base PMI Nulls, handle corner cases
+DROP TABLE IF EXISTS #Cello_PMI_Base;
+SELECT 
+    CASE WHEN LoanPurpose like ('%REFI%') THEN 'REFI' WHEN LoanPurpose like ('%PURCH%') THEN 'PURCH' ELSE NULL END as LoanPurpose,
+    FICOBucketStart,
+    FICOBucketEnd,
+    LTVBucketStart,
+    LTVBucketEnd,
+    startDate,
+    endDate,
+    PMI
+INTO #Cello_PMI_Base
+FROM report.Cello_PMI_Base_Raw
+;
+
+-- Update the lower FICO cases, set to be the max of save LTV group
+UPDATE #Cello_PMI_Base c SET PMI = max.max_PMI
+FROM (SELECT  LoanPurpose, startDate, endDate, LTVBucketStart, max(PMI) as max_PMI FROM #Cello_PMI_Base group by LoanPurpose, startDate, endDate, LTVBucketStart) max
+WHERE PMI IS NULL
+    AND c.FICOBucketStart < 500
+    AND max.LoanPurpose = c.LoanPurpose
+    AND max.startDate = c.startDate
+    AND max.endDate = c.endDate
+    AND max.LTVBucketStart = c.LTVBucketStart
+;
+-- Update the higher LTV cases, set to be the max of save FICO group
+UPDATE #Cello_PMI_Base c SET PMI = max.max_PMI
+FROM (SELECT  LoanPurpose, startDate, endDate, FICOBucketEnd, max(PMI) as max_PMI FROM #Cello_PMI_Base group by LoanPurpose, startDate, endDate, FICOBucketEnd) max
+WHERE PMI IS NULL
+    AND c.LTVBucketEnd > 200
+    AND max.LoanPurpose = c.LoanPurpose
+    AND max.startDate = c.startDate
+    AND max.endDate = c.endDate
+    AND max.FICOBucketEnd = c.FICOBucketEnd
+;
+COMMIT;
+
+-- Step 1: create the middle point for CLTV and FICO
+DROP TABLE IF EXISTS #PMI_Base_middle_point;
+SELECT 
+*,
+FICO = CASE WHEN FICOBucketEnd > 800 THEN FICOBucketStart + 10
+        ELSE CASE WHEN FICOBucketStart < 500 THEN FICOBucketEnd - 10
+        ELSE 0.5 * (FICOBucketStart + FICOBucketEnd) END END,
+LTV = CASE WHEN LTVBucketEnd > 150 THEN LTVBucketStart
+        ELSE CASE WHEN LTVBucketStart < 60 THEN LTVBucketEnd - 2.5
+        ELSE 0.5 * (LTVBucketStart + LTVBucketEnd) END END
+INTO #PMI_Base_middle_point
+FROM #Cello_PMI_Base
+;
+
+-- Step 2: Join the four corner points for the interpolation later
+--  2-1: join point 1(CLTV_low,FICO_low) and 2(CLTV_high,FICO_low)
+DROP TABLE IF EXISTS #PMI_Base_points_12;
+SELECT 
+LoanPurpose     = CASE WHEN p1.LoanPurpose IS NOT NULL THEN p1.LoanPurpose ELSE p2.LoanPurpose END,
+FICOBucketStart = CASE WHEN p1.FICOBucketStart IS NOT NULL THEN p1.FICOBucketStart ELSE p2.FICOBucketStart END,
+FICOBucketEnd   = CASE WHEN p1.FICOBucketEnd IS NOT NULL THEN p1.FICOBucketEnd ELSE p2.FICOBucketEnd END,
+startDate       = CASE WHEN p1.startDate IS NOT NULL THEN p1.startDate ELSE p2.startDate END,
+endDate	        = CASE WHEN p1.endDate IS NOT NULL THEN p1.endDate ELSE p2.endDate END,
+FICO            = CASE WHEN p1.FICO IS NOT NULL THEN p1.FICO ELSE p2.FICO END,
+LTV_L           = CASE WHEN p1.LTV IS NOT NULL THEN p1.LTV ELSE p2.LTVBucketStart END,
+LTV_H           = CASE WHEN p2.LTV IS NOT NULL THEN p2.LTV ELSE p1.LTVBucketEnd END,
+PMI_LL         = CASE WHEN p1.PMI IS NOT NULL THEN p1.PMI ELSE p2.PMI END,
+PMI_LH         = CASE WHEN p2.PMI IS NOT NULL THEN p2.PMI ELSE p1.PMI END
+INTO #PMI_Base_points_12
+FROM #PMI_Base_middle_point p1
+FULL OUTER JOIN #PMI_Base_middle_point p2 
+ON p1.FICOBucketStart = p2.FICOBucketStart 
+AND p1.FICOBucketEnd = p2.FICOBucketEnd 
+AND p1.LTVBucketEnd = p2.LTVBucketStart
+AND p1.startDate = p2.startDate
+AND p1.LoanPurpose = p2.LoanPurpose
+ORDER BY LTV_L, FICO
+;
+
+-- 2-2: Join point 3(CLTV_low,FICO_high) and 4(CLTV_high,FICO_high) with p1 and p2
+DROP TABLE IF EXISTS report.Cello_PMI_Base_Bilinear_Interpolation;
+SELECT 
+LoanPurpose = CASE WHEN p12.LoanPurpose IS NOT NULL THEN p12.LoanPurpose ELSE p34.LoanPurpose END,
+startDate   = CASE WHEN p12.startDate IS NOT NULL THEN p12.startDate ELSE p34.startDate END,
+endDate     = CASE WHEN p12.endDate IS NOT NULL THEN p12.endDate ELSE p34.endDate END,
+FICO_L      = CASE WHEN p12.FICO IS NOT NULL THEN p12.FICO ELSE p34.FICOBucketStart END,
+FICO_H      = CASE WHEN p34.FICO IS NOT NULL THEN p34.FICO ELSE p12.FICOBucketEnd END,
+LTV_L       = CASE WHEN p12.LTV_L IS NOT NULL THEN p12.LTV_L ELSE p34.LTV_L END,
+LTV_H       = CASE WHEN p12.LTV_H IS NOT NULL THEN p12.LTV_H ELSE p34.LTV_H END,
+PMI_LL_FL  = CASE WHEN p12.PMI_LL IS NOT NULL THEN p12.PMI_LL ELSE p34.PMI_LL END,
+PMI_LH_FL  = CASE WHEN p12.PMI_LH IS NOT NULL THEN p12.PMI_LH ELSE p34.PMI_LH END,
+PMI_LL_FH  = CASE WHEN p34.PMI_LL IS NOT NULL THEN p34.PMI_LL ELSE p12.PMI_LL END,
+PMI_LH_FH  = CASE WHEN p34.PMI_LH IS NOT NULL THEN p34.PMI_LH ELSE p12.PMI_LH END
+INTO report.Cello_PMI_Base_Bilinear_Interpolation
+FROM #PMI_Base_points_12 p12
+FULL OUTER JOIN #PMI_Base_points_12 p34 
+ON p12.FICOBucketEnd = p34.FICOBucketStart
+AND p12.LTV_L = p34.LTV_L
+AND p12.startDate = p34.startDate
+AND p12.LoanPurpose = p34.LoanPurpose
+ORDER BY LTV_L, FICO_L
+;
+
+
+---- PMI Occupancy
+-- Step 0: Fix Occupancy PMI Nulls
+DROP TABLE IF EXISTS #Cello_PMI_Occupancy;
+SELECT 
+    CASE WHEN OccType like ('%OWNER%') THEN 'OWNER' WHEN OccType like ('%2ND%') THEN '2ND' WHEN OccType like ('%INV%') THEN 'INV' WHEN OccType like ('%N/A%') THEN 'N/A' ELSE NULL END as OccType,
+    LtvStart as LTVBucketStart,
+    LtvEnd as LTVBucketEnd,
+    FICOBucketStart,
+    FICOBucketEnd,
+    StartDate,
+    EndDate,
+    PMI
+INTO #Cello_PMI_Occupancy
+FROM report.Cello_PMI_Occupancy_Raw
+;
+UPDATE #Cello_PMI_Occupancy o SET PMI = m.max_pmi
+FROM (SELECT  startDate, endDate, max(PMI) as max_pmi, OccType FROM #Cello_PMI_Occupancy group by OccType,startDate, endDate ) m
+WHERE o.PMI IS NULL 
+    AND m.OccType = o.OccType 
+    AND m.startDate = o.startDate 
+    AND  m.endDate = o.endDate
+;
+UPDATE #Cello_PMI_Occupancy SET PMI = 0
+WHERE LTVBucketEnd = 80
+;
+COMMIT;
+
+-- Step 1: create the middle point for CLTV and FICO
+DROP TABLE IF EXISTS #PMI_Occupancy_middle_point;
+SELECT 
+*,
+FICO = CASE WHEN FICOBucketEnd > 800 THEN FICOBucketStart + 10
+        ELSE CASE WHEN FICOBucketStart < 500 THEN FICOBucketEnd - 10
+        ELSE 0.5 * (FICOBucketStart + FICOBucketEnd) END END,
+LTV = CASE WHEN LTVBucketEnd > 150 THEN LTVBucketStart + 2.5
+        ELSE CASE WHEN LTVBucketStart < 60 THEN LTVBucketEnd - 2.5
+        ELSE 0.5 * (LTVBucketStart + LTVBucketEnd) END END
+INTO #PMI_Occupancy_middle_point
+FROM #Cello_PMI_Occupancy
+;
+
+-- Step 2: Join the four corner points for the interpolation later
+--  2-1: join point 1(CLTV_low,FICO_low) and 2(CLTV_high,FICO_low)
+DROP TABLE IF EXISTS #PMI_Occupancy_points_12;
+SELECT 
+OccType         = CASE WHEN p1.OccType IS NOT NULL THEN p1.OccType ELSE p2.OccType END,
+FICOBucketStart = CASE WHEN p1.FICOBucketStart IS NOT NULL THEN p1.FICOBucketStart ELSE p2.FICOBucketStart END,
+FICOBucketEnd   = CASE WHEN p1.FICOBucketEnd IS NOT NULL THEN p1.FICOBucketEnd ELSE p2.FICOBucketEnd END,
+startDate       = CASE WHEN p1.startDate IS NOT NULL THEN p1.startDate ELSE p2.startDate END,
+endDate	        = CASE WHEN p1.endDate IS NOT NULL THEN p1.endDate ELSE p2.endDate END,
+FICO            = CASE WHEN p1.FICO IS NOT NULL THEN p1.FICO ELSE p2.FICO END,
+LTV_L           = CASE WHEN p1.LTV IS NOT NULL THEN p1.LTV ELSE p2.LTVBucketStart END,
+LTV_H           = CASE WHEN p2.LTV IS NOT NULL THEN p2.LTV ELSE p1.LTVBucketEnd END,
+PMI_LL         = CASE WHEN p1.PMI IS NOT NULL THEN p1.PMI ELSE p2.PMI END,
+PMI_LH         = CASE WHEN p2.PMI IS NOT NULL THEN p2.PMI ELSE p1.PMI END
+INTO #PMI_Occupancy_points_12
+FROM #PMI_Occupancy_middle_point p1
+FULL OUTER JOIN #PMI_Occupancy_middle_point p2 
+ON p1.FICOBucketStart = p2.FICOBucketStart 
+AND p1.FICOBucketEnd = p2.FICOBucketEnd 
+AND p1.LTVBucketEnd = p2.LTVBucketStart
+AND p1.startDate = p2.startDate
+AND p1.OccType = p2.OccType
+ORDER BY LTV_L, FICO
+;
+
+-- 2-2: Join point 3(CLTV_low,FICO_high) and 4(CLTV_high,FICO_high) with p1 and p2
+DROP TABLE IF EXISTS report.Cello_PMI_Occupancy_Bilinear_Interpolation;
+SELECT 
+OccType     = CASE WHEN p12.OccType IS NOT NULL THEN p12.OccType ELSE p34.OccType END,
+startDate   = CASE WHEN p12.startDate IS NOT NULL THEN p12.startDate ELSE p34.startDate END,
+endDate     = CASE WHEN p12.endDate IS NOT NULL THEN p12.endDate ELSE p34.endDate END,
+FICO_L      = CASE WHEN p12.FICO IS NOT NULL THEN p12.FICO ELSE p34.FICOBucketStart END,
+FICO_H      = CASE WHEN p34.FICO IS NOT NULL THEN p34.FICO ELSE p12.FICOBucketEnd END,
+LTV_L       = CASE WHEN p12.LTV_L IS NOT NULL THEN p12.LTV_L ELSE p34.LTV_L END,
+LTV_H       = CASE WHEN p12.LTV_H IS NOT NULL THEN p12.LTV_H ELSE p34.LTV_H END,
+PMI_LL_FL  = CASE WHEN p12.PMI_LL IS NOT NULL THEN p12.PMI_LL ELSE p34.PMI_LL END,
+PMI_LH_FL  = CASE WHEN p12.PMI_LH IS NOT NULL THEN p12.PMI_LH ELSE p34.PMI_LH END,
+PMI_LL_FH  = CASE WHEN p34.PMI_LL IS NOT NULL THEN p34.PMI_LL ELSE p12.PMI_LL END,
+PMI_LH_FH  = CASE WHEN p34.PMI_LH IS NOT NULL THEN p34.PMI_LH ELSE p12.PMI_LH END
+INTO report.Cello_PMI_Occupancy_Bilinear_Interpolation
+FROM #PMI_Occupancy_points_12 p12
+FULL OUTER JOIN #PMI_Occupancy_points_12 p34 
+ON p12.FICOBucketEnd = p34.FICOBucketStart
+AND p12.LTV_L = p34.LTV_L
+AND p12.startDate = p34.startDate
+AND p12.OccType = p34.OccType
+ORDER BY LTV_L, FICO_L
+;
+
+
+
+---- PMI LoanSize
+-- Step 0: Fix LoanSize PMI Nulls
+DROP TABLE IF EXISTS #Cello_PMI_LoanSize;
+SELECT 
+    LoanSizeStart,
+    LoanSizeEnd,
+    LtvStart as LTVBucketStart,
+    LtvEnd as LTVBucketEnd,
+    FICOBucketStart,
+    FICOBucketEnd,
+    StartDate,
+    EndDate,
+    PMI
+INTO #Cello_PMI_LoanSize
+FROM report.Cello_PMI_LoanSize_Raw
+;
+UPDATE #Cello_PMI_LoanSize c SET PMI = 0
+WHERE PMI IS NULL
+    AND LoanSizeStart = 0
+;
+UPDATE #Cello_PMI_LoanSize c SET PMI = max.max_pmi
+FROM (SELECT startDate, endDate, max(PMI) as max_pmi FROM #Cello_PMI_LoanSize group by startDate, endDate) max
+WHERE PMI IS NULL
+    AND  max.startDate = c.startDate 
+    AND  max.endDate = c.endDate
+    AND LoanSizeStart != 0
+;
+COMMIT;
+
+-- Step 1: create the middle point for CLTV and FICO
+DROP TABLE IF EXISTS #PMI_LoanSize_middle_point;
+SELECT 
+*,
+LoanSize = CASE WHEN LoanSizeEnd > 1000000 THEN LoanSizeStart 
+        ELSE CASE WHEN LoanSizeStart < 10000 THEN LoanSizeEnd - 10000
+        ELSE 0.5 * (LTVBucketStart + LTVBucketEnd) END END,
+FICO = CASE WHEN FICOBucketEnd > 800 THEN FICOBucketStart + 10
+        ELSE CASE WHEN FICOBucketStart < 500 THEN FICOBucketEnd - 10
+        ELSE 0.5 * (FICOBucketStart + FICOBucketEnd) END END,
+LTV = CASE WHEN LTVBucketEnd > 150 THEN LTVBucketStart + 2.5
+        ELSE CASE WHEN LTVBucketStart < 60 THEN LTVBucketEnd - 2.5
+        ELSE 0.5 * (LTVBucketStart + LTVBucketEnd) END END
+INTO #PMI_LoanSize_middle_point
+FROM #Cello_PMI_LoanSize
+;
+
+-- Step 2: Join the four corner points for the interpolation later
+--  2-1: join point 1(CLTV_low,FICO_low) and 2(CLTV_high,FICO_low)
+DROP TABLE IF EXISTS #PMI_LoanSize_points_12;
+SELECT 
+LoanSizeStart   = CASE WHEN p1.LoanSizeStart IS NOT NULL THEN p1.LoanSizeStart ELSE p2.LoanSizeStart END,
+LoanSizeEnd     = CASE WHEN p1.LoanSizeEnd IS NOT NULL THEN p1.LoanSizeEnd ELSE p2.LoanSizeEnd END,
+FICOBucketStart = CASE WHEN p1.FICOBucketStart IS NOT NULL THEN p1.FICOBucketStart ELSE p2.FICOBucketStart END,
+FICOBucketEnd   = CASE WHEN p1.FICOBucketEnd IS NOT NULL THEN p1.FICOBucketEnd ELSE p2.FICOBucketEnd END,
+startDate       = CASE WHEN p1.startDate IS NOT NULL THEN p1.startDate ELSE p2.startDate END,
+endDate	        = CASE WHEN p1.endDate IS NOT NULL THEN p1.endDate ELSE p2.endDate END,
+FICO            = CASE WHEN p1.FICO IS NOT NULL THEN p1.FICO ELSE p2.FICO END,
+LoanSize        = CASE WHEN p1.LoanSize IS NOT NULL THEN p1.LoanSize ELSE p2.LoanSize END,
+LTV_L           = CASE WHEN p1.LTV IS NOT NULL THEN p1.LTV ELSE p2.LTVBucketStart END,
+LTV_H           = CASE WHEN p2.LTV IS NOT NULL THEN p2.LTV ELSE p1.LTVBucketEnd END,
+PMI_LL          = CASE WHEN p1.PMI IS NOT NULL THEN p1.PMI ELSE p2.PMI END,
+PMI_LH          = CASE WHEN p2.PMI IS NOT NULL THEN p2.PMI ELSE p1.PMI END
+INTO #PMI_LoanSize_points_12
+FROM #PMI_LoanSize_middle_point p1
+FULL OUTER JOIN #PMI_LoanSize_middle_point p2 
+ON p1.FICOBucketStart = p2.FICOBucketStart 
+AND p1.FICOBucketEnd = p2.FICOBucketEnd 
+AND p1.LTVBucketEnd = p2.LTVBucketStart
+AND p1.startDate = p2.startDate
+AND p1.LoanSizeStart = p2.LoanSizeStart
+ORDER BY LTV_L, FICO
+;
+
+-- 2-2: Join point 3(CLTV_low,FICO_high) and 4(CLTV_high,FICO_high) with p1 and p2
+DROP TABLE IF EXISTS #PMI_LoanSize_points_1234;
+SELECT 
+LoanSizeStart   = CASE WHEN p12.LoanSizeStart IS NOT NULL THEN p12.LoanSizeStart ELSE p34.LoanSizeStart END,
+LoanSizeEnd     = CASE WHEN p12.LoanSizeEnd IS NOT NULL THEN p12.LoanSizeEnd ELSE p34.LoanSizeEnd END,
+startDate       = CASE WHEN p12.startDate IS NOT NULL THEN p12.startDate ELSE p34.startDate END,
+endDate         = CASE WHEN p12.endDate IS NOT NULL THEN p12.endDate ELSE p34.endDate END,
+LoanSize        = CASE WHEN p12.LoanSize IS NOT NULL THEN p12.LoanSize ELSE p34.LoanSize END,
+FICO_L          = CASE WHEN p12.FICO IS NOT NULL THEN p12.FICO ELSE p34.FICOBucketStart END,
+FICO_H          = CASE WHEN p34.FICO IS NOT NULL THEN p34.FICO ELSE p12.FICOBucketEnd END,
+LTV_L           = CASE WHEN p12.LTV_L IS NOT NULL THEN p12.LTV_L ELSE p34.LTV_L END,
+LTV_H           = CASE WHEN p12.LTV_H IS NOT NULL THEN p12.LTV_H ELSE p34.LTV_H END,
+PMI_LL_FL       = CASE WHEN p12.PMI_LL IS NOT NULL THEN p12.PMI_LL ELSE p34.PMI_LL END,
+PMI_LH_FL       = CASE WHEN p12.PMI_LH IS NOT NULL THEN p12.PMI_LH ELSE p34.PMI_LH END,
+PMI_LL_FH       = CASE WHEN p34.PMI_LL IS NOT NULL THEN p34.PMI_LL ELSE p12.PMI_LL END,
+PMI_LH_FH       = CASE WHEN p34.PMI_LH IS NOT NULL THEN p34.PMI_LH ELSE p12.PMI_LH END
+INTO #PMI_LoanSize_points_1234
+FROM #PMI_LoanSize_points_12 p12
+FULL OUTER JOIN #PMI_LoanSize_points_12 p34 
+ON p12.FICOBucketEnd = p34.FICOBucketStart
+AND p12.LTV_L = p34.LTV_L
+AND p12.startDate = p34.startDate
+AND p12.LoanSizeStart = p34.LoanSizeStart
+ORDER BY LTV_L, FICO_L
+;
+
+-- Step 3: Join p1~p4 with the loansize bucket
+--         loansize will be an additional layer of interpolation based on the result of Bilinear_Interpolation from FICO and CLTV
+DROP TABLE IF EXISTS #PMI_LoanSize_Bucket;
+SELECT 
+startDate   = CASE WHEN p1.startDate IS NOT NULL THEN p1.startDate ELSE p2.startDate END,
+endDate	    = CASE WHEN p1.endDate IS NOT NULL THEN p1.endDate ELSE p2.endDate END,
+LoanSize_L  = CASE WHEN p1.LoanSize IS NOT NULL THEN p1.LoanSize ELSE p2.LoanSizeStart END,
+LoanSize_H  = CASE WHEN p2.LoanSize IS NOT NULL THEN p2.LoanSize ELSE p1.LoanSizeEnd END,
+LTV_L       = CASE WHEN p1.LTV_L IS NOT NULL THEN p1.LTV_L ELSE p2.LTV_L END,
+LTV_H       = CASE WHEN p1.LTV_H IS NOT NULL THEN p1.LTV_H ELSE p2.LTV_H END,
+FICO_L      = CASE WHEN p1.FICO_L IS NOT NULL THEN p1.FICO_L ELSE p2.FICO_L END,
+FICO_H      = CASE WHEN p1.FICO_H IS NOT NULL THEN p1.FICO_H ELSE p2.FICO_H END,
+PMI_LL_FL   = CASE WHEN p2.PMI_LL_FL IS NOT NULL THEN p2.PMI_LL_FL ELSE p1.PMI_LL_FL END,
+PMI_LH_FL   = CASE WHEN p2.PMI_LH_FL IS NOT NULL THEN p2.PMI_LH_FL ELSE p1.PMI_LH_FL END,
+PMI_LL_FH   = CASE WHEN p2.PMI_LL_FH IS NOT NULL THEN p2.PMI_LL_FH ELSE p1.PMI_LL_FH END,
+PMI_LH_FH   = CASE WHEN p2.PMI_LH_FH IS NOT NULL THEN p2.PMI_LH_FH ELSE p1.PMI_LH_FH END
+INTO #PMI_LoanSize_Bucket
+FROM #PMI_LoanSize_points_1234 p1
+FULL OUTER JOIN #PMI_LoanSize_points_1234 p2 
+ON p1.LoanSizeEnd = p2.LoanSizeStart
+AND p1.startDate = p2.startDate
+AND p1.LTV_L = p2.LTV_L
+AND p1.FICO_L = p2.FICO_L
+;
+
+DROP TABLE IF EXISTS report.Cello_PMI_LoanSize_Bilinear_Interpolation;
+SELECT
+*,
+needExtraInterp = CASE WHEN LoanSize_L > 0.0 AND LoanSize_H < 99000000.0 THEN 1.0 ELSE 0.0 END
+INTO report.Cello_PMI_LoanSize_Bilinear_Interpolation
+FROM #PMI_LoanSize_Bucket
+;
+COMMIT;
+
+
+
+-------------------------------------------------
+-- MIP
+-------------------------------------------------
+-- MIP smoonthing will invovle bilinear interpolation of CLTV and loan size
+-- Step 0: combine MIP_Base and MIP_Grandfather
+DROP TABLE IF EXISTS #Cello_MIP_Base;
+SELECT 
+    *
+INTO #Cello_MIP_Base
+FROM ( Select * from report.Cello_MIP_Base UNION Select * from report.Cello_MIP_Grandfather ) mip_base
+--WHERE enddate = '2100-01-01'
+;
+
+-- Step 1: create the middle point for CLTV and LoanSize
+DROP TABLE IF EXISTS #MIP_Base_middle_point;
+SELECT 
+*,
+LoanSize = CASE WHEN LoanSizeBucketEnd > 99000000 THEN LoanSizeBucketStart
+        ELSE CASE WHEN LoanSizeBucketStart < 1000 THEN LoanSizeBucketEnd - 10000
+        ELSE 0.5 * (LoanSizeBucketStart + LoanSizeBucketEnd) END END,
+LTV = CASE WHEN LTVBucketEnd > 150 THEN LTVBucketStart
+        ELSE CASE WHEN LTVBucketStart < 60 THEN LTVBucketEnd - 2.5
+        ELSE 0.5 * (LTVBucketStart + LTVBucketEnd) END END
+INTO #MIP_Base_middle_point
+FROM #Cello_MIP_Base
+;
+
+-- Step 2: Join the four corner points for the interpolation later
+--  2-1: join point 1(CLTV_low,LoanSize_low) and 2(CLTV_high,LoanSize_low)
+DROP TABLE IF EXISTS #MIP_Base_points_12;
+SELECT 
+TermBucketStart     = CASE WHEN p1.TermBucketStart IS NOT NULL THEN p1.TermBucketStart ELSE p2.TermBucketStart END,
+TermBucketEnd       = CASE WHEN p1.TermBucketEnd IS NOT NULL THEN p1.TermBucketEnd ELSE p2.TermBucketEnd END,
+LoanSizeBucketStart = CASE WHEN p1.LoanSizeBucketStart IS NOT NULL THEN p1.LoanSizeBucketStart ELSE p2.LoanSizeBucketStart END,
+LoanSizeBucketEnd   = CASE WHEN p1.LoanSizeBucketEnd IS NOT NULL THEN p1.LoanSizeBucketEnd ELSE p2.LoanSizeBucketEnd END,
+OriginationStartDate= CASE WHEN p1.OriginationStartDate IS NOT NULL THEN p1.OriginationStartDate ELSE p2.OriginationStartDate END,
+OriginationEndDate  = CASE WHEN p1.OriginationEndDate IS NOT NULL THEN p1.OriginationEndDate ELSE p2.OriginationEndDate END,
+startDate           = CASE WHEN p1.startDate IS NOT NULL THEN p1.startDate ELSE p2.startDate END,
+endDate	            = CASE WHEN p1.endDate IS NOT NULL THEN p1.endDate ELSE p2.endDate END,
+LoanSize            = CASE WHEN p1.LoanSize IS NOT NULL THEN p1.LoanSize ELSE p2.LoanSize END,
+LTV_L               = CASE WHEN p1.LTV IS NOT NULL THEN p1.LTV ELSE p2.LTVBucketStart END,
+LTV_H               = CASE WHEN p2.LTV IS NOT NULL THEN p2.LTV ELSE p1.LTVBucketEnd END,
+AnnualMIPPoints_LL  = CASE WHEN p1.AnnualMIPPoints IS NOT NULL THEN p1.AnnualMIPPoints ELSE p2.AnnualMIPPoints END,
+AnnualMIPPoints_LH  = CASE WHEN p2.AnnualMIPPoints IS NOT NULL THEN p2.AnnualMIPPoints ELSE p1.AnnualMIPPoints END,
+UpfrontMIPPoints    = CASE WHEN p1.UpfrontMIPPoints IS NOT NULL THEN p1.UpfrontMIPPoints ELSE p2.UpfrontMIPPoints END
+INTO #MIP_Base_points_12
+FROM #MIP_Base_middle_point p1
+FULL OUTER JOIN #MIP_Base_middle_point p2 
+ON p1.LoanSizeBucketStart = p2.LoanSizeBucketStart 
+AND p1.LoanSizeBucketEnd = p2.LoanSizeBucketEnd 
+AND p1.LTVBucketEnd = p2.LTVBucketStart
+AND p1.startDate = p2.startDate
+AND p1.TermBucketStart = p2.TermBucketStart
+AND p1.OriginationStartDate = p2.OriginationStartDate
+ORDER BY LTV_L, LoanSize
+;
+
+-- 2-2: Join point 3(CLTV_low, LoanSize_high) and 4(CLTV_high, LoanSize_high) with p1 and p2
+DROP TABLE IF EXISTS report.Cello_MIP_Base_Bilinear_Interpolation;
+SELECT 
+TermBucketStart         = CASE WHEN p12.TermBucketStart IS NOT NULL THEN p12.TermBucketStart ELSE p34.TermBucketStart END,
+TermBucketEnd           = CASE WHEN p12.TermBucketEnd IS NOT NULL THEN p12.TermBucketEnd ELSE p34.TermBucketEnd END,
+OriginationStartDate    = CASE WHEN p12.OriginationStartDate IS NOT NULL THEN p12.OriginationStartDate ELSE p34.OriginationStartDate END,
+OriginationEndDate      = CASE WHEN p12.OriginationEndDate IS NOT NULL THEN p12.OriginationEndDate ELSE p34.OriginationEndDate END,
+startDate               = CASE WHEN p12.startDate IS NOT NULL THEN p12.startDate ELSE p34.startDate END,
+endDate                 = CASE WHEN p12.endDate IS NOT NULL THEN p12.endDate ELSE p34.endDate END,
+LoanSize_L              = CASE WHEN p12.LoanSize IS NOT NULL THEN p12.LoanSize ELSE p34.LoanSizeBucketStart END,
+LoanSize_H              = CASE WHEN p34.LoanSize IS NOT NULL THEN p34.LoanSize ELSE p12.LoanSizeBucketEnd END,
+LTV_L                   = CASE WHEN p12.LTV_L IS NOT NULL THEN p12.LTV_L ELSE p34.LTV_L END,
+LTV_H                   = CASE WHEN p12.LTV_H IS NOT NULL THEN p12.LTV_H ELSE p34.LTV_H END,
+AnnualMIPPoints_LL_SL   = CASE WHEN p12.AnnualMIPPoints_LL IS NOT NULL THEN p12.AnnualMIPPoints_LL ELSE p34.AnnualMIPPoints_LL END,
+AnnualMIPPoints_LH_SL   = CASE WHEN p12.AnnualMIPPoints_LH IS NOT NULL THEN p12.AnnualMIPPoints_LH ELSE p34.AnnualMIPPoints_LH END,
+AnnualMIPPoints_LL_SH   = CASE WHEN p34.AnnualMIPPoints_LL IS NOT NULL THEN p34.AnnualMIPPoints_LL ELSE p12.AnnualMIPPoints_LL END,
+AnnualMIPPoints_LH_SH   = CASE WHEN p34.AnnualMIPPoints_LH IS NOT NULL THEN p34.AnnualMIPPoints_LH ELSE p12.AnnualMIPPoints_LH END,
+UpfrontMIPPoints        = CASE WHEN p12.UpfrontMIPPoints IS NOT NULL THEN p12.UpfrontMIPPoints ELSE p34.UpfrontMIPPoints END
+INTO report.Cello_MIP_Base_Bilinear_Interpolation
+FROM #MIP_Base_points_12 p12
+FULL OUTER JOIN #MIP_Base_points_12 p34 
+ON p12.LoanSizeBucketEnd = p34.LoanSizeBucketStart
+AND p12.LTV_L = p34.LTV_L
+AND p12.startDate = p34.startDate
+AND p12.TermBucketStart = p34.TermBucketStart
+AND p12.OriginationStartDate = p34.OriginationStartDate
+ORDER BY LTV_L, LoanSize_L
+;
+
+DELETE FROM report.Cello_MIP_Base_Bilinear_Interpolation
+WHERE LoanSize_L = LoanSize_H
+;
+-------------------------------------------------
+-- Grant access
+-------------------------------------------------
+GRANT SELECT ON report.Cello_LLPA_Base_Bilinear_Interpolation to PUBLIC;
+GRANT SELECT ON report.Cello_LLPA_ADMC to PUBLIC;
+GRANT SELECT ON report.Cello_LLPA_Occupancy_Linear_Interpolation to PUBLIC;
+GRANT SELECT ON report.Cello_LLPA_Units_Linear_Interpolation to PUBLIC;
+GRANT SELECT ON report.Cello_LLPA_LTV to PUBLIC;
+GRANT SELECT ON report.Cello_LLPA_LoanSize_Interpolation to PUBLIC;
+
+GRANT SELECT ON report.Cello_PMI_Base_Bilinear_Interpolation to PUBLIC;
+GRANT SELECT ON report.Cello_PMI_Occupancy_Bilinear_Interpolation to PUBLIC;
+GRANT SELECT ON report.Cello_PMI_LoanSize_Bilinear_Interpolation to PUBLIC;
+
+GRANT SELECT ON report.Cello_MIP_Base_Bilinear_Interpolation to PUBLIC;
+COMMIT;
+
+
+
+
+-------------------------------------------------
+-- test case
+-------------------------------------------------
+DROP TABLE IF EXISTS #loan;
+CREATE TABLE #loan(
+    cltv numeric(8,3),
+    fico numeric(8,1)
+);
+
+INSERT #loan SELECT 105, 717;
+
+
+SELECT *,
+LLPA = (LLPA_LL_FL * (LTV_H - CLTV) * (FICO_H - FICO) + LLPA_LH_FL * (CLTV - LTV_L) * (FICO_H - FICO) 
+      + LLPA_LL_FH * (LTV_H - CLTV) * (FICO - FICO_L) + LLPA_LH_FH * (CLTV - LTV_L) * (FICO - FICO_L)
+      ) / ((LTV_H - LTV_L) * (FICO_H - FICO_L)) 
+FROM #loan l
+JOIN "report"."Cello_LLPA_Base_Bilinear_Interpolation" llpa 
+    ON l.CLTV > llpa.LTV_L 
+    AND l.CLTV <= llpa.LTV_H 
+    AND l.FICO > llpa.FICO_L 
+    AND l.FICO <= llpa.FICO_H
+;
+
+select * from scale.FHL_Loan
+where marketTicker = 'FGT6'
+
+
+
+select * from report.Cello_PMI_LoanSize_Bilinear_Interpolation
+
+select * from report.Cello_MIP_Base
+ 
+Select * from report.Cello_MIP_Base_Bilinear_Interpolation

@@ -1,0 +1,18 @@
+C:\Rwd\MortgageRateModel\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\CurrentCouponResult.exe.config
+C:\Rwd\MortgageRateModel\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\CurrentCouponResult.exe
+C:\Rwd\MortgageRateModel\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\CurrentCouponResult.pdb
+C:\Rwd\MortgageRateModel\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\Google.ProtocolBuffers.dll
+C:\Rwd\MortgageRateModel\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\Google.ProtocolBuffers.Serialization.dll
+C:\Rwd\MortgageRateModel\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\log4net.dll
+C:\Rwd\MortgageRateModel\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\log4net.xml
+C:\Rwd\MortgageRateModel\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\obj\Debug\CurrentCouponResult.csprojResolveAssemblyReference.cache
+C:\Rwd\MortgageRateModel\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\obj\Debug\CurrentCouponResult.exe
+C:\Rwd\MortgageRateModel\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\obj\Debug\CurrentCouponResult.pdb
+C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\CurrentCouponResult.exe.config
+C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\obj\Debug\CurrentCouponResult.exe
+C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\obj\Debug\CurrentCouponResult.pdb
+C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\CurrentCouponResult.exe
+C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\CurrentCouponResult.pdb
+C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\log4net.dll
+C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\bin\Debug\log4net.xml
+C:\Lien Workspace\11.Mortgage Rate Model\CurrentCoupon\Output\CurrentCouponResult\CurrentCouponResult\obj\Debug\CurrentCouponResult.csprojResolveAssemblyReference.cache

@@ -1,0 +1,116 @@
+Prod:
+      "baselineConstant": [0.0001252937],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -50,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -35,
+          "KnotValues": 2.07
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 2.55
+        },
+        {
+          "Knots": 35,
+          "KnotValues": 2.84
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 3.07
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 3.07
+        }
+      ],
+Interp:
+      "baselineConstant": [0.0001252937],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -50,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -25,
+          "KnotValues": 2.360850413
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 2.55
+        },
+        {
+          "Knots": 25,
+          "KnotValues": 2.764393263
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 2.923566552
+        },
+        {
+          "Knots": 75,
+          "KnotValues": 3.029083816
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 3.07
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 3.07
+        }
+      ],
+Dev:
+      "baselineConstant": [0.0002255287],
+      "incentive": [
+        {
+          "Knots": -300,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -50,
+          "KnotValues": 0.0
+        },
+        {
+          "Knots": -25,
+          "KnotValues": 2.360850413
+        },
+        {
+          "Knots": 0,
+          "KnotValues": 2.8050
+        },
+        {
+          "Knots": 25,
+          "KnotValues": 2.9026
+        },
+        {
+          "Knots": 50,
+          "KnotValues": 2.9236
+        },
+        {
+          "Knots": 75,
+          "KnotValues": 2.9685
+        },
+        {
+          "Knots": 100,
+          "KnotValues": 3.0086
+        },
+        {
+          "Knots": 150,
+          "KnotValues": 3.07
+        },
+        {
+          "Knots": 200,
+          "KnotValues": 3.07
+        }
+      ],

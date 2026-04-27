@@ -1,0 +1,349 @@
+-- Fannie Conventional
+-- Pool Level
+-- Part 3 of 6
+-- Script to update delinquency estimate data
+-- Updates Delinquency Estimates
+
+-- Before execute the script, need to set the dates to run for
+DROP TABLE IF EXISTS #tmp_asOf;
+SELECT CAST('#####ASOF#####' AS DATE) asOf INTO #tmp_asOf
+--SELECT CAST ('1994-02-01' AS DATE) asOf INTO #tmp_asOf
+;
+-- Before execute the script, need to set the version to run for
+DROP TABLE IF EXISTS #tmp_version;
+SELECT CAST ('2.50' AS varchar(5)) version INTO #tmp_version
+;
+
+-- Before execute the script, need to set the tickers
+DROP TABLE IF EXISTS #ticker;
+CREATE TABLE #ticker(
+    tickerName varchar(20),
+    mtgRateSeries varchar(30)
+)
+;
+INSERT #ticker SELECT 'FNCL', 'CONVENTIONAL_30YR';    --Conventional Fannie
+INSERT #ticker SELECT 'FNCK', 'JUMBO_30YR';           --Jumbo Fannie
+INSERT #ticker SELECT 'FNCQ30', 'CONVENTIONAL_30YR';  --CQ Fannie High LTV[105-125]
+INSERT #ticker SELECT 'FNCR', 'CONVENTIONAL_30YR';    --CR Fannie High LTV[125-150]
+COMMIT;
+
+CREATE LF INDEX loan_tickerName_idx ON #ticker(tickerName);
+COMMIT;
+
+
+-- Create Pool Historical Data
+DROP TABLE IF EXISTS #FNM_PoolDelinquency;
+SELECT
+    ph.marketTicker,
+    ph.issueId,
+    ph.originationDate,
+    ph.asOf,
+    sf.wala,
+    ph.origFICO,
+    ph.cltv,
+    cltvBucket = case
+                    when ph.cltv < 10 THEN 10
+                    when ph.cltv >= 140 THEN 150
+                    else convert(int, ph.cltv / 10) * 10 + 10
+                    end,
+	walaBucket = case 
+                    when sf.wala <= 1 THEN 1
+                    when sf.wala <= 2 THEN 2
+                    when sf.wala <= 3 THEN 3
+                    when sf.wala <= 4 THEN 4
+                    when sf.wala <= 5 THEN 5
+                    when sf.wala <= 6 THEN 6
+                    when sf.wala >= 190 THEN 200
+                    else convert(int, sf.wala / 10) * 10 + 10
+                    end,
+	ficoBucket = case 
+                    when ph.origFICO < 500 THEN 500
+                    when ph.origFICO >= 800 THEN 820
+                    else convert(int, ph.origFICO / 20, 0) * 20 + 20
+                    end,
+    ph.balance,
+    cast(NULL as numeric(6, 3)) as Est_Pct_CURRENT,
+    --cast(NULL as numeric(6, 3)) as Est_Pct_DELQ30,
+    --cast(NULL as numeric(6, 3)) as Est_Pct_DELQ60,
+    cast(NULL as numeric(6, 3)) as Est_Pct_DELQ30p,
+    cast(NULL as numeric(6, 3)) as Est_Pct_DELQ60p,
+    cast(NULL as numeric(6, 3)) as Est_Pct_DELQ90p,
+    cast(NULL as numeric(6, 3)) as Est_Pct_Total
+INTO #FNM_PoolDelinquency
+FROM scale.FNM_PoolHist ph
+JOIN #ticker tk
+    ON ph.marketTicker = tk.tickerName
+JOIN fnm.secFactor sf
+    ON ph.issueId = sf.issueId
+    AND ph.asOf = sf.asOf
+WHERE 1=1
+    AND ph.asOf >= (select asOf from #tmp_asOf)
+;
+COMMIT;
+
+CREATE HG INDEX issueId_idx ON #FNM_PoolDelinquency(issueId);
+CREATE LF INDEX asOf_idx ON #FNM_PoolDelinquency(asOf);
+CREATE LF INDEX ticker_idx ON #FNM_PoolDelinquency(marketTicker);
+COMMIT;
+
+
+-- Create AsOf Date Delinquency Pct Estimates using FHL Pool Data
+DROP TABLE IF EXISTS #FHL_AsOf_PoolDelinquencyBuckets;
+SELECT 
+    d.asOf,
+    marketTickerBucket = case
+                    when marketTicker = 'FGLMC' THEN 'FNCL'
+                    when marketTicker = 'FGT6' THEN 'FNCK'
+                    when marketTicker = 'FGU6' THEN 'FNCQ30'
+                    when marketTicker = 'FGU9' THEN 'FNCR'
+                    end,
+    cltvBucket = case
+                    when cltv < 10 THEN 10
+                    when cltv >= 140 THEN 150
+                    else convert(int, cltv / 10) * 10 + 10
+                    end,
+	walaBucket = case 
+                    when wala <= 1 THEN 1
+                    when wala <= 2 THEN 2
+                    when wala <= 3 THEN 3
+                    when wala <= 4 THEN 4
+                    when wala <= 5 THEN 5
+                    when wala <= 6 THEN 6
+                    when wala >= 190 THEN 200
+                    else convert(int, wala / 10) * 10 + 10
+                    end,
+	ficoBucket = case 
+                    when origFICO < 500 THEN 500
+                    when origFICO >= 800 THEN 820
+                    else convert(int, origFICO / 20) * 20 + 20
+                    end,
+    sum(h.balance) as balance,
+    sum(CASE WHEN percentCURRENT IS NULL THEN est_pct_CURRENT ELSE percentCURRENT END * h.balance) / sum(h.balance) as Pct_CURRENT,
+    sum(CASE WHEN percentDELQ30plus IS NULL THEN est_pct_DELQ30plus ELSE percentDELQ30plus END * h.balance) / sum(h.balance) as Pct_DELQ30p,
+    sum(CASE WHEN percentDELQ60plus IS NULL THEN est_pct_DELQ60plus ELSE percentDELQ60plus END * h.balance) / sum(h.balance) as Pct_DELQ60p,
+    sum(CASE WHEN percentDELQ90plus IS NULL THEN est_pct_DELQ90plus ELSE percentDELQ90plus END * h.balance) / sum(h.balance) as Pct_DELQ90p
+INTO #FHL_AsOf_PoolDelinquencyBuckets
+FROM scale.FHL_PoolDistribution d
+JOIN scale.FHL_PoolHist h
+    ON h.issueId = d.issueId
+    AND h.asof = d.asof
+JOIN fhl.secFactor s
+    ON s.issueId = d.issueId
+    AND s.asof = d.asof
+WHERE 1=1
+GROUP BY d.asOf, cltvBucket, walaBucket, ficoBucket, marketTickerBucket
+ORDER BY d.asOf, cltvBucket, walaBucket, ficoBucket, marketTickerBucket
+;
+COMMIT;
+
+
+-- Update the Delinquency Pct Estimates
+UPDATE #FNM_PoolDelinquency pd SET 
+    pd.Est_Pct_CURRENT = b.Pct_CURRENT,
+    pd.Est_Pct_DELQ30p = b.Pct_DELQ30p,
+    pd.Est_Pct_DELQ60p = b.Pct_DELQ60p,
+    pd.Est_Pct_DELQ90p = b.Pct_DELQ90p
+FROM #FHL_AsOf_PoolDelinquencyBuckets b
+WHERE pd.asOf = b.asOf
+    AND pd.cltvBucket = b.cltvBucket
+    AND pd.walaBucket = b.walaBucket
+    AND pd.ficoBucket = b.ficoBucket
+    AND pd.marketTicker = b.marketTickerBucket
+;
+COMMIT;
+
+-- Create Aggregate Pct Delinquency Estimates using FHL Pool Data - no asOf group
+DROP TABLE IF EXISTS #FHL_AVG_PoolDelinquencyBuckets;
+SELECT
+    cltvBucket,
+    walaBucket,
+    ficoBucket,
+    sum(b.Pct_CURRENT * balance) / sum(balance) as Avg_Pct_CURRENT,
+    sum(b.Pct_DELQ30p * balance) / sum(balance) as Avg_Pct_DELQ30p,
+    sum(b.Pct_DELQ60p * balance) / sum(balance) as Avg_Pct_DELQ60p,
+    sum(b.Pct_DELQ90p * balance) / sum(balance) as Avg_Pct_DELQ90p
+INTO #FHL_AVG_PoolDelinquencyBuckets
+FROM #FHL_AsOf_PoolDelinquencyBuckets b
+WHERE 1=1
+    AND Pct_CURRENT IS NOT NULL
+    AND Pct_DELQ30p IS NOT NULL
+    AND Pct_DELQ60p IS NOT NULL
+    AND Pct_DELQ90p IS NOT NULL
+GROUP BY cltvBucket, walaBucket, ficoBucket
+ORDER BY cltvBucket, walaBucket, ficoBucket
+;
+COMMIT;
+
+-- Update the Delinquency Estimates, where current/dq30/dq60/dq90 is still null
+UPDATE #FNM_PoolDelinquency pd SET 
+    pd.Est_Pct_CURRENT = ldb.Avg_Pct_CURRENT,
+    pd.Est_Pct_DELQ30p = ldb.Avg_Pct_DELQ30p,
+    pd.Est_Pct_DELQ60p = ldb.Avg_Pct_DELQ60p,
+    pd.Est_Pct_DELQ90p = ldb.Avg_Pct_DELQ90p
+FROM #FHL_AVG_PoolDelinquencyBuckets ldb
+WHERE 1=1
+    AND pd.cltvBucket = ldb.cltvBucket
+    AND pd.walaBucket = ldb.walaBucket
+    AND pd.ficoBucket = ldb.ficoBucket
+    AND pd.Est_Pct_CURRENT IS NULL
+;
+COMMIT;
+
+-- Create Aggregate Pct Delinquency Estimates using FHL Pool Data - no asOf group
+DROP TABLE IF EXISTS #FHL_WALA_AVG_PoolDelinquencyBuckets;
+SELECT
+    walaBucket,
+    sum(b.Pct_CURRENT * balance) / sum(balance) as Avg_Pct_CURRENT,
+    sum(b.Pct_DELQ30p * balance) / sum(balance) as Avg_Pct_DELQ30p,
+    sum(b.Pct_DELQ60p * balance) / sum(balance) as Avg_Pct_DELQ60p,
+    sum(b.Pct_DELQ90p * balance) / sum(balance) as Avg_Pct_DELQ90p
+INTO #FHL_WALA_AVG_PoolDelinquencyBuckets
+FROM #FHL_AsOf_PoolDelinquencyBuckets b
+WHERE 1=1
+    AND Pct_CURRENT IS NOT NULL
+    AND Pct_DELQ30p IS NOT NULL
+    AND Pct_DELQ60p IS NOT NULL
+    AND Pct_DELQ90p IS NOT NULL
+GROUP BY walaBucket
+ORDER BY walaBucket
+;
+COMMIT;
+
+-- Update the Delinquency Estimates, where current/dq30/dq60/dq90 is still null
+UPDATE #FNM_PoolDelinquency pd SET 
+    pd.Est_Pct_CURRENT = ldb.Avg_Pct_CURRENT,
+    pd.Est_Pct_DELQ30p = ldb.Avg_Pct_DELQ30p,
+    pd.Est_Pct_DELQ60p = ldb.Avg_Pct_DELQ60p,
+    pd.Est_Pct_DELQ90p = ldb.Avg_Pct_DELQ90p
+FROM #FHL_WALA_AVG_PoolDelinquencyBuckets ldb
+WHERE 1=1
+    AND pd.walaBucket = ldb.walaBucket
+    AND pd.Est_Pct_CURRENT IS NULL
+;
+COMMIT;
+
+-- Sum the Delinquency Estimates
+UPDATE #FNM_PoolDelinquency SET 
+    Est_Pct_Total = Est_Pct_CURRENT + Est_Pct_DELQ30p
+;
+COMMIT;
+
+-- Adjust for 0 Totals
+UPDATE #FNM_PoolDelinquency SET
+    Est_Pct_CURRENT = 100.0,
+    Est_Pct_Total = 100.0
+WHERE Est_Pct_Total <= 0.0
+;
+COMMIT;
+
+-- Normalize the Delinquency Estimates to Sum to 100
+UPDATE #FNM_PoolDelinquency SET 
+    Est_Pct_CURRENT = 100.0 * (Est_Pct_CURRENT / Est_Pct_Total),
+    Est_Pct_DELQ30p = 100.0 * (Est_Pct_DELQ30p / Est_Pct_Total),
+    Est_Pct_DELQ60p = 100.0 * (Est_Pct_DELQ60p / Est_Pct_Total),
+    Est_Pct_DELQ90p = 100.0 * (Est_Pct_DELQ90p / Est_Pct_Total)
+;
+COMMIT;
+
+
+
+-- Tests
+
+-- Time Series Tests
+-- History for: delinquency
+--SELECT marketTicker, asOf, count(1), sum(balance), sum(balance * Est_Pct_CURRENT) / sum(balance) as wavg_curr FROM #FNM_PoolDelinquency GROUP BY marketTicker, asOf ORDER BY asOf
+
+--SELECT marketTicker, asOf, count(1), sum(balance), sum(balance * Est_Pct_DELQ30p) / sum(balance) as wavg_dq30p FROM #FNM_PoolDelinquency GROUP BY marketTicker, asOf ORDER BY asOf
+
+--SELECT marketTicker, asOf, count(1), sum(balance), sum(balance * Est_Pct_DELQ60p) / sum(balance) as wavg_dq60p FROM #FNM_PoolDelinquency GROUP BY marketTicker, asOf ORDER BY asOf
+
+--SELECT marketTicker, asOf, count(1), sum(balance), sum(balance * Est_Pct_DELQ90p) / sum(balance) as wavg_dq90p FROM #FNM_PoolDelinquency GROUP BY marketTicker, asOf ORDER BY asOf
+
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Pools have Est_Pct_CURRENT IS NULL OR Est_Pct_CURRENT < 0.0 OR Est_Pct_CURRENT > 100.0
+----------------------------------------------------------------------------------------------
+        declare   @cnt int
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_PoolDelinquency WHERE Est_Pct_CURRENT IS NULL OR Est_Pct_CURRENT < 0.0 OR Est_Pct_CURRENT > 100.0
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FNM Pools with INVALID VALUE for Est_Pct_CURRENT PoolCount : %1!', @cnt
+            RETURN
+        END
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Pools have Est_Pct_DELQ30p IS NULL OR Est_Pct_DELQ30p < 0.0 OR Est_Pct_DELQ30p > 100.0
+----------------------------------------------------------------------------------------------
+
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_PoolDelinquency WHERE Est_Pct_DELQ30p IS NULL OR Est_Pct_DELQ30p < 0.0 OR Est_Pct_DELQ30p > 100.0
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FNM Pools with INVALID VALUE for Est_Pct_DELQ30p PoolCount : %1!', @cnt
+            RETURN
+        END
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Pools have Est_Pct_DELQ60p IS NULL OR Est_Pct_DELQ60p < 0.0 OR Est_Pct_DELQ60p > 100.0
+----------------------------------------------------------------------------------------------
+
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_PoolDelinquency WHERE Est_Pct_DELQ60p IS NULL OR Est_Pct_DELQ60p < 0.0 OR Est_Pct_DELQ60p > 100.0
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FNM Pools with INVALID VALUE for Est_Pct_DELQ60p PoolCount : %1!', @cnt
+            RETURN
+        END
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Pools have Est_Pct_DELQ90p IS NULL OR Est_Pct_DELQ90p < 0.0 OR Est_Pct_DELQ90p > 100.0
+----------------------------------------------------------------------------------------------
+
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_PoolDelinquency WHERE Est_Pct_DELQ90p IS NULL OR Est_Pct_DELQ90p < 0.0 OR Est_Pct_DELQ90p > 100.0
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FNM Pools with INVALID VALUE for Est_Pct_DELQ90p PoolCount : %1!', @cnt
+            RETURN
+        END
+
+----------------------------------------------------------------------------------------------
+-- Check to see if Pools have abs(Est_Pct_CURRENT + Est_Pct_DELQ30p - 100.0) > 0.1
+----------------------------------------------------------------------------------------------
+
+        SELECT
+            @cnt =  count(1)
+        FROM #FNM_PoolDelinquency WHERE abs(Est_Pct_CURRENT + Est_Pct_DELQ30p - 100.0) > 0.1
+
+        if (@cnt > 0)
+        BEGIN
+            RAISERROR 99999 'FNM Pools with Est Delinquency Status not summing to 100 PoolCount : %1!', @cnt
+            RETURN
+        END
+
+-- End Tests
+
+
+
+-- Update Scale Pool Tables
+UPDATE scale.FNM_PoolDistribution spd SET 
+    spd.Est_Pct_CURRENT = pd.Est_Pct_CURRENT,
+    spd.Est_Pct_DELQ30plus = pd.Est_Pct_DELQ30p,
+    spd.Est_Pct_DELQ60plus = pd.Est_Pct_DELQ60p,
+    spd.Est_Pct_DELQ90plus = pd.Est_Pct_DELQ90p
+FROM #FNM_PoolDelinquency pd
+WHERE 1=1
+    AND spd.issueId = pd.issueId
+    AND spd.asOf = pd.asOf
+    AND pd.marketTicker IN (SELECT tickerName FROM #ticker)
+    AND pd.asOf >= (SELECT asOf from #tmp_asOf)
+;
