@@ -1,0 +1,833 @@
+Trading Strategy Meeting — speaker-relabelled transcript
+Participants: Aizaz, Seb, Lien
+
+Attribution note: Speaker identities were reassigned using acoustic consistency across the recording,
+the transcript's conversational structure, and previously confirmed role/topic cues. The source
+wording is otherwise preserved, including speech-recognition errors. A few rapid overlaps were split
+where one original diarization block contained two voices. From 33:22 onward, the source diarization
+became unstable, but the sustained voice is acoustically consistent with Aizaz.
+
+Seb 0:13
+Bangles, it's exciting. Well done.
+
+Lien 0:15
+Angle first, first portfolio trade down yesterday.
+
+Aizaz 0:19
+Oh wow!
+
+Lien 0:19
+Yeah, it's
+
+Lien 0:21
+like 3 billion. I thought was four, close to four. Call you three or four got like around the thing like around 12 $12 million PL day one PL. Yeah, first one down. Now we are very busily working on the second one, which is the
+
+Aizaz 0:41
+big one, 70,000,000,001.
+
+Lien 0:44
+No, that one is not 10, 10 billion. Is like five. Yeah, I think so. But this is competitive. This one has three, three like three banks beating. So we JP and Bamol are like you know, trying to get the deal, so they are accepting the fifth round of bidding today, and the final result gonna come out on next Tuesday. It's already five rounds of bidding. It's just like they change all the structure every every round.
+
+Seb 1:20
+Like is it roughly a one in whatever? Is it five dealers? It's like roughly 20% chance. Three dealers. Three dealers. Okay, just roughly 1/3 chance.
+
+Lien 1:27
+I think I would say like 50% chance. Okay, but yeah, we'll see. So we're in the conversation like
+
+Aizaz 1:35
+this splitting up the sale across different asset classes. Not like 111 person gets everything,
+
+Lien 1:41
+right? This is two people has the biggest one. The spec pool and CMO get the biggest. Bangle is similar, so Bangle is like mostly.
+
+Aizaz 1:52
+No, I'm saying the sale is not just CMO. There's other things as well in the bank.
+
+Lien 1:56
+That I don't know. I thought it's just mortgage. Yeah, more more stuff going on.
+
+Aizaz 2:00
+CRE as well.
+
+Lien 2:03
+maybe when you quote the number, it's like everything together. I just saw like 10 10 billion mortgages stuff. There might be more.
+
+Aizaz 2:10
+It's a bigger trade. Yeah. Overall,
+
+Lien 2:13
+yeah, it's a bigger trade, but the it's more computation, so the the margin is not as big. It's probably similar piano to Bengal is like around call it like 10 to 15 range. Yeah, it was like you know good money. And the third one, Sereno is the really big like really good piano one. It's like the deal contingency one is still waiting.
+
+Aizaz 2:38
+That's the one right. I'm talking about Sereno. Sereno is a the one
+
+Lien 2:40
+with like 1% of discount.
+
+Aizaz 2:44
+Yeah, but that Sereno I think is across multiple.
+
+Lien 2:48
+Oh right, right. That one yes.
+
+Aizaz 2:50
+Not only not only demos.
+
+Lien 2:52
+Right, there are two pending. One is Sereno. The other one is Rim Rock. Rimrock is the one that's currently beating the fifth round, and it's due next Tuesday.
+
+Aizaz 3:09
+That's 10 billion. That's 10 billion,
+
+Lien 3:10
+roughly 10 to 15 million of PL. Serhino is 8 billion mortgages, around 80 million, yeah, 80 million. There's a lot in that one, but that one has a deal contingency. Deal contingency favor. Why are they
+
+Aizaz 3:32
+paying one by one point?
+
+Lien 3:34
+Because it's it has the deal contingency thing that not everyone has to set up, and it's coming from our IBD, which is part of like helping them to do merchant position. The
+
+Aizaz 3:50
+rest are coming from sales. Yeah,
+
+Lien 3:51
+they they all come from IBD, but you know different relationships, I guess. Yeah, all these are like TCM stuff. Cool, but yeah. know, like Ashish is talking to Branno, meeting with you know MRD to get the temporary increase of risk limit. Saw the body these few days. Our Japanese colleagues are visiting this week. It has been a big revenue source for our Gini made business because U.S. banks are not buying, and overseas has been the dominant buyer of Gini bonds. We had very good business in the past two years, like very good, like increasing trend. But beginning of this year, there's always about, you know, beginning of this this year, two of the senior cells in Japan left Morgan Stanley. We use we have four, so half of them left, and Tokyo is a very relationship-driven business, right? So they only do business with the people, their their bodies, and losing two of the senior people is a like is a very big deal for the business. So we try to bring bring people in. And they're
+
+Aizaz 5:11
+expensive.
+
+Lien 5:12
+They're expensive. So you pay them to get the business. Yeah, yeah. They know it. Well, yeah, I just have people here. You know, I live in Tokyo,
+
+Aizaz 5:21
+right? You know that.
+
+Lien 5:22
+Yeah, yeah. Oh, I know that. Yeah. I forgot. Tokyo. Yeah.
+
+Lien 5:26
+So you've been talking. You also live in Hong Kong, right?
+
+Aizaz 5:29
+Four years in Hong Kong and a year and three months in Tokyo.
+
+Lien 5:32
+Yeah. That's great. We both want to go, right? You live in Tokyo. Oh, why not?
+
+Aizaz 5:39
+Work is very hard.
+
+Lien 5:41
+Oh, true. We want to. We don't want to work there. You can go for ski there.
+
+Aizaz 5:47
+Ski, onsen.
+
+Lien 5:49
+Yeah. You
+
+Lien 5:50
+know. Kalaoke.
+
+Lien 5:51
+Saki. Sushi. We want those things. Not the working part.
+
+Aizaz 5:59
+Ginza. Ginza shop, yeah, all of that. Yeah,
+
+Lien 6:04
+folks are talking about it. The their office hour is like seven a.m. till 7p.m. as a typical day, but often run to like you know 8p.m. 9p.m. So it's very hard.
+
+Aizaz 6:15
+Even longer.
+
+Lien 6:15
+Yeah,
+
+Aizaz 6:17
+that's average.
+
+Lien 6:18
+Average. That's a typical day
+
+Aizaz 6:21
+like 9p.m. is average people living living 9p.m. is pretty normal.
+
+Lien 6:24
+Yeah, pretty normal. And sometimes they go drink after work and come back. No, no, at
+
+Aizaz 6:29
+9p.m. they will all go and say, "Hey, let's go for drink, and then they spend two hours drinking, and then eat sushi after that. Then they go home at midnight. And the midnight, basically the the midnight train. Any train you get on a midnight train, it's packed. You can't even find it. It's fucking reeks of alcohol. Yeah. Yes. Those people are all drunk. It's everybody sleeping on the subway. Everybody drunk on that subway. Yeah. I worked there
+
+Lien 6:56
+for like three months. It's like you know, every day, people is like, Lien Sun, do you like drink alcohol? I was like, "What do you mean, like they just bring you out every night? The first week is fun, you know. But like, you know, after three weeks, you say, "You know, I don't really want to go anymore. You know,
+
+Aizaz 7:17
+my my neighbor came to my wife one day, and she said, "Your husband comes home too early. You guys will survive here. You guys will leave soon. Not fitting
+
+Aizaz 7:29
+into the corporate culture.
+
+Lien 7:31
+Yeah, it's it's tough there. Lost the story
+
+Aizaz 7:36
+to tell you guys. We talk later. Yeah, it's a long list of stories to try. We should
+
+Lien 7:39
+introduce you to our Japanese colleagues, what else going on? You got all those like promotion write-ups submitted this week, right? So that's all done.
+
+Lien 7:51
+Yeah.
+
+Lien 7:51
+Yeah.
+
+Aizaz 7:52
+Yes, submitted.
+
+Seb 7:53
+They're saved. I guess I'm seeing if she wanted it. But they don't. They don't. They don't go away overnight. So you can just leave it. It turns out. So I'm just waiting to see. When did
+
+Aizaz 8:00
+they finish? When did they actually go? Like,
+
+Seb 8:04
+I was talking to Ed from corporates, and he's like, and he was like, he was like, oh yeah, and even no one told me I haven't submitted yet. No problem. I don't know. He's like, totally like no problem. So he's
+
+Aizaz 8:14
+always like, I leave on these. Yeah.
+
+Seb 8:17
+So anyway, it's there. It's saved, and and we'll see if
+
+Aizaz 8:20
+somebody by tomorrow and finish it off. So they're ready to go. The ED has any
+
+Seb 8:25
+feedback or something.
+
+Lien 8:26
+EDs doesn't have the same deadline for for the submission, or just get more more times. No,
+
+Seb 8:33
+apparently there's not a real
+
+Aizaz 8:34
+deadline. Yeah. There's no deadline. Okay. People from other groups just
+
+Seb 8:37
+like never they like without a care in the world just like well the reason the reason
+
+Aizaz 8:41
+the reason they did this was because it's stupid SPG. So Reno sent in this emails to people. He's all organized guy, right? Right. Basically, he's like, "I want you to write it this way, and then he's using AI to check your work. Okay, he gets a report, and he sent an email, like a stinker email, saying to Etienne, saying, you know, you you owe the word count, you're over this thing. Oh, so if we
+
+Seb 9:07
+didn't get the emails, that means a good. Yeah, that means a good sign. Thank God. If
+
+Aizaz 9:11
+you like write, if you're ready for both shared, he's going to write in your stinker email saying, just cut this out.
+
+Seb 9:16
+Okay.
+
+Aizaz 9:16
+But
+
+Aizaz 9:17
+now it's about the quality. Okay.
+
+Seb 9:18
+Right. Yeah. Yeah. That's funny.
+
+Aizaz 9:22
+Yeah, because he wants to the the the the VP process is going to be like associate. I guess ED is fine. The VP process is like it's going to go to Bruno's committee, and he probably has some. Who's
+
+Seb 9:35
+on that committee? You know,
+
+Aizaz 9:36
+I've not. It's probably like the smallest of people. Probably will be on it whenever it happens, it'll be mostly like people fighting out an SPG, and he'll probably what will happen is like he'll go to the eligible candidates, like let's say they're 36, which we believe they're good candidates. They'll go to a mall and whatever, and say, "Well, SPG within fixed income, how much SPG will get as VP? And he'll just like muscle his way in as much as he can to get us the maximum amount of candidates. I think that's what he's doing right now. Okay. Once he gets the number of candidates, then it's up to him and the few MDs who will help him in that process. So it's going to be. I don't know if I'm part of that or not, but like associate to VP is more like Cam and Vanessa, and maybe you should look at.
+
+Lien 10:26
+Yeah, the good thing about us is like we don't have many trader candidate this year. That part doesn't hurt.
+
+Seb 10:33
+Yeah, it's a good point. Yeah, one advantage. One ED one.
+
+Lien 10:36
+Yeah, for VP just one, one trader. So and
+
+Lien 10:39
+then
+
+Lien 10:41
+there will be a separation between trading. Hopefully, yeah, agency. Antoine will, you know, get a good chance.
+
+Aizaz 10:51
+Yeah, I think look, that striker bull is pretty strong actually.
+
+Lien 10:54
+Yeah.
+
+Aizaz 10:56
+So, look, I don't have anything honest. Like I'm just focused on the Rezi Lab. You guys should we'll do a demo not this week, on the SPG demos. We'll show you the demo of the Resi Lab on the demo series. It's a 30-minute demo. It's a pretty nice work
+
+Seb 11:13
+done. Nice. I love seeing that. Yeah,
+
+Aizaz 11:14
+it's quite quite impressive actually. Like you know, Purcell's an amazing job. Like just part of the ballpark.
+
+Seb 11:21
+Yeah, big. Yeah,
+
+Aizaz 11:22
+because that's tractor of atmosphere.
+
+Seb 11:24
+Nice. We're working with QRT to maybe buy synapse. We'll have to see if they want to do it or not. But they're yeah, one of their quants is looking at Eginelli and her are going back and forth. Just they ask for some slightly different data than we normally give to like evaluate it, so just yeah, bit of back and forth aligning on conventions and stuff. So yeah, we'll see. I don't know what the odds of that working out are, but you know, I mean, again, like there's not other data sets or that you know, there's Bval. It's not that great, and so you know, it is kind of one of the few
+
+Aizaz 11:56
+options. So on, we had a group meeting yesterday on BX, right?
+
+Seb 12:01
+On BX, yeah, and that seemed I feel like is like at least there's more structure. She she's a bit I will say so like I think like for she she's like on you don't have to just like see stuff in prod and so I told Janelle was like just release like even if it's not 100% release it if you're worried about it causing problems just label it say like from Bwick part you know be like like Bloomberg parsed right, and so if it's labeled, then the traders look at it and make them and like it's they think it's yeah. So then I think we just do that. That way they can roll it out for specs to the couple places they were planning, and then I think yeah we haven't made as much progress on the B Wick like ingestion side yet, but I think we can move pretty like I think just because like this Bloomberg thing was such a disaster, took so much time. Like I think now that that's freed up a little bit, they can spend time pushing on like integrating that downstream and also and also doing the B-wick parsing. And like for pools, it's not going to take that long. It's going to be really quick to get that. Like yeah, I can't. I don't think the pool. Like at least for pools, the rest we'll have to see, I guess. But like for pools, I'm pretty sure we can make some quick progress there.
+
+Aizaz 13:07
+Okay, so Jenny, I think Jenny has a page now as well. She was showing me that she's going to release a page which shows all all the stats. Yeah, exactly. Because all the things we
+
+Seb 13:14
+talked about are easily trackable. Yeah, yeah. Like some are zeros, but the rest are easily trackable. For
+
+Aizaz 13:19
+non-agency, I'm more concerned about non-agency actually than agency, but like let's see what happens there.
+
+Seb 13:25
+Yeah. Who's the
+
+Lien 13:26
+leading? Who needs a non-agency effort there? Is I, or no one really?
+
+Aizaz 13:32
+Okay. So Etienne's now involving Victoria.
+
+Lien 13:37
+Oh, Victoria. Oh, instead
+
+Seb 13:38
+of Radran, she wants to do.
+
+Aizaz 13:40
+Yeah. Okay. You know, like Riddranch was just among ourselves. He was interviewing, you know, with Avery's team somewhere, and you guys said no to him or something. Interesting.
+
+Seb 13:52
+Over e swaps, maybe. Yeah. Same one that Cecilia is talking to. Yeah, they're stealing everyone. Yeah.
+
+Aizaz 13:57
+So
+
+Seb 13:59
+unbelievable. Yeah. So is it is
+
+Aizaz 13:59
+is it is is she wanting to do it?
+
+Seb 14:03
+I mean, sounds like she was interested in at least learning more about it. I asked David like a couple days ago just if anything happened or whatever, and like it sounded like a couple people have spoken to her, and then Nick was speaking to her at some point this week, who's another strat there, and then he said after that he felt like he would know. He asked me for my thoughts on her, and I said, like you know, reasonably well-rounded, you know.
+
+Aizaz 14:28
+Where do you rank her in the team?
+
+Seb 14:32
+I mean, I think in terms of like,
+
+Aizaz 14:37
+let's say apples to apples, like Antoine, like Antoine, Antoine, I would
+
+Seb 14:42
+consider stronger on all all metrics. Yeah, both on like technical and and like quantitative modeling, stronger communication and market sense, stronger. And like Cecilia's done a lot of like infra like tech work, you know, setting everything up and managing all our Ottawa DLC and these kind of processes and stuff like that, but I've seen Antoine do some of those things do really well. So at Commodus, I think Antoine Antoine's like I would consider stronger on almost all metrics. Her, so I think she's like reasonably well rounded, but like doesn't excel. Her market sense is generally not as strong as like you know, some of the other folks. Yeah, I'd say weaker in the market sense, and then modeling is like okay. Has done has done some modeling and is kind of okay at modeling.
+
+Aizaz 15:32
+Yeah,
+
+Seb 15:33
+yeah.
+
+Aizaz 15:34
+For like B plus.
+
+Seb 15:37
+Yeah, something like that. Yeah, like I was. Yeah, the way I would rank it as like I would say like Hugo is much stronger on like modeling and like research and market sense. Genielli is stronger on communication. Probably has done more modeling. Somewhat comparable. Probably weaker on tech.
+
+Aizaz 16:00
+So talent ranks are due tomorrow for me.
+
+Seb 16:03
+Oh what? Oh that's crazy. Okay.
+
+Aizaz 16:06
+So I have to put in my talent rank.
+
+Seb 16:07
+Okay.
+
+Aizaz 16:08
+So and I need to normalize them. I need to work on them. I haven't restarted. Oh wow.
+
+Seb 16:12
+Okay. So we got a big day tomorrow then. What do you need?
+
+Aizaz 16:15
+So I need you guys to think about the team, how you rank them yourselves within the teams, right? You could do it by team, or you can do it consolidated between the two of you,
+
+Seb 16:28
+okay,
+
+Aizaz 16:28
+as a team. I think we
+
+Seb 16:30
+should try to consolidate, right? Make your life a bit easier. Yeah, that'd be much
+
+Aizaz 16:33
+easier. Yeah. The reason why I'm asking to do together is because you got like probably to combine 10 people.
+
+Seb 16:40
+Yeah. No, it's me paying for you to then try to yeah. We'll try to,
+
+Aizaz 16:44
+and then I'm gonna do the same thing in lending. So and but the best is not in my control. What
+
+Seb 16:52
+do you want us to do for like targeting? Like you just want like a ranking, and then you can worry about like what kind of rankings? Like just
+
+Lien 16:59
+order, or you want a letter ranking, kind of like order, just order, because
+
+Aizaz 17:04
+it'll be easier right now. Okay, right. But but do a distribution because I'm gonna have to do a distribution. I can't really put everybody in right five. Yeah. So what do you want to be more like the 20% 10 105? And do you want us to enforce that at our level. Try and do it. Try and do it. If you can't do it, that's fine.
+
+Lien 17:27
+Was it 20 20% fives? Yeah,
+
+Aizaz 17:30
+15 to 20% fives. Yeah. And like 30% fours. Then 50% like 40 or like 30% threes, then twos 10% and one 5% like so maybe like 20 some version I haven't really thought about it properly but like some version where the one is like literally nobody
+
+Aizaz 18:00
+one is
+
+Seb 18:01
+basically saying like I want to get rid of this person.
+
+Aizaz 18:03
+Yeah. Yeah. I think three is more like getting rid of one is one is one is like you wanted to be on the riff list tomorrow. Right. Yeah. Two is two is like by Gurian. Two is like two is like I can barely get anything. Stand the person and get anything out of it. Okay, if this person does not actually turn around by year end, it needs to be in the diff list in February.
+
+Lien 18:30
+Okay, that's
+
+Aizaz 18:31
+two.
+
+Seb 18:31
+Okay,
+
+Aizaz 18:32
+okay. Three is like the person is not going to make VP if in current course correction, but has a potential chance if you can give me how many do you want in three? You can do three, and then you can do three, and you can say whether it's high potential or not.
+
+Seb 18:50
+Okay.
+
+Aizaz 18:50
+So you can say high potential, low potential. You can do potential. You do two things. So I need to put in potential and turn rank.
+
+Seb 18:58
+Okay.
+
+Aizaz 18:59
+Right.
+
+Seb 19:00
+And how many? Oh, there's a separate thing. There's a potential
+
+Aizaz 19:03
+potential. Like if you have a three, you can say, okay, I think this is three now.
+
+Seb 19:08
+Yeah.
+
+Aizaz 19:09
+But here's a high potential. Okay. Which means that I have, I'm like spoiled for choice. I'm being forced into pushing this person three, but I'm using this wild card of high, so that he's on the list to go to four if I can actually make somebody promotion in four. Because what talent rank happens, the game plays as this way, right? The talent rank will play into next year's promotions.
+
+Seb 19:31
+Yeah. Well, so this is annoying about even this year. I'm pretty sure
+
+Seb 19:34
+cost input like Antoine is a three in talent rank.
+
+Aizaz 19:37
+That's why I I don't do it this way. That's why my career. That's why I don't do it. It's not a random selection process. It's like a communication with your with your senior strats to figure out what the talent rank write, try and write what people is. Not my impression. I don't give a fuck about my impression. I care about like, can you actually promote the guy as early as next year, or as early as this year, right?
+
+Seb 20:04
+And what percentage you want in three generally would support the overall target? You know,
+
+Aizaz 20:09
+like three should be like 50% of your team should be three.
+
+Seb 20:12
+Oh, half.
+
+Aizaz 20:13
+Yeah, 4040 to 40% If you get 40, is fine. 44% of your team should be like three. 10% of your team should be like two.
+
+Seb 20:25
+Yeah, so five at one. 5% at one. You said five was like five to 20% Yeah,
+
+Aizaz 20:30
+10% to be at like two.
+
+Seb 20:32
+So how big? But four wouldn't be that big then, right?
+
+Aizaz 20:35
+And no, 1% should be like 5% should be like one on zero. Yeah. So between one, two,
+
+Seb 20:43
+and three, we're at six. Between one and two,
+
+Aizaz 20:45
+between one and two, it should be max 15% combined. Yeah. 10 to 15% combined. Right. The remaining 85% I find 40% is three, And the remaining 35% is between five and 430. meaning 15 and 20.
+
+Seb 21:12
+Yeah, that's
+
+Aizaz 21:13
+I think that's how I think about it. Yeah. Okay.
+
+Seb 21:15
+Yeah.
+
+Aizaz 21:15
+So top 35% of your team should be in four and five. The remaining in this distribution in my mind can I can I can probably like defend it.
+
+Lien 21:24
+Okay. I think you know that distribution makes a lot of sense, but we just thought we don't have any
+
+Seb 21:30
+ones or twos. Yeah,
+
+Lien 21:30
+like agency team has been like like I would say like on a on a relatively like higher scored. If we can do three plus, yeah, because there's no
+
+Seb 21:39
+one who I'm like let's riff. Like there's yeah. It's
+
+Lien 21:42
+like the team has been like performing very well. Like even the even if the the guys we potentially put lower score here can be a top performer in other teams every day. But Cecilia,
+
+Aizaz 21:56
+for example, you think she'll make it. When when did she make VP? Two years ago. She made VP last year. Last year.
+
+Seb 22:07
+Yeah, yeah.
+
+Lien 22:09
+Give her a four year. I mean, she would be like a four
+
+Seb 22:11
+year. Yeah, yeah. Like, but but like assuming she continues to improve and stuff. So just
+
+Lien 22:15
+as example, like you know, Antoine, we put him up this year is associated two. Cecilia get promoted associate four.
+
+Aizaz 22:27
+Ah,
+
+Lien 22:28
+so like two year differences there.
+
+Seb 22:30
+Yeah, I would say she's like solid, you know, somewhat well rounded. Like, you know, is like you know, communicates pretty well, big relationship with her traders, but like not like a standout. So like yeah, productive member of the team. But like some gaps are on like market intuition that I would like to see like you know getting better about. Like I mean the kind of like a core example that was like she was like we're doing some e trading stuff. We want to do some some auto quoting and agency debt, and I was like, okay, like just study the RFQs, like see what's going on, and you know if we're bidding. And she just like when she's doing analyzes, there was like you could like there was just no market intuition of like she was trying to match like you know she was trying to like match like trades with print like RFQs with prints that like just shouldn't like have no like it was like a different thing that like there's no world they would match. I forget what the problem was. Like, there's some like reason why it didn't make any sense. Whatever, and like you just like brought a lot of things that you could like. It was clear that she hadn't. Like, she didn't have like a higher understanding of like how does the like ecosystem work and like if it's an order versus RFQ, what does that explicitly mean, and like why is this a surprise? But that's not a surprise. And like anyway, so it was like you could just tell like like just broadly like there's some folks that are better at understanding big. I should say markets. It's really much just big picture sometimes. Like when you like big business, big picture, understanding like, you know, what are the different pieces of everything. Like that's an area I've seen struggle. This is
+
+Aizaz 23:51
+this is really two things: your curiosity and your imagination, power of imagination.
+
+Seb 23:56
+Yeah, I think how much you
+
+Aizaz 23:58
+imagine the world around you and how curious you are based on like what you ask.
+
+Seb 24:02
+Yeah, so I would say like you know stuff to get to the VP level where it was like you know she could still lead like projects that were like you know like like kind of like front to back in the agency world. She basically led like a mini front to back like fixing all the agency ops problems, which was like like a really awesome project. But like yeah, bigger picture like market stuff. I found her a little bit lacking, but yeah, very solid technically. You know, built like you know, she set up like all of our DevOps and like release process, made it like insanely like we got on Auto SDLC way before anyone else. Never had to file TCMs. We went straight from like not on GitHub and like not disted to like Auto SDLC like no TCMs. So she's like, but but honestly, like like
+
+Aizaz 24:42
+don't let her. No, that's what I'm saying. You need people like she
+
+Seb 24:45
+started like a very.
+
+Aizaz 24:46
+I'd rather have her go work in lending, as opposed to going to rates, unless she's like.
+
+Seb 24:51
+Well, she wants to do e-trading specifically, so I don't. If you want to do
+
+Aizaz 24:54
+e-trading specifically, she you think she's going to actually grow in that role, given that she's not doesn't have the market like context and. That's what I
+
+Seb 25:02
+don't know. Yeah, I'm not sure.
+
+Aizaz 25:06
+If she wants to chen, because she does
+
+Seb 25:07
+some e trading here with Hugo on the TBA side.
+
+Aizaz 25:10
+I'm just saying to you, like this is a conversation at some point, saying that if you're not, if you're feeling you're kind of stuck and you're trying to do e trading because you feel like you want to do e trading because it seems sexy, and here's your development points. Help her understand because people are unaware of where they can actually grow. Growing growing your career is not to do with the fact that you you want to get there, do something which is sexy. Right. Growing your career is more to do with the fact that you can actually contribute where where you're really Good at
+
+Seb 25:40
+right,
+
+Aizaz 25:43
+right, and making people aware of what they're good at and what they're not good at. Part of the feedback process is our job.
+
+Seb 25:49
+Yeah,
+
+Aizaz 25:52
+you know.
+
+Lien 25:54
+She's currently on a e trading role, like using. Yeah, she does e trading
+
+Seb 25:58
+stuff, like on the TBA side. She might think that also, but I think the reason she sees it is different. Of
+
+Aizaz 26:03
+course, because that's an autonomous book.
+
+Seb 26:05
+But it's not a good book. I know.
+
+Aizaz 26:07
+I've done the trade before. Yeah, the swaps books, dude. I know. I've done the trade before. Doesn't
+
+Aizaz 26:12
+make any money.
+
+Seb 26:12
+Yeah. If you if you don't make any money,
+
+Seb 26:15
+and and we provide them 400k a day of a wanted mid, and they still don't make money. But but but
+
+Aizaz 26:21
+that means she doesn't understand the economics of that trade she wants to do with her career. She doesn't. She hasn't thought through the economics of just getting an e-trading role is not enough to actually progress your career. No.
+
+Seb 26:35
+Yeah.
+
+Aizaz 26:36
+And people don't understand. You might as well do something more interesting around your career, which is today's Gen AI, could be some automation, could be
+
+Seb 26:45
+some idea that like there she's not going to have to deal with like any of the trader requests, like right? Because like that's one thing like what are the things that like a secondary trading strat does that can be not fun? It's like you're getting a lot of like trading requests of like random shit, right? That like a trader has a question about. Do you have to like do, and I think she views as that one is not going to have those requests. Well, okay, but I'll talk to her. We're catching up tomorrow.
+
+Aizaz 27:08
+Yeah, to have a sense, I don't like people leaving leaving for the sake of like oh I want to do something else. Either she's making if she's making a really educated and a well you know, well-formed decision. We should support her. We should give her the guidance and and with a lot of like care that this is how you should think about it. Based on your, it reflects on us as managers how well we know our people and in terms of actually, you know, helping them out in terms of you know their awareness level, bringing their awareness to a level where they can actually grow from there, and I've seen this multiple times at this point. Like it's a small conversation. You can nudge a person and says, "If you want to explore other places, let me know. I want to encourage mobility between SPG strats. You know, if a person from lending wants to come to work in trading, any day. Any day, right? People want to come from trading to lending. I want to just rotate people around a little bit, and encourage their. And based on these conversations, like you know, I don't want to saddle you in. We have. I feel like we're too long. Like Fall is doing his own thing, being very like thing. You guys are an exceptional team. You guys don't care because you have so much content and and and brand that people want to work for you. There's a fucking lie now there to work for agency strats, right? So that's why people are bidding on you, like taking your people out because they know it's a really strong team. That's very simple, right?
+
+Lien 28:40
+I really don't see a reason to divide. If you want to go to like, Citadel or whatever, pay twice of the compensation. Yes, I get it. But like, to go swap like e trading, you're not making money. I come to like e swaps. E swap, yeah. They're flat.
+
+Aizaz 28:57
+It's an old product. You know,
+
+Aizaz 29:00
+it's basically an electronic form of a swap which trades in price.
+
+Seb 29:03
+Not positive why they're adding a fourth strat there either. To be honest, they're gonna have the same number of strats as like.
+
+Aizaz 29:09
+Does it report to the same bosses you report to, Mesnick?
+
+Seb 29:12
+Yeah.
+
+Aizaz 29:12
+Is it report
+
+Seb 29:13
+Masnick? Yeah. Yes.
+
+Lien 29:14
+Yes. Yeah.
+
+Seb 29:15
+Yeah. Through Ching. I don't know why they're adding. I wonder why they're adding strats. Ching. Ching.
+
+Aizaz 29:18
+Ching is hiring.
+
+Seb 29:21
+No, Ching's the trader.
+
+Aizaz 29:22
+Yeah, I know, but Ching saying the highest front.
+
+Seb 29:24
+Oh, I don't know. I mean, Rob presumes the one that like. Yeah, yeah, he's all the time. Yeah,
+
+Lien 29:30
+I think they might need like senior quant, but not you know, just randomly getting people. They're like they don't have EDs. Like just you, you folks, right? Like you, Sandeep. They brought Longyi from Lien.
+
+Seb 29:43
+David Bai. David Bai is recently get promoted. But he
+
+Lien 29:47
+just got promoted. He's relatively junior. I mean, like, yeah, he doesn't have senior ED in team.
+
+Seb 29:53
+No, there's not a ton. Yeah.
+
+Aizaz 29:55
+All right. So
+
+Seb 29:56
+anyway, I don't know.
+
+Lien 29:57
+Probably need some like a little bit more senior people rather than just like stealing people, like who doesn't know? Do you guys sense like do
+
+Aizaz 30:04
+people want to just like rotate around a little bit, just like find out who the motivation? Yeah, that's a fair point. Yeah, yeah. The motivation really is about exploring other things. That like there's a lot going on in AI stuff now. Yeah, we can like put them onto AI projects, which will be like really game changing for them. We got a lot of kudos for that. You can change the asset class. You can change, you know, your functional change to like being like, you know, now strong. For instance, is no longer looking at models that much. She's like actually working on underwriting and securitization, right? She's looking at trades and working with structurers and traders and and and figuring out like how they she can help the esoteric business doing use AI to do their structuring stuff because when they actually underwrite they underwrite based on what the exit is they underwrite based on like some fundamentals better
+
+Lien 30:56
+use her time yeah better uses her time
+
+Aizaz 30:58
+right
+
+Aizaz 30:58
+for sure yeah
+
+Lien 30:58
+making
+
+Lien 31:00
+money is all about yeah she's just
+
+Aizaz 31:01
+trying to work with them. Like she's, you know, we're just exploring new things with the team.
+
+Seb 31:06
+Okay. Yeah, and I'll talk to her tomorrow to get some more more understanding.
+
+Aizaz 31:11
+Initially, she wasn't like, for instance, you know her very well. She wasn't very, you know, sure where I was taking her, right? Now she's finally seeing it a little bit, and all she cares about for me to for her to take on to that decision is to give her the comfort that I have her back, right? We have had few conversations around that I have your back, and she's like off to hopefully doing something big, right? We can do two things. One is like this is an approach, right, which I've always used to like incentivize people to take take them out of their risk, you know, limits and take them out of their comfort zone. Right. One
+
+Seb 31:51
+other question on these for the people who are up for promo this year, do they need to be fives because it's going to be seen together? Four or five. Okay, so they have to be four. Those have to be four. I mean, and I think they all all three would be anyway. Right. Yeah. Okay.
+
+Aizaz 32:04
+This is an opportunity. Like Anton. Like let's see. Like if Anton is something. Then if we can push her push him to four five now, let's see. Like we can push him to five, but that means that will I have to give off somebody else in the team? Yeah,
+
+Seb 32:17
+we'll go for next year. Yeah. I'll
+
+Aizaz 32:18
+have to I'll have to worry about like you know what's in the pipeline for next
+
+Seb 32:22
+year
+
+Aizaz 32:23
+in the talent rank,
+
+Seb 32:24
+okay,
+
+Aizaz 32:25
+and it's combined talent rank right. So like, ED VPs as well. So for instance, I have a VP who I want to promote next year. I need to get that VP from four to a five, or if he's three, he's going to three to a four minimum. Yeah, right. Yeah, maybe three to five, depending on what contribution they've done this year.
+
+Seb 32:43
+Okay, we're meeting it tomorrow. Run through these. Yeah, I think I have a rough idea. But I need, I need to. I need to send them in tomorrow. You can sit on whenever
+
+Lien 32:50
+you have time. Okay, but
+
+Aizaz 32:51
+tomorrow, like whenever you can, you can send me your your idea, and then I will submit it by by noon tomorrow. Yeah, but I think by
+
+Seb 32:58
+tomorrow morning we can. Tomorrow morning
+
+Lien 32:59
+I sit on. Yeah, but noon
+
+Aizaz 33:01
+I want to like submit because because Nate liked chasing me now. Yeah. Okay. The online system wanted to submit first version of it. Okay. All right. All right, guys. Sweet. Okay.
+
+Aizaz 33:22
+Having like a lot of
+
+Aizaz 33:23
+entertaining here, right? Yeah, yeah. Whenever Tuesday,
+
+Aizaz 33:26
+like whenever you can move it along, put a face holder. Yeah, when I have some time, like no, no, we should touch on it. I understand, like too busy to do it, but I feel like you know. Same here. Yeah, whatever. That's right.
+
+Aizaz 34:09
+How I can use my time to grow people? Tell me who is your next person because I can't spend time with all people, right? So after I want to show on Walter and Tim, he said, "Well, you highlight the person you want me to mentor. Okay. Then I will spend the time with them to get them to think, right, and then work with them to see how they can actually really embrace, right. But they really want to spend time, like one-on-one time, like two weeks before a coffee walk, to like you know feel like I'm not like they should be thinking me like oh yes I'm a senior manager, but I'm here to mentor
+
+Aizaz 34:58
+you, and then
+
+Aizaz 34:59
+people you identify that. What will happen back over you? They will come back to you, and they will do so much more. Then you can. I'll be the nice person in response, and you can put more pressure on.
+
+Aizaz 35:15
+Yeah, yeah. It's like working. Yeah, it's like too much.
+
+Aizaz 35:18
+Yeah, exactly. That will work.
+
+Aizaz 35:20
+That that that that actually works, and
+
+Aizaz 35:22
+you can help them to do some like higher picture of life. I see
+
+Aizaz 35:27
+the picture, but also how they need to think about their career when they need to. Where to spend most of the problem is most of the junior folks don't know how to work. They don't know how to project. That's the biggest problem.
+
+Aizaz 35:40
+Too deep into those gentlemen.
+
+Aizaz 35:42
+They don't know the binology. They don't talk about right. They're gonna need to run into
+
+Aizaz 35:47
+higher into the engineering. She is not connecting the dogs herself. And before I ask the question, she only is answering the second question I'm about to ask. You can take him because nobody wants nobody like nobody wants. Because he didn't want to report right into our side, he
+
+Aizaz 36:30
+was like saying now he has one problem with me. He actually doesn't want to be working now. It is temple.
+
+Aizaz 36:54
+started from saying people usually like, oh, this is the thing I did last week. Here's my update for you. Let me walk you through my update. I don't care about what you've done. Tell me what. No, no, tell me what you've not done. Tell me about the things you thought about, which you wanted to do but you didn't get them done. Yeah. Yeah. That's when we can
+
+Aizaz 37:23
+help them. Yeah, that's not everybody loves the point. I don't know the status update, you know,
+
+Aizaz 37:29
+managers. We just want to know what we are about. Yeah, yeah, yeah. You know
+
+Aizaz 37:33
+how that is your shape already. So help you freeze it out. Every
+
+Aizaz 37:36
+weekend. I'll be around tomorrow. Okay. Okay. See you. Chen.
