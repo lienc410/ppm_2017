@@ -1,0 +1,989 @@
+Aizaz 0:00
+With the loss model for CMVS,
+
+Lien 0:04
+that's like he needs to talk to a senior quant. Like you can't, you can't just do that. I'm like, how could you
+
+Aizaz 0:09
+actually do that without actually know? Like, talk to Etienne, talk to you know somebody senior.
+
+Lien 0:14
+Yeah, just like get your the correct direction. Don't waste time and just wasting of like his own time, he's like, yeah, yeah. So
+
+Aizaz 0:23
+I went to Kamel and said, as opposed to doing that, what you should be doing, the the strat should be coming to you and saying, I know you have been talking about having a loss model for CNBS, like, and he and Kamal is like, oh, I'm, I want him to run Monte Carlo. I'm like, stop. You think Monte Carlo is solution for everything, or like, why? Why Monte Carlo? Leave alone how he does it. You should be looking at a work product which helps you take your business to the next level. Yeah, and don't worry about how he does it.
+
+Lien 1:02
+Yeah,
+
+Aizaz 1:03
+right. You should opine on the work product's ability for you to actually yeah exactly help you do your business. Yeah, and if that work product is not something which helps you do your business, then leave it alone.
+
+Lien 1:16
+Yeah, yeah. Or give him
+
+Aizaz 1:19
+feedback. Give Charles feedback as to why this works and why it doesn't work. Yeah,
+
+Lien 1:24
+why it's not helping you to get your goal, whether that's like getting P&L, yeah, or getting better risk management, or getting a better market share, whatever, just like whatever. Whatever you have a goal, and why this current model doesn't work perfectly for your goal, yeah, and tell me the feedback, and we can move, yeah, from there, and rather than you try to like spend your time building. Yeah, you should not be spending that time. Yeah,
+
+Aizaz 1:46
+you should ask your strat to tell you, come up with a loss model, and then he should actually explain it to you, and then you should challenge it.
+
+Lien 1:53
+Yeah, that's probably gonna get a lot better when Echen comes over. I hope so. Yeah, that's more like you know, for those junior people like a associate on the desk, one they don't know, and two it's very hard for them to see a bigger picture of like where this, you know, piano is next piano is coming from. So like, it doesn't matter who that junior person is. It's very hard for them. So and three, they haven't learned how to say no to their senior trader. You know, a ED trader tell them, "Oh, I want to do this for associate strat to tell, oh, actually, have you thought about it? Like, you know, it's something you need to have that trust to see it out, right? So, for junior people, they need to like accumulate that trust and the confidence. But for you and me is clear. You know, this is not that something that you need to do. Talk to us first. I know we probably need to. I don't know. We can't wait for Etan to take over that. But you know, if you see that better, I talk to to them. I can talk to them too. But you know,
+
+Aizaz 2:58
+he's he's coming next week for a week. Oh, nice! Then he's coming back in November, end of November, so he'd be here. So, so November,
+
+Lien 3:06
+I'm worried it will be more like around Thanksgiving. He's here. Nice. Yeah, it's gonna be a lot better. Yeah, yeah. He's
+
+Aizaz 3:12
+finally moving in the end of November. I just got a message from the lady who processes visas.
+
+Lien 3:19
+Cool, cool, cool. Yeah.
+
+Aizaz 3:20
+So like,
+
+Lien 3:21
+so both him and his wife, like kind of family, and the daughter. Yeah, has a case where
+
+Aizaz 3:26
+daughter one. Ah,
+
+Lien 3:26
+daughter. Oh, nice.
+
+Aizaz 3:27
+Three year olds.
+
+Lien 3:28
+Ah, it's a different life, right? It's just like moving to New York. I mean, London is really good too. Like it's just like yeah, depend on whether you like it. New because
+
+Aizaz 3:35
+another world like Morgan Stanley in New York is completely different. Morgan Stanley.
+
+Lien 3:39
+Yeah, yeah, totally. I
+
+Aizaz 3:40
+fucking worked 10 years in London. I kind of feel like I wasted my time.
+
+Lien 3:44
+I guess I, you know, got some good time there too. I guess.
+
+Aizaz 3:50
+Yeah. Yeah.
+
+Lien 3:52
+Lee was there too, right? Like working for you there back back then, London time.
+
+Aizaz 3:58
+Lee was working from
+
+Lien 4:00
+here. Oh, he's here. I thought he moved to London for no, no. Oh, he's just here working for you. Working for me
+
+Aizaz 4:05
+in London. Oh, I see.
+
+Lien 4:08
+For some reason, I feel like he was away for for some time. Oh, maybe I got it wrong. Yeah. So like he wasn't
+
+Aizaz 4:15
+credit, but he was working for me while I was in I was in New York. I was in London. He's New York.
+
+Lien 4:23
+Oh, I see. I see.
+
+Aizaz 4:24
+And with Lee as well, like, like massing him and his team didn't really fare him well, honestly.
+
+Lien 4:31
+Yes, yes, I heard. Yeah,
+
+Aizaz 4:33
+yeah. He was like be not real well.
+
+Lien 4:35
+Yeah. And Lee is
+
+Aizaz 4:36
+a good guy. He's a good guy. He's
+
+Lien 4:38
+really like the guy who can deliver whatever that like makes sense. It's
+
+Aizaz 4:44
+phenomenal. Comes to like technology, super smart technology, whatever. He's problem solver. He does everything.
+
+Lien 4:50
+Yeah.
+
+Aizaz 4:50
+Anyway, yeah. What's on your mind?
+
+Lien 4:52
+So I want to align like maybe like two things. Want to talk to you? Oh, first of all, like the morning presentation went pretty well. Yeah. It's just short five minutes. Went pretty straightforward and got you know. I think he's fine.
+
+Aizaz 5:07
+They were able to understand the platform.
+
+Lien 5:09
+I think they tried, but they only have two minutes. So I I try my best too. So like one question they ask is like, okay, how much piano is you know fairly like associated with Adam Talik, I told them, okay, for CMO business, they made like $25 million this year, which is 25% more than the average of the past three years. Not to see that's because we have Adam Talik here, but his work of automation and making more efficient helps, right? Ben said, "Is okay with that answer? Abstract asked me like, okay, you got these now automation for your CMO. What's next? How we gonna spend from there? So told them okay, we already see like business opportunities across SPG. Like, Reddie Holon would be benefit from those. Like our spec pool trading would be benefit because they all share a similarity of like we are doing like a bespoke business and translate into like a made-to-measure kind of semi-automated process for those less liquid products. So we didn't we didn't get to the follow-up questions and time runs up. And was there
+
+Aizaz 6:16
+in the meeting Clocker?
+
+Lien 6:17
+So Clocker wasn't. So it's Cliff Wall, Abhishek, Victor there, like in Budapest, and then Benzi, I know HR.
+
+Lien 6:30
+Yeah,
+
+Lien 6:31
+yeah, pretty much. Yeah, but I think he's fairly smooth. It's a short notice though. Like HR told me yesterday around lunchtime. Oh, tomorrow morning you have plantation. Say okay. I'm asking how did Alex do? Yeah,
+
+Aizaz 6:55
+third card. He's messaging. Yeah, let's see. Let's see. He's messaging. Yeah. Tell you in a sec. I think we will finish in the middle. He will finish in the middle. Okay, great. He gets it done.
+
+Lien 7:10
+Only the middle. Yeah. I push pretty hard.
+
+Aizaz 7:17
+I care about it, so he gets
+
+Lien 7:19
+done. Yeah.
+
+Aizaz 7:27
+No, it's also like because he's not like a quant, right?
+
+Lien 7:31
+I didn't mention that point like during that presentation. I think he's good enough for being a VP and lead that product development, he might not have like too much upside if he's just doing what he he's currently doing at the moment. But I think he's good enough.
+
+Aizaz 7:53
+Order. The fuck.
+
+Lien 7:56
+What border? Like I thought, like it went pretty good.
+
+Aizaz 8:29
+Yeah, you did well. He said Lien did very well.
+
+Lien 8:34
+I pushed pretty hard during that presentation. I only have three minutes, but I, I think I pushed. Same Lien
+
+Aizaz 8:38
+did very well.
+
+Lien 8:39
+Thank you.
+
+Aizaz 8:40
+Yeah.
+
+Lien 8:41
+Thanks for his great work. But yeah, Lien did very well. He'll be right at the edge. I feel. I mean, it's just his platform, right? Not his platform. What he does. It's not like a popular heavy pressure. Like he's like lightweight straddle, not content. More like structuring automation, not quant. What quant talking about like quant modeling, or yeah? Well, whatever can help the desk to expand their business should be valued, right? So those kind of automation can can get the desk more bandwidth. Yeah. You know, basically, if you want to hire two more traders on on desk in New York, or let him work on it and get get things done. Right, it's a it's a very trivial trade off.
+
+Aizaz 9:30
+I want to tell them Benson, you should help.
+
+Lien 9:33
+Yeah,
+
+Aizaz 9:34
+Benson, you should help.
+
+Lien 9:38
+Border means like borderly, like in or border not in?
+
+Aizaz 9:44
+He said he's on the border on the line. Yeah, but like we just like
+
+Lien 9:48
+yeah, but like the
+
+Aizaz 9:49
+line is. We talked to Pense. Yeah. Fuck no, I don't. I want this done.
+
+Lien 10:07
+Let's see. He's already associated fifth year, so the third year we put him on the list. But you know, he's not that. He's not bad. He's just not a superstar, but he's doing his job like pretty good as a VP. I think he's like you know deserving a VP role. Well, I mean he's like you know that team doesn't have any senior people. Yeah, this is like he's leading. I know
+
+Aizaz 10:38
+this is the discussion I have with Nate as well. Yeah, it doesn't matter anymore, like who's senior, who's not. It's like how how it's the excellent, how good you are.
+
+Lien 10:48
+He's okayly good. He's not a superstar, but like you know, I know. But the leaders,
+
+Aizaz 10:53
+you want to promote those superstars, even if they're junior.
+
+Lien 10:57
+Then we're gonna send someone from New York to to to there to like you know manage that team, who's gonna go? It's just like there's nobody
+
+Aizaz 11:04
+junior there who can do this.
+
+Aizaz 11:05
+No
+
+Aizaz 11:05
+belong no.
+
+Lien 11:06
+Balogi is like too junior is like you know the first year. Just like you need to wait for two or three years.
+
+Aizaz 11:14
+Okay,
+
+Lien 11:15
+Balogi is good, but you need to wait.
+
+Aizaz 11:31
+I'm pushing him.
+
+Lien 11:32
+No. Well, let's see. If it doesn't work, doesn't work. You know. We tried.
+
+Aizaz 11:39
+He said, "Minoe mainly. Is this Noe, Chris Noe.
+
+Lien 11:42
+Noe, yeah.
+
+Aizaz 11:43
+And that's it. Chris Noe
+
+Lien 11:44
+and Johan was on the write-up. Johan Olafsen, yeah. Okay, I'm telling
+
+Aizaz 11:55
+Noe. Noe plus Johan.
+
+Lien 11:56
+Johan, yeah.
+
+Aizaz 11:58
+Noe, Johan is G O H E N, right?
+
+Lien 12:00
+Noe what? Yohan what? The
+
+Aizaz 12:02
+spelling is G O H. G
+
+Lien 12:04
+O H A N. Last name is O L O S O N. That's okay. Yeah.
+
+Aizaz 12:12
+Yuan is M D. Yeah,
+
+Lien 12:14
+Yon is M D. It has more weight.
+
+Aizaz 12:24
+All right, fine. These fucking strat guys. All right, I'm switching it. Yeah, we'll see. He's the MD. He should help me out. He's an SPG guy. I would like not be happy with him. What is he fucking doing in GC? Sitting in Mumbai. He should help me out.
+
+Lien 12:45
+Yeah, I agree. He was like, I oh, I came from. He actually being like a agency modeler, Starv. I know he's an CPS guy. Yeah,
+
+Aizaz 12:54
+he's not CNPS very much. Yeah. Anyway, yeah.
+
+Lien 12:57
+This is the first one. The second one is about potentially now we are moving into comp, so just want to have a have a kind of like higher level alignment on Yugu and Nikola.
+
+Aizaz 13:09
+Yeah.
+
+Lien 13:10
+So I know that we have to curve for talent rank that we have to curve Yu Gu down for like you know calibration. Don't worry
+
+Aizaz 13:17
+about that. Yeah. For example, like we go to Ashish and say we want to pay him.
+
+Lien 13:22
+Yeah. So I already like told Johan. Haven't talked to Ashish about it yet. So Johan is like he's like more than 100% happy via the work that Yugu and Nikola provide this year. So if we need him to, you know, stand up and talk to whoever about their comp, like he's willing to do it. Like so, should you
+
+Aizaz 13:51
+send an email?
+
+Lien 13:52
+Yeah.
+
+Aizaz 13:53
+Like, like as early as like end of October.
+
+Lien 13:56
+Okay.
+
+Aizaz 13:57
+Like
+
+Lien 13:57
+2/3.
+
+Aizaz 13:58
+like third week of October, start sending emails to Ashish and me. Johan to send email to Ashish and me saying you go done X Y Z, right? And just not to say we need to pay him. Just yeah, just like
+
+Lien 14:09
+a recognization. Yeah, his
+
+Aizaz 14:10
+amazing work. He's how he's done it. Blah blah blah. Yeah. Just start sending emails.
+
+Lien 14:15
+Yes. Yes. Okay. Yeah. Don't
+
+Aizaz 14:18
+wait till November. Do it now. Like oh, we're gonna do it this week. We're gonna no do it next week.
+
+Lien 14:23
+Next week.
+
+Lien 14:23
+Yeah.
+
+Lien 14:23
+After the after the ED
+
+Aizaz 14:25
+promo is done, like you know, then promo cycle is over. Yeah. Literally next Wednesday, he should start writing email.
+
+Lien 14:31
+Yeah. Okay. I think I can draft something or ask you go to draft a like a small achievement email about like oh we just released something. No, it needs to be
+
+Aizaz 14:44
+natural,
+
+Lien 14:44
+like him. Huh?
+
+Aizaz 14:45
+It shouldn't be. It should be natural. Yeah. Should be like Johann should naturally say, here's the three things I really care he has done. I really appreciate his work. This is amazing.
+
+Lien 14:56
+Yeah.
+
+Aizaz 14:56
+Very simple email.
+
+Lien 14:57
+Yeah. Okay. I can ask that favor from him. I think those two these two guys deserve that support. So
+
+Aizaz 15:05
+Hugo and who?
+
+Lien 15:06
+Nikla.
+
+Aizaz 15:07
+Yeah, Nikola is very good.
+
+Lien 15:08
+Nikla. The problem for Niklas is
+
+Aizaz 15:10
+he bases low.
+
+Lien 15:11
+Is he's only getting $5,000 of bonus last year.
+
+Aizaz 15:16
+Yeah.
+
+Lien 15:18
+I'm gonna lose him to be honest. We have to
+
+Aizaz 15:19
+we have to correct it. What was total comp last year? 200k,
+
+Lien 15:25
+200k sharp.
+
+Aizaz 15:27
+Oh no, we're gonna move it up.
+
+Lien 15:28
+Yeah, his side.
+
+Aizaz 15:29
+He should be like minimum, and if he gets to BP, he should be like total comp like 280.
+
+Lien 15:36
+Yeah, something like high 200. Yeah. Otherwise, I'm gonna lose him for sure. 280,
+
+Aizaz 15:40
+dude. Yeah. 280 should be the number.
+
+Lien 15:42
+Yeah, I think like for him, like,
+
+Aizaz 15:44
+yeah,
+
+Lien 15:45
+I'm gonna lose him to to to those top hedge funds. Yeah, yeah. Both of him and you, I I think like did very well, and you know the replacement cost is gonna be high if we lost them.
+
+Aizaz 15:56
+Right.
+
+Lien 15:57
+So, like the quote that I got from Yuhan about Yu was like, okay, Yu is the one that actually understand the book's risk, so Yu need to stand behind Johan to explain Yuhan's book's risk. Why is this number to the two traders, and they accept that. And Johan was like, if Hugo doesn't want to do strat work, he's happy to take him on the desk as a as a VP trader. So it's like a you know very high recommendation to be a VP trader. Yeah.
+
+Aizaz 16:38
+Okay. It's like you know. Why would you take Hugo over him then next year.
+
+Lien 16:42
+Hugo is doing pretty good work too. Like he's doing. I know, but the trader
+
+Aizaz 16:49
+is saying, a traitor.
+
+Lien 16:51
+Yeah, it's like great recommendation. This is even
+
+Aizaz 16:54
+better than actually saying you know. So why would you like about Hugo as four as a town rack because you want him to get promoted next year, yeah, and you go to be three.
+
+Lien 17:03
+I thought I I initially had both of them as four. I
+
+Aizaz 17:07
+know, but we actually curved down. Yeah,
+
+Lien 17:09
+it's just like curved down.
+
+Aizaz 17:11
+But I'm just saying to you, like those are the kinds of things we have to be like super sharp on. Like if he's a guy who's got a bid as a trader, that means he got a bid as a trader outside.
+
+Lien 17:19
+Yeah. Yes. Exactly. The guy who's the Yugu here in Goldman reached out to Johan and trying to be a trader, and we're gonna interview that guy next week ish. Yeah, as a trader, so it's like there's a market for those type of people.
+
+Aizaz 17:40
+Of course, yeah. Just like there's a market for you, dude.
+
+Lien 17:42
+Yeah, I know. Just like you know,
+
+Aizaz 17:46
+for me, it's more and more to get you paid more than anybody else. Yeah, I'm very happy
+
+Lien 17:51
+working with you. But like, no, but you're underpaid, dude.
+
+Aizaz 17:53
+I know you're underpaid. It's not right. You see, you're fixed.
+
+Lien 17:56
+Thank you very much. No,
+
+Aizaz 17:57
+honestly, yeah, I need to get you paid.
+
+Lien 17:59
+Yeah, you're doing your job. I'm doing my job, trying to keep my people too. I know. No, no, it's
+
+Aizaz 18:04
+not just no. It's not about just keeping the people. Yeah, it's actually figuring out two things: a compensating appropriately what people deserve for the for their level and and their contribution, so that's one thing, which is like doing the right thing, right? Then the second thing is that you have to, you know, not everybody can be on the same path of growth because that's how it is, right? You put in different effort. You put in different, you know, capacity. You do different things with the business. You have understanding of the things better, like X, Y, whatever. You're gonna have to, you you have to grow at a certain pace. So we have to put like you know things behind you so that that resonates. So it's very simple. You you have a good team. The first step was make sure you have supported from team perspective. Okay, so you've seen like I'm trying to commit to, and we have committed to actually get you better people, better support, whether transfer, whether hire, whether internal help or modeling, whatever. That's clear. That's very clear. Yeah. The second one is to get you paid more. Third one is to get your people paid more, and then the fourth one is to get you promoted, right? In that order. Yeah. Right.
+
+Lien 19:30
+Yeah. Takes time. It just
+
+Aizaz 19:32
+takes a bit of time, but it's not that long. I think it should be done in a couple of years.
+
+Lien 19:36
+Yeah. Oh, just like we're
+
+Aizaz 19:37
+trying to push it through. Like you know, like it should. Yeah. See what happens. Yeah.
+
+Lien 19:41
+But yeah, appreciate your help. But I used the first steps very very clear to me, and it has been very helpful. Like the resources they give me, like Corey and Ashikupta are super good. Like we hired, like you know, moving people around from Budapest to here would help too. Like we should
+
+Aizaz 20:01
+hire that guy as well, the forep guy.
+
+Lien 20:04
+I def I have him on my list on my next to hire list for sure.
+
+Aizaz 20:11
+We should we can hire him in we can hire him in lending actually. I can hire him in lending.
+
+Lien 20:15
+Yeah, but like either way, like trading or lending, right? I want to build a case for him. Where is I? No,
+
+Aizaz 20:22
+no. We can hire him in London, have him work with Corey for a bit.
+
+Lien 20:25
+Yeah, yeah. And then
+
+Aizaz 20:26
+actually move him over if you. Yeah,
+
+Lien 20:28
+yeah, yeah, yeah. Like
+
+Aizaz 20:29
+you know, with with SPG, we can do whatever. Yeah,
+
+Lien 20:32
+yeah, exactly. He has his summer project is very relevant to what Corey's current team is doing. Like you know, the he's he worked on credit card default, like probability kind of model, what the CMBS trader is looking for kind of. So just like have him like okay, work with Korea and do a better model. Yeah,
+
+Aizaz 20:52
+loss models. Victoria is looking at a like a prepayment model, like
+
+Lien 20:58
+a short term short term. Yeah, short term
+
+Aizaz 20:59
+prepayment model, long-term prepayment model. She had a meeting yesterday with Ashish. I walk her through. She explained to me the whole thing, and then I actually told her how to present it to Ashish. The meeting went really well. Ashish pretty much asked the same questions I asked. He's like, "Where's the long-term
+
+Aizaz 21:15
+one? I'm
+
+Aizaz 21:15
+like, "We don't even have the right, good, good long-term one for the agency to ask. What are you talking about? Right? You should stay close to Corey and to Lien, and connect with them and understand. Like she should then spend time with you. She's trying to build the prepayment model. Yeah, Victoria should be reaching out to you for help. Yeah,
+
+Lien 21:32
+we talk. Yeah, we talk.
+
+Aizaz 21:33
+Okay, she's pretty good,
+
+Lien 21:34
+but like you know, she's pretty good. Another day. Yeah, she's great. I would like to like if she's willing to work for agency, I'm happy to take her any day. She's very good. I like her. Yeah, I like her. But you know, she got a lot of the things that she want to do on the agency, not agency side. Yeah, and she likes Jesse
+
+Aizaz 21:51
+mostly. She's in a good relationship with Jesse.
+
+Lien 21:54
+Yeah, you know, people gonna like her. You know, she moved to agency. People gonna like her too. So you know, it's not a problem. I'm willing to take her, like if she wants to move, but she doesn't. She likes no agency, which is good. But it doesn't stop me from like working with her on the, you know, things that we can share, like model or stuff that we do.
+
+Aizaz 22:17
+Swad built the team so badly. I'm sorry to say, like, unfortunately, he really built the team badly.
+
+Lien 22:24
+Yeah, we lost so many people. We lost so many. We lost so many
+
+Aizaz 22:26
+people, but we don't have any real strat there besides Victoria.
+
+Lien 22:30
+Yeah, right.
+
+Aizaz 22:31
+Like Charles and Rudran. Rudran is fucking toxic. Okay, honestly speaking. Yeah. Like he
+
+Lien 22:40
+want to move out. He goes
+
+Aizaz 22:41
+there and there and then tries to massage me. I'm like, go fuck off. Like that's not how it works, you know. Like come to me straight. Like don't try and think that this whole thing of like you know trying to have a a bit of a camaraderie because I'm South Asian and he's also like some
+
+Lien 23:00
+okay
+
+Aizaz 23:02
+bullshit, like get out. You know, like he's tried to say, you know, I move from there and blah blah blah, and I did get some work, get some brownie points. Like, like that doesn't work here. Sorry.
+
+Lien 23:14
+Yeah, you know, that is not a way. This is not how Morgan Sally works. Yeah, this is not how
+
+Aizaz 23:18
+Morgan's anyway. Don't fuck up. But then you know he's trying to get a job in rates. He's trying to. I think he was trading stuff. E trading stuff like or e swaps or whatever. I think maybe the same role Cecilia. Cecilia was actually looking at, and he didn't get it. And then, and now basically same back to square one.
+
+Lien 23:40
+Yeah, I think like the three part of the business. I think like the agency definitely need more care or love there to to get a better team build. Say the team is too junior. I mean, like there's not just too
+
+Aizaz 23:54
+junior. They no
+
+Lien 23:55
+experiencing a lot of things. Yeah,
+
+Aizaz 23:57
+not just too junior. It's just more like they don't contribute to the business.
+
+Lien 24:07
+Yes,
+
+Aizaz 24:08
+right. There's no there's no feedback. There's no feedback where the contribution is then whatever they do or deliver is a direct feedback saying I'm using it to make money. That conversation doesn't exist. Maybe Victoria, there is a bit of that going on with Jesse.
+
+Lien 24:27
+Yeah, I haven't heard too much of the direct PNL impact or yeah, you know, or building me
+
+Aizaz 24:33
+this dashboard, building me this report. That's not the job of just purely strats. You should be like actually figuring out what analytics you require to make your next trade.
+
+Lien 24:43
+Yeah, yeah. What can help you to make more money? More
+
+Aizaz 24:46
+money, like how do you look at your market share? What is market share? Better risk management. Yeah, you know how better pricing. Yeah, I can talk
+
+Lien 24:53
+to more clients. Whatever. How do you talk to
+
+Aizaz 24:55
+more clients? Something.
+
+Lien 24:56
+Yeah, something in that rather than I got 20 more PDF reports every day. Yeah, that team. I don't know. Agency team has been like you know, getting all these new things, new concepts out. But they need to.
+
+Aizaz 25:14
+And maybe Min did the right thing. Min was very sharp. Maybe she said that.
+
+Lien 25:20
+Yeah, Ming had a very clear like when I first joined, like she made you
+
+Aizaz 25:24
+work for Min, right?
+
+Lien 25:25
+Yeah, more work for him for her for like you know close to 10 years, but like she's and
+
+Aizaz 25:30
+then also this other guy, right? What was the guy? Chao, Chao, Chao. Yeah, I think Chao is very good.
+
+Lien 25:34
+Chao is really good. I I I think both of them are very good, right? Both
+
+Aizaz 25:38
+Chao and Min are very good. Very
+
+Lien 25:39
+good. They got really strong. It just like unfortunately, you know, I don't know what. It's just like unfortunate event. But like Ming had a very clear mindset for all the strat that you have to ask a question when you got a task is, are we making more money doing these? Because a lot of time, trader just asks you, "Oh, let's try to build these. And if you ask them, like, if I give you these, how would you trade differently?
+
+Aizaz 26:09
+Yeah,
+
+Lien 26:10
+right.
+
+Aizaz 26:10
+You should ask that question. They're gonna,
+
+Lien 26:11
+oh, it's not very clear. Yeah. Then your priority automatically downgrade and say, like, why don't we think about it? And you know, like, I will put it here on my to-do list, but you need to tell me clearly, like how we're gonna move the priority up. Like a lot of times, the traders don't know what they are asking for.
+
+Lien 26:30
+Yeah, they
+
+Lien 26:31
+just ask for something and they don't know.
+
+Aizaz 26:33
+Yeah, exactly. You know,
+
+Lien 26:33
+I give you more information. So what?
+
+Aizaz 26:35
+Yeah,
+
+Lien 26:35
+I'm telling you that bond gonna default.
+
+Aizaz 26:38
+Yeah,
+
+Lien 26:39
+are you going? Are you able to sell you on the market, you're gonna check. Oh, not really, because it's not liquid. I'm gonna hold it anyways. Then what's the point?
+
+Lien 26:47
+You know,
+
+Lien 26:48
+knowing now is
+
+Lien 26:50
+like,
+
+Lien 26:50
+yeah, you know, you have to have a liquid market to to like you know do your trade, and I can help you when you feel like you can make a trade.
+
+Aizaz 27:00
+Yeah,
+
+Lien 27:00
+yeah. I think agency is doing fine. It's like you know, traders are like I can give you like plenty of PNL stories like with like stress here. I think lending is doing pretty pretty well too, right? All this automation can help them like you know unleash so much like processing power. What else? Like that's the two main part. Like when we start to talk about comp, like you let me know like anything that you want me to prepare beforehand, like the email from Johann, that type of thing. Yeah, send me email starting next
+
+Aizaz 27:38
+week, next week or week after.
+
+Lien 27:39
+Yeah,
+
+Aizaz 27:40
+saying you know, hey, he's done X Y Z, did really good work.
+
+Aizaz 27:43
+Yeah,
+
+Aizaz 27:43
+and yeah,
+
+Lien 27:44
+I'll have that conversation with you, huh?
+
+Aizaz 27:46
+Yeah,
+
+Lien 27:46
+yeah. Ask for that favor.
+
+Aizaz 27:47
+Yeah, you should do that. You should do it. It's not a favor. It's actually
+
+Lien 27:51
+like just a red right recognition. Just recognize
+
+Aizaz 27:56
+his work. Yeah, because that time of the year. Yeah,
+
+Lien 27:58
+I already talked to him yesterday and gave him a heads up. I will need some support in those comp conversations, and he is very happy to do it. So, just a second episode of that conversation, I think is it should be fine.
+
+Aizaz 28:12
+Yeah, yeah. So, on at one, at the minimum, I already started that conversation with the shish.
+
+Aizaz 28:16
+Yeah,
+
+Aizaz 28:17
+because at the minimum, what he's going to get is a better comp.
+
+Lien 28:21
+I I feel like we are pushing for those two cases, but it's really okay to me. Like you know, he's gonna get it next year.
+
+Aizaz 28:30
+Yeah,
+
+Lien 28:31
+I'm not worried about. You ask anyone what do you want, they're gonna say I want comp and promotion. It's not that he's gonna leave. You know, I don't think he's like I don't see anything that a hedge fund gonna you know steal like too aggressively on him. To be honest, he's too junior. Doesn't know the business. He's great. He has a passion in AI, sure, but he doesn't know the business yet. He like there's no business that Antoine is tying to. There's no. Wait. There's
+
+Aizaz 29:01
+no there's no like product knowledge that yeah
+
+Lien 29:06
+there's no product knowledge. He doesn't he doesn't get to tie to any sub product of the desk. Meaning like he doesn't have a trader that he is partnering with. He doesn't have a sponsor on the desk. Right, so which is a problem for his girl, he needs to build that first to get to the next step. How many? Chen is the
+
+Aizaz 29:30
+same.
+
+Lien 29:31
+Chen Yi.
+
+Aizaz 29:33
+And Geishon was pretty like you know, like a long conversation with her. I was like, you know, if next year, let's imagine in the lending world, like for instance, Purcell. I'll give you an example. He found a year ago, and he's built a relationship with the desk. Now I posted him there on purpose because nobody was doing Resi, and Foad was doing it at a very hands-off way. Yeah. So I posted Purcell there, and Bursel is now has built lens, you know. Demonstrated. He presented to Jahalu the other day.
+
+Lien 30:05
+Yeah, heard. That's crazy. And Jay
+
+Aizaz 30:09
+is like Jay is like. Who are you? Jay's like, how old are you? He's like 28. He's like, I thought you were 16. Yeah,
+
+Lien 30:16
+he looks like 16. But he's not afraid. He's he's not afraid. No, he's
+
+Aizaz 30:20
+a pretty like fearless guy. Yeah,
+
+Lien 30:22
+but like not being free. I was I was
+
+Aizaz 30:26
+laughing with Brazil. Like when I talk to you, feel like I'm more like you're fearful of me. Yeah. And Jay, you're like fearless. Too far away. Too far away. Don't care. He doesn't know me anyway.
+
+Lien 30:40
+Yeah. Like Brazil is great. I mean, that type of partnership is what would matter for Antoine' next step, and maybe Jingyi too.
+
+Aizaz 30:49
+Yeah.
+
+Lien 30:50
+Anyone also on the desk, like we're talking about Cecilia or Hugo Generali, they all have a trader sponsor.
+
+Aizaz 30:57
+Genially has trader sponsor.
+
+Lien 30:58
+Generally, has been like doing the spec pool. Like, yeah, I know. she used to be the spec pool trader. Yeah,
+
+Aizaz 31:04
+he still likes her a lot. Yeah,
+
+Lien 31:05
+she's she works for Shish before, so yeah, she
+
+Aizaz 31:08
+know he knows he really likes her.
+
+Lien 31:10
+Yeah,
+
+Aizaz 31:10
+so he's got a good sponsor.
+
+Lien 31:12
+Yeah, yes. So everyone else get a sponsor. Last one needs a sponsor too. That's something that we need to work on next time. Other people all happy. Jingyi tried a little bit working for me, like part time, last year.
+
+Aizaz 31:26
+Part time doesn't work.
+
+Lien 31:27
+Yeah, I was like, okay, I like your work, but you you can only dedicate like one hour per week to my project. It just doesn't work. By the way, Jing
+
+Aizaz 31:36
+Jing is very good.
+
+Lien 31:38
+Yeah, she was in the the lab, right? She I put her in for
+
+Aizaz 31:41
+that reason.
+
+Lien 31:42
+Yeah, because I think she's. I think
+
+Aizaz 31:44
+she's very. No, I put her in the firm lab now.
+
+Lien 31:46
+Yeah, her. She was in both of both labs. Yeah, yeah. So I put her
+
+Aizaz 31:49
+in both of them.
+
+Lien 31:50
+Yeah,
+
+Aizaz 31:51
+and she's going to do amazing. She did amazing work in the first one, and now she's doing even more work in the follow.
+
+Aizaz 31:57
+Yeah,
+
+Aizaz 31:57
+I can see her like come out off her cover, and I was telling things wrong. You've kept her under cover. Don't keep people under cover. Let them go. Don't don't prescribe how they should work. Give them let the get them higher challenges. Give them higher bandwidth. Give them vision. Yeah, yeah. You know that's what your role is as EDs. Not because you want them to show them exactly how you grow up. Everybody have their own paths of growth. Don't bolt yourself them to yourself. That's very traditional mindset. Don't do that to yourself.
+
+Lien 32:33
+Yeah, everyone has a different way to coach. Everyone
+
+Aizaz 32:35
+want to. Yeah,
+
+Lien 32:36
+it's like how how you how my my five year old learn. Like you just throw them into the water. They're gonna figure out exactly, and some
+
+Aizaz 32:44
+people will grow exponentially if you let them be.
+
+Lien 32:47
+Yes, yes. Right.
+
+Aizaz 32:48
+If you're gonna like tweak them every step of the way, then you're hindering their progress.
+
+Lien 32:52
+Yeah. Let them fail a
+
+Aizaz 32:54
+little bit. Idea is for you to like hold them when they fail, just like kids when they fail. You hold them.
+
+Lien 32:59
+You hold them, but you give them enough freedom, enough feedback
+
+Aizaz 33:02
+and freedom, right?
+
+Lien 33:04
+Yeah, but you need those young people to also listen to you too. Some of the people did. Yeah, if they get to point. Yeah, yeah. Like for instance, I got a little bit mad
+
+Aizaz 33:12
+on on Charles today. Now I'm interested in him. I'm like, where are you? I'm at some fucking AMP conference, or AMP is doing some thing, and they're doing a one New York plaza. All these three guys have gone there: Frank, Charles, and Versal, and they use a lot of AMP. AMP is this thing. Oh yeah, yeah. There's like a two-day
+
+Lien 33:32
+like teaching teaching on AMP. I'm like,
+
+Aizaz 33:36
+what the fuck are you doing?
+
+Lien 33:37
+Yeah.
+
+Aizaz 33:37
+There's no need for you to actually go on a like two-day teaching.
+
+Lien 33:40
+Yeah, yeah. They have the amps. The amps founder. Yeah, amp founder. Yeah, exactly. I'm
+
+Aizaz 33:47
+like, who cares? Amp founder. Like, I'd rather have you go sit in the challenge lab on the sixth floor and see what real what the firm is doing about AI. Yeah. And they're entering people teaching actual AI concepts. Yeah. Go and listen on to that as opposed to
+
+Lien 34:01
+yeah going there going
+
+Aizaz 34:02
+there for like a whole day,
+
+Lien 34:04
+exactly.
+
+Aizaz 34:05
+To me, that's like wasteful boondoggle. Yeah, honestly.
+
+Lien 34:08
+Oh, three of them went.
+
+Aizaz 34:10
+Three of them went, and I didn't even know about it. Like you know, Etienne signed off on one, and Corey signed off the other one, and then they all went. What the fuck? me off. I'm using like have judgment.
+
+Lien 34:28
+Yeah.
+
+Aizaz 34:29
+Right. I expect junior people to have judgment. Yeah. Okay. If you have something now, I'm gonna have them come and do a teaching. Okay. So you come. You spend a day or whatever you spend, come and explain what you learned. Yeah, everybody else will learn from you.
+
+Lien 34:44
+Yeah, you learn a day, and you can have like half an hour teaching, right? It's like concentrated level. Yeah, yeah. And and then we
+
+Aizaz 34:52
+will grill you in the teaching because you'll find out you learn nothing in the process. Next time you will not go.
+
+Lien 35:00
+Yeah, exactly. Those young people, I think, young people disagree with them. Yeah,
+
+Aizaz 35:06
+like he has some discipline, right? Fine, you have, you can do whatever in the office and blah blah blah. I'm not asking you to like just don't do this.
+
+Lien 35:14
+Yeah, it sounds fancy, but doesn't really get you anything. It's a marketing event. It's a
+
+Aizaz 35:18
+marketing event. They just want you to be there and tell you about AMP, it's fucking vendor and feed you good food and that's it.
+
+Lien 35:24
+Yes, yeah,
+
+Aizaz 35:25
+stupid.
+
+Lien 35:26
+Yeah, exactly. Talking about marketing event, are you interested in like going to New York Stock Exchange to watch their like closing bill and stuff? Like you know, they have like events going on. No, good.
+
+Aizaz 35:40
+I'm launching.
+
+Lien 35:40
+Yeah, yeah, yeah. They have like once a year, just invite like quants to there and watch things. Okay, just wasting time, but depend on whether you have other things to do that evening. If no, then it's like you know a thing. I'll talk to you. Yeah.
