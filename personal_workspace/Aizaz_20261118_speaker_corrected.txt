@@ -1,0 +1,827 @@
+Aizaz & Lien — 1:1 Conversation — 2026-11-18
+Speaker mapping and turn-boundary correction
+
+说明：保留原转录措辞，修正讲话人和跨段句子归属；时间戳沿用原稿，修复后的切换点为近似位置。
+44:46 后录入的无关多人讨论已移除。少数极短应答存在声纹归属不确定性，目前按声纹与上下文综合标注；原稿中的听写错误未擅自改写。
+
+Aizaz 0:00
+The next time for an amendment, some of these docs are even as old, and we just assume, you know. So it's very good, very good. I love it.
+
+Lien 0:10
+Good time to do that. Yeah, this is a week. Yeah, for feedback. Pretty good, like some of the side. Very well. I don't think it's a surprise to anyone. So talk to me here.
+
+Aizaz 0:56
+Why are you gonna? Seems like an interview going on. Oh yes, Darkness. Dark. Yeah. Yeah.
+
+Lien 1:06
+Are you gonna soon take these offices, or like, is there any plan?
+
+Aizaz 1:11
+Because then Dan is here. I don't.
+
+Lien 1:13
+Yeah, I understand. I understand. Yeah, it's like you know.
+
+Aizaz 1:16
+I think we probably try and keep Dan anyway.
+
+Lien 1:18
+He's a very like enjoying like doing all the AI stuff with other folks, so yeah. But he's not gonna do SPG stuff, so like probably don't need to sit here.
+
+Aizaz 1:30
+I know, but he can do AI, right? He needs a space, so he's a senior guy.
+
+Lien 1:33
+Yeah, or find you a different place. Like you, I think you need an office to to have many meetings. Yeah, yeah. Talking about the transition, doing pretty well. I mean, like talk to everybody individually. People reports to SAP. Also, people reporting used to be reporting to me. Also, want to make sure that although the team get bigger, you you guys still have the attention from me. Now that I'm gonna only take care of like Seb's old people, like but everyone gonna you know get just old like treatment from me. Like I will spend time with them. I think I don't. I haven't heard any surprise or anyone that because like we have been working this way for the past eight months, so really not something that's surprising to anyone. Also had, but
+
+Aizaz 2:23
+Janelli and Antoine have been like on their own a little bit on Bwick side.
+
+Lien 2:27
+A little bit, but but I think they just
+
+Aizaz 2:29
+they should be talking too.
+
+Lien 2:30
+Yes, they have been working on the Bwick stuff, but they also work on that stuff too. Like Antoine is working with other projects with me, so like you know, we talk pretty. He's pretty strong, actually. Yeah, I like him a lot. I think he has a lot of potential. This year didn't get promotion, but like you know, it's like early, early promotion. Anyways, like I, I told him already. Like okay, we're gonna like work out something like you know very soon. So next year I don't think he's a problem. Didn't tell him that, but you know, for myself, I I think he got all the support that he need. Get support from you. Get support from Ashish. Also, like align that with Ashish. So Ashish is Ashish like him a lot, so which is good. Otherwise, trying to do some desk alignment with Ashish and see where he sees SPG trading for the next six months, and if you don't mind, I get a net feel like I feel like his bigger problem is where to find the next 100 million PNL, right? So, trying to help think it through. Maybe like another thing that senior folks this year,
+
+Aizaz 3:51
+where we're gonna end up being at like 400
+
+Lien 3:54
+or like high 300. Yeah,
+
+Aizaz 3:57
+it won't get to 400.
+
+Lien 3:58
+Very Difficult, very difficult, but you know, like this month has a lot of volatility, so like it's not a zero chance, but probably lower than 50 chance. Yeah. So 375,
+
+Aizaz 4:17
+380.
+
+Lien 4:18
+Yeah, I feel like more like that number rather than well, like you know, anything can happen, and we normally make bigger piano in January and February rather than November and December. Even if we put on a big position today, is normally like a two months holding to realize that, like you know, even if we put on today, it's more likely to be a January one. But you can mark the bond the way that you mark them. However, traders normally for those not realized PNL, they would prefer to mark them next year. Yeah, of course. Because it's already decided, so I understand them.
+
+Aizaz 5:00
+It's psychological. Yes, yes. You get you get you get psychologically stronger with PNL in your pocket as you are to be yeah
+
+Lien 5:06
+to begin the new year is right so like for all these reasons feel like you know
+
+Aizaz 5:12
+he's they're going to hire some PNL that's fine yeah yeah
+
+Lien 5:15
+but like people already started thinking about 2027 so like you know this part of the conversation how how to where to find the 5200 most likely to get it. But it's
+
+Aizaz 5:27
+going to be what at 450 next year.
+
+Lien 5:31
+He hasn't told me, but from this year I think it's 350.
+
+Aizaz 5:35
+Yeah, so it'd be budget.
+
+Lien 5:37
+Yeah, but like I don't think it's going to jump all the way to 450. It's normally like a yeah 400 or even 383 390 because they want to make the budget lower and they they can be rather than have the target too high. And next year, it's hard to see that the market is the same way as today, right? Like the rates are so high, and if you hike more, we already saw a little bit of problem for floaters in October, where you know floaters is a floating rate, but there's a cap.
+
+Aizaz 6:20
+Yeah,
+
+Lien 6:20
+you know, currently like about 10% of the floating bonds hit the bond, hitting the cap already. So when you get close to the cap, when you are floating bond, your IR duration is close to zero because you are you know it's like floating together. But when you get close to it, the change from zero to a large number is almost like a step function, and there's no way for those guys who hold the bond to hedge because it's not linearly transient; it's just jumping up. So, a few hedge fund blow up, and not hedge fund blow up, but like those portfolio managers,
+
+Aizaz 7:01
+so coupon cap.
+
+Lien 7:03
+Yeah, coupon cap, and we are talking about potentially three highs. That means that
+
+Aizaz 7:10
+some people will be like, I mean, the things getting trading at par would be like at 98. I mean, like yeah,
+
+Lien 7:17
+exactly. Yeah, it's gonna be a huge. Maybe if you go to
+
+Aizaz 7:21
+three points.
+
+Lien 7:21
+Yeah, three points. Yeah, in one day.
+
+Aizaz 7:24
+In one day,
+
+Lien 7:25
+like all these like local banks, like mid-sized banks, including Morgan Stanley. Actually, if you go to talk to like Josh or Chu Yichang on the corporate treasury side, we have. 60 billion floaters. Yeah, if we mark down three points on those, no, they currently just put them all in the whole to maturity account, so we don't need to write off. But some banks don't like so. There's going to be some problem down the road, and you know, even if making it like 380 as a target next year, you make a huge assumption of the business is going the same way as today. And you know how much room
+
+Aizaz 8:11
+we have till that time, or no?
+
+Lien 8:14
+What do you mean that how much cap to the cap? I do. I have a chart to show where we are today. What is the percent? And we like it's basically accumulative percentage of people hitting the cap with the sulfur rate level. So each reading I can tell you today, and with the next five basis point, what's incremental? I have that chart. Currently is like you know low teens, you know close to 12% coin. This is one big assumption there. But like, I think Ashish want to make more money on the CMO plus durial side because Neil on the pass through side is already making a lot of money for the desk. The incremental space there is very limited because he's already like close to 25% of the market share. For CMO new insurance, it's probably only 7% of the market share. Like, I think we can reasonably target on around 12%, like doubling the market share next year with bigger balance sheet and better strategy. Yeah, I need a better prepayment model. I need better, like we have all the building blocks for Strew, all the things that automate the CMO business. But I need to consolidate. Yeah, exactly. We need to hire someone who's good at it. Otherwise, I'm still the one who's in the in the team discussion. Like you know, like talk about speed, but I I shouldn't be the guy who do that. Ashish also like you know agree with that idea of like I shouldn't be the guy talking about it because that shouldn't be, you know. If Ashish is like still doing a lot of like spec tray, he's not doing his job. Yeah, I'm not supposed to do that, and I need to train someone or
+
+Aizaz 10:03
+Yugo. Why don't just train him?
+
+Lien 10:05
+You go has a lot on his plate already, and Johan need him to you know work on the derivative stuff. So, like, I don't know how much time. Like, I'm just saying, like, you know, hiring somebody
+
+Aizaz 10:18
+outside may be very hard.
+
+Lien 10:19
+Very hard. Maybe
+
+Aizaz 10:20
+take the best person you have,
+
+Lien 10:22
+yeah,
+
+Aizaz 10:22
+and train that person to get to do prepayment modeling, and we can pay them much more next year.
+
+Lien 10:28
+Yeah, yeah, that's that could like currently I'm working with with Corey and Ashish Gupta, and see like initially I had a hope with Corey spending time to be like to do the work that I'm currently doing, but feels like he's spending more time on the Resi Hollow stuff, which I understand. You know that desk has a lot of problem, and he's trying to help out there. He feels like I can't handle the agency stuff anyway, so he's helping out with nobody there. I get it, but like Ashish Gupta is great. He's really good, and he just a little bit too junior to talk to traders in the trading lingo, right? And just like he doesn't understand. Yugo can do it better, but he's not a prepayment guy either. I need to train him.
+
+Aizaz 11:23
+Who would be? Who is the best prepayment guy on your team?
+
+Lien 11:27
+I don't have a good one. Like it's like I like.
+
+Aizaz 11:29
+They're all mostly like tooling analytics.
+
+Lien 11:32
+Yeah, more analytics. I trained like Ben Dilly was the guy, and you know just like moved to. Yeah, they both like yeah. They'll train someone. Yeah, Judy Mao is also my people. Like, one went to Millennium, the other one Citadel, and the the Citadel guy is my classmate with Columbia back then. And he called me last week, and I see like you know you guys have more like prepare model. I was dude, you already got the people from me, like you can't just like targeting on my team, like. But it just people are hiring. It's just hard to compete with with those hedge funds. So like, they don't have a budget limit. Like how much like we can offer, they can just pay 50% more. It's really hard to to get the great
+
+Aizaz 12:22
+people.
+
+Lien 12:24
+Yeah, yes, yes, yes. That's how you do. Like, but we also target on the people who has like you know around five years experience, which is what they are targeting on. Like, at some point, I can you know probably I'll just talk to more people on the market and and see whether anyone want to move want to move to Morgan Stanley.
+
+Aizaz 12:47
+What did you guys pay to this guy Jack Hugh?
+
+Lien 12:49
+600.
+
+Aizaz 12:51
+And was he happy with the number?
+
+Lien 12:55
+He was happy for a month. So I I told people like you know we make it 606 50. Doesn't matter. The moment I got a buy side,
+
+Aizaz 13:06
+pre payment or was he doing signals?
+
+Lien 13:08
+He's doing signals back then, but he knows how to do prepayment. He can do that too.
+
+Aizaz 13:14
+How about how about like Walter Wong's team? Is any anything good or no? No.
+
+Lien 13:19
+Those people are horrible. Horrible. These are horrible people. They don't. They don't know how to. They know how to do PBRM. They are like you know Tomasz's team. Yeah. They are. They're doing that type of prepayment modeling. They know the concepts, but they're not doing the desk stuff. Ashish, I I think like Ashish Gupta Needs probably two years. Call it two years, three years. Get to like the VP level. Then he got a lot of potential. I just I'm training him. He's very
+
+Aizaz 13:50
+sharp.
+
+Lien 13:51
+Yeah, he's sharp. Like I spend like I don't have too much time to spend like with like first first year associate, but I do spend a lot of time with him because it's helping me too. I need to get rid of that part of job for me. I think he's getting there with some help from Korea as well.
+
+Aizaz 14:12
+Push them hard.
+
+Lien 14:13
+Yeah, I am. I am. I'm doing the bad, right? Like this month, I'm doing $50 with him. Yeah. Yeah. So like, I think he's getting getting the idea. You can talk to him. I think he's very happy about like doing. No, I know he is.
+
+Aizaz 14:26
+He is. He's happy.
+
+Lien 14:27
+Yeah, he's learning a lot of stuff.
+
+Aizaz 14:29
+I I spotted him from hiring the pros. Yeah. Yes. Yes. I should just take it like the moment. I told him. I told him. Yeah. He said, "What do you want?" Yeah. He said, "I want to be a trading strat." I said, "You got it. You will be a trading strat. Yeah, I gave him exactly the job he wanted.
+
+Lien 14:44
+Yeah, yeah, he's very happy. Yeah, I know. He's very happy. That's a lot of connection. Yeah,
+
+Aizaz 14:50
+which you, I don't have no problem take him if you can. If you want him to be not part of Corey, you can take him anytime. But have him train under Corey. Yeah, yeah. He will treat Corey will treat him like you know, teach him like the you know the infrastructure KDBQ PDR.
+
+Lien 15:09
+Yes, yes. That that takes less time from me. I just teach him the market part. Yeah, exactly. Yeah, how to talk to traders. What trader means. Yeah, it's going on well.
+
+Aizaz 15:17
+And and Corey doesn't know how to talk to traders, by the way.
+
+Lien 15:19
+I I figured he
+
+Aizaz 15:20
+doesn't know. Yeah, he has never been a trading strut.
+
+Lien 15:23
+Yeah, yeah.
+
+Aizaz 15:24
+Very different mindset. He doesn't understand like, you know, the 10-year equivalent concept when they talk about it. What does it really mean? Yeah,
+
+Lien 15:32
+yeah, yeah.
+
+Aizaz 15:33
+He doesn't talk widget. He doesn't know widgets. Trading is all about widgets. Yes, yes. It's all widgets. It's really not more than that. You have to decompose any product into widgets. Yeah, and he doesn't know how to do that.
+
+Lien 15:46
+Yeah, I figured.
+
+Aizaz 15:49
+I'm telling you, he doesn't. Yeah,
+
+Lien 15:50
+I figured. Yeah, and just like a different different skill set.
+
+Aizaz 15:54
+Yeah, yes, different skill set. Yeah, these guys have never been taught how to decompose products.
+
+Lien 15:59
+Yeah, you need to teach those guys. Yeah, yeah, 100. Oh, yeah, true, true. Like I feel like there's a problem for people sitting on horse floors.
+
+Aizaz 16:06
+I know, but
+
+Lien 16:08
+yeah, yeah, whatever. Yeah, your call.
+
+Aizaz 16:10
+I mean, it's very hard for me to spend time with like senior people or teach them widgets.
+
+Lien 16:15
+Yeah, even I feel the pain. I I can't imagine like how much more that you have on your stuff, um, yeah. But I I think like look like things are moving very well, on agency side. I think like it's really, you know, when you Chen comes over. But Dan never taught that mindset. Yeah, yeah,
+
+Aizaz 16:35
+right. Dan never taught their their team team to
+
+Lien 16:38
+talk
+
+Aizaz 16:39
+to talk to traders. I think he's the one
+
+Lien 16:40
+who talks to the. He talked.
+
+Aizaz 16:42
+So what happened in the past is like Dan has been talking to everybody. Everybody, right? Even here as well. Yeah. The team is not known to people. Yeah. I'm unfolding that whole thing this year. Yeah. I'm basically like, go fucking talk to people. No, I'm not the bottleneck.
+
+Lien 16:57
+Yeah. Yeah.
+
+Aizaz 16:58
+And don't want to be the bottleneck, but I'm not going to be here for like for plenty of years. Other people have to do this job in the future.
+
+Lien 17:06
+Yeah, Chen.
+
+Aizaz 17:08
+Like I, I haven't like a fixed time on my calendar. Like five years, right? Like just this job. If I would, if I'm doing it more than five years, I'm doing injustice to people in the team. Yeah, people need to just step up and do this job. Simple.
+
+Lien 17:23
+Anything particular in your mind, like you want to do after this, or like, or just like you know, just
+
+Aizaz 17:30
+I don't know. Maybe I can move on and I can do that job. I'm going. I'm ambitious guy.
+
+Lien 17:33
+Oh yeah, yeah. And Niall is moving on, so you know, like you, you have more to do there. Yeah, exactly. Pardon me. I mean, like now it's moving up, so like you know you got you got bigger scope and yeah yeah yeah there's like bigger scope yeah yeah
+
+Aizaz 17:51
+like I my thing is move my manager up
+
+Lien 17:54
+yeah so you are moving up like everyone is moving up together that's how you grow like all the team grow move the
+
+Aizaz 17:59
+manager up
+
+Lien 18:00
+yeah simple yes the more we do, like, is all all the good things you do. Like, you know, it's the same story. I want my people to do the all the good stuff too. Like for agency stuff, we just ask the junior people to have Friday afternoon. You don't work. You go talk to people.
+
+Aizaz 18:18
+Yeah.
+
+Lien 18:19
+Like you got a full afternoon talking to people. I don't want you to see. I don't want to see you on the desk. Let's go talk to people. I don't care who you are talking to. Go talk to people, not just our traders. Talk to other stress, what they are working on. Go go somewhere else. I don't want to see you on the desk. So that's that's the way Friday happens on our side.
+
+Aizaz 18:38
+That's a good idea. Yeah, push them out. Yeah, like
+
+Lien 18:42
+you know, 2pm. Like you know, Friday afternoon, no one is really working on stuff. So like, I know if you are sitting there, you're not doing your work. Yeah. So just go out. I don't want to see you here, right? So yeah, forcing people to do that. I think agency is doing well. Like Mike Siebel just mentioned it, like while you're chatting me, like he he he was talking to me about Kelly escalated some conflict conflict with Jenny Ali about some of the you know they're working together on on the you know selling client data type of things. No, yeah, or in the past. No. I was like, okay, let's so like Kelly, right? Unreceivable. You know Kelly well. Yeah. Is like so. Kelly is doing the groundwork where like Jenny Ali on our end is doing the work, and the two had some like conflict on Teams. Like you know the team chat happens again, and and Kelly just you know Kelly apparently trying to figure out whether that's her own problem or anything, she just like chat with ChatGPT or like you know get a conclusion of she was bullied by Jenny Ali, and she asked to talk to Jenny Ali yesterday after work, you know around like you know 530 or 6pm, so they two find a meeting room and talk to each other. And Kelly just cried like so badly, like in a meeting room with Jenny, Alien, and they just apparently let managers know today, like me and Sibo know that, and then I, you know, I just had a conversation with Sibo how we want to handle this, and I think the fact that the didn't choose to Kelly mostly didn't choose to escalate the situation to manager as a first action, and she rather talk to Jenny Ali privately, is a good sign of do you want to sort it out as a you know a professional way or friend to friend talk and figure it out. I think you know, like Kelly just went on a vacation to California for for two weeks. So when she comes back, I think maybe she just went like she had that conversation before
+
+Aizaz 21:21
+she didn't speak to HR, right?
+
+Lien 21:22
+She hasn't. She did. She did. I don't think we need to. Like, we will just
+
+Aizaz 21:27
+don't get spirit to HR. I'm telling you, like,
+
+Lien 21:30
+it's gonna be a problem. Yeah. So, I plan to maybe bring two of them out with Siebel together with four. Find like you know have a dinner together and just like sort it out and just like you know we are good friends like we are like making money for the firm and all we are doing here is trying to sell some data to the client you know sort it out as a friend friend.
+
+Aizaz 21:59
+What was it about though?
+
+Lien 22:01
+It's the same thing of like you know, like pushing people like in a way. Like Chen Yali has a very good, good or bad. Like being aggressive of like pushing things ahead. I understand it. Like with working with like a big corporate American setup, you need to have the ability to influence other people without the title or you know authentic authorization. Yeah. So again,
+
+Aizaz 22:29
+told her I'm a senior VP. She listened to me. Yeah, kind of. Yes,
+
+Lien 22:34
+she's like you know talking to people like an MD basically. Yeah. Like you know she would like jump out and just summarize for other people while you know other people are doing the work, which makes other people unhappy about like you know I'm doing the work like why you are summarizing for me.
+
+Aizaz 22:52
+Telling you she'll suffer long term. She'll make ED this year if she if HR doesn't really stop at last minute.
+
+Lien 22:58
+Yeah,
+
+Aizaz 22:59
+she's on the list and she'll make ED.
+
+Lien 23:01
+Yeah,
+
+Aizaz 23:02
+but I'm telling you, if she messes it up like next year, she won't get paid.
+
+Lien 23:08
+But once she get a higher title, she got a better position to influence people in that way. And currently, it's like you know,
+
+Aizaz 23:17
+but even as as an ED, it's even even more incumbent on her at that point to actually bring junior people on board. That's part of her agreement at that point that she has behaved like an ED.
+
+Lien 23:30
+Yeah, yeah. She's already working like an MD now. It's like you know, no, but
+
+Aizaz 23:38
+not as MD. Like it's it's not MDs are supposed to be even, even better. Even
+
+Lien 23:42
+better, yeah, Tina. Yeah, it just.
+
+Aizaz 23:46
+But Kelly is not great either.
+
+Lien 23:48
+Yeah, I told like you know Sable
+
+Aizaz 23:51
+when he was taking her. I'm like, dude, I don't know you can take her, but for me, it's telling.
+
+Lien 23:56
+Yeah, yeah, yes, yeah. He knows. He's like you know, kind of the the second month for her to to do that new job and it's so different from her old job where here is just like sitting on the floor not talking to anyone just doing a linear job of like you know doing PBRM whatever and down there is is more all of a sudden you need to talk to external client you need to talk to the actual model owner you need to make sure the traders are aligned. You need to being like the the center of a lot of communication. Like it's a new job to her. So like, is I I I'm not blaming anyone to be this is like Jenny Is for or like Kelly's for, but let's just like come together, like we probably I go out and have a drink and.
+
+Aizaz 24:46
+But Kelly knows things or no?
+
+Lien 24:49
+Which things?
+
+Aizaz 24:50
+Does he understand this product? Which part was CMO? This
+
+Lien 24:54
+spec pool pricer, the synapse.
+
+Aizaz 24:57
+That's already done. You're just selling it to another client. You're selling it already. This is.
+
+Lien 25:03
+part of selling that to client and onboarding that client because like Kelly was working on onboarding all these like backend like setting up the FTP the real onboarding process where she's like that's where the conflict started, and you know, it's just like.
+
+Aizaz 25:27
+But this is being done. We have sold spec pool pricing to other clients.
+
+Lien 25:30
+Yes, we have done this. This is a
+
+Aizaz 25:32
+client.
+
+Lien 25:33
+This is a third client. This is a third client, but this client wants something slightly different. They want to tweak the model in a certain way. This thing is creating so much problem. Like you know, this conflict. We initially deliver wrong dataset to client. Client complained, and MRM is like holding on us and trying to give us a violation for being used undocumented model input. That is still ongoing. It just like you know, being a manager, I feel all the pains of like, okay, you got 300k of PNL, sure. Is it worth it? I'm not sure. I'm talking to Ashish. Where to find the next 100 million? Yeah, and all these things is like I have to have so many MRM calls with like a tier three decision support model, and it's gonna be like you know the first week I'm like taking over the team is like a violation waiting for me.
+
+Aizaz 26:32
+You need to you need to have a you need to have a number two in your team. Like I have like couple of the tools, right? Like I have like Walter, I have like Sean. I mean, I have European. I have it, and
+
+Lien 26:50
+yeah,
+
+Aizaz 26:51
+yeah. Like you need to have another person. Like your team, your your your role has become bigger. Yeah, very quickly.
+
+Lien 26:57
+Yes.
+
+Aizaz 26:58
+So you just need somebody to like really handle things for you. Yeah,
+
+Lien 27:04
+currently, like you know, Janelli is a like the the second ED gonna grow up, but she's the one that brings in all these conversations. Yeah, I need her to.
+
+Aizaz 27:16
+We need to have a conversation with her, saying that now you're an ED, now you need to own all this stuff. This is your problem.
+
+Lien 27:21
+Yeah. She. She's kind of owning it in a way that. I don't know. She's like. She's very good at like you know, not taking the stress of like giving
+
+Aizaz 27:40
+other people stress. Yeah,
+
+Lien 27:40
+giving other people stress. Mean like you know, even you know, there's a violation. It's like if you cause a problem, you need to be a little bit of like you know owning it. Rather, you know, she's handling it like you know, this is like a third party thing. It's not my problem. I was like, dude, you like you just give MRM like back and forth. What's better of that situation? It's not about we are having a level three decisions of support model having a violation. That's not that's nothing. The problem is Liana, the head of MRM, sent an email to Nate and Tom, saying that they are signing a violation to us, and the second day you told MRM that wait a minute, I just checked the code. I told you wrong information. We are actually not in a violation situation. We are not using it, and we start the second phase of conversation. Two days later, you told them, oh wait a minute, actually I'm using it. So you flip
+
+Aizaz 28:40
+flop twice.
+
+Lien 28:41
+Twice, yeah. You give like MRM.
+
+Aizaz 28:44
+They gave us a violation or no? They are going. They they are
+
+Lien 28:46
+they are so confused. They they haven't made a final violation decision.
+
+Aizaz 28:50
+But is it a is it a violation or no, in your mind?
+
+Lien 28:53
+It is to me. It is to me
+
+Aizaz 28:56
+because we are using a model and an input which was not documented.
+
+Lien 29:00
+Yes, we're using a model documentation that's not used used for, uh, for two years.
+
+Aizaz 29:06
+So we we have a we have a model documentation which does not, which is not aligned with the production model.
+
+Lien 29:16
+Correct. How? So the which
+
+Aizaz 29:21
+which input is missing in the model documentation?
+
+Lien 29:24
+So the model documentation says, like it's using CPR, which is an actual prepayment CPR that's realized every month, getting reported the actual one in the Synapse model, which is a you know spec full trade pricing model. But in production, it's the next month projection, which is itself is a model. It's a deeper
+
+Aizaz 29:53
+next month's projection, not
+
+Lien 29:56
+actually what get reported.
+
+Aizaz 29:58
+Not realized CPR, right? But projected CPR. Yes,
+
+Lien 30:01
+yes. So in the two
+
+Aizaz 30:02
+separate things. Yeah, two separate. One is a backward looking. One is forward looking. Of course, the forward looking CPR is based on your short term thing.
+
+Lien 30:10
+Yes,
+
+Aizaz 30:11
+and the backward looking is just what actually happened.
+
+Lien 30:13
+Yes, the reason why we document it that way is because like two years ago, when like you know the situation when like me and Chao get fired, MRM give us a violation of like you know using the STF model in a lot of other places. So we had the agreement with MRM. We don't use that model to touch anything that's bookend records. So that model is very clearly defined as a decision support model that can support traders' bidding and risk management decisions only, not fitting into anything else. And the synapse model is classified as a e trading model. It's all go trading model. So that model is potentially down the road can can drive the auto quarter for secondary speculator to feed in into auto model. Yes, so either me or Seb is aware of that model is actually taking like the STF, the short-term focus model as an input, none of us know. And all these conversation coming from this selling to a client, where the client the small tweak that they want is to adjust the price to a T zero settlement. So you need to change the the carry adjustment a little bit. So Genially is planning to use a short-term focus model to do that small adjustment. She comes to you, not me, but you to ask you to build that out for her. And you was like, okay, let me ask Lien about it. And you come to me as, oh, Genially asked him to build a server to use short focus. I was like, wait a minute, it's not supposed to be used in that model. And I talked to Seb, and like he asked Genially, and Genially's answer was, oh, we have been using this for two years in the production synapse, which is a surprise to me and Seb, right? So our first. You mean the you mean the the short term model? The fact that Genialis told us the pricer model, the algo model in production, has been using this short-term model, which is a decision-support model,
+
+Aizaz 32:44
+for two years.
+
+Lien 32:44
+For two years,
+
+Aizaz 32:45
+yeah.
+
+Lien 32:46
+None of us, like neither of us, know.
+
+Aizaz 32:48
+And that's how it's been documented.
+
+Lien 32:50
+Yeah, this is no. The documentation is is using the backward-looking one. Okay,
+
+Aizaz 32:54
+fine.
+
+Lien 32:54
+Right. Then, like, to me and Seb was like, okay, this sounds like a problem, like we don't want to hide any problem. So let's just talk to MRM and see. Like, okay, we self-reported problem and we want to fix it.
+
+Aizaz 33:11
+Yeah,
+
+Lien 33:12
+we can update the documentation or reverse.
+
+Aizaz 33:15
+And then she said, no, no, no, I'm not using it. After that,
+
+Lien 33:18
+yes.
+
+Aizaz 33:19
+Oh, it's actually historical. Yeah. And then she said, "No, no, it's actually now I'm using."
+
+Lien 33:23
+Yeah, I'm using it. So the problem to Nate is like, do you guys actually know what's going on with your team?
+
+Aizaz 33:32
+Nate hasn't. Yeah, like I like we we
+
+Lien 33:34
+individually like talked to Nate already about yeah Nate is okay with what's going on? Because we just talked to him about all this decision support model. It's a level three model. It doesn't waste your time, and it's okay. And he knows like Ileana is sometimes being a little bit too dramatic about like you know MRM stuff. And I don't, I don't. But but the problem is
+
+Aizaz 33:57
+not Iliana or flip flopping. The problem is that you can't have a decision support model fitting into algo model. Fitting into the algo model. Yes, that's problem one. That's problem. That's that's that's a violation.
+
+Lien 34:08
+Yeah, that's a violation.
+
+Aizaz 34:09
+Nothing else is a problem.
+
+Lien 34:12
+And to me, I feel like the the the fact that you have to tell them three different versions of the story is a problem. Okay,
+
+Aizaz 34:20
+fine. I mean, that's bad communication. Leave that aside for a second. Yeah, yeah. But the fact is that you come to the fact that you've been using decision support model to feed into a
+
+Lien 34:28
+like an algo into an
+
+Aizaz 34:30
+algo model.
+
+Lien 34:31
+Yeah. As for
+
+Aizaz 34:32
+the policy that's a violation.
+
+Lien 34:33
+Yeah. If the MRM team says okay, you can use it. If they sign it off, it's okay. I mean, like, if they make a decision, okay, we can, you know, whether that's gonna need need us to change the decision model to a higher tier, or anything like we can follow their guidance, but like currently is definitely a violation, like not, not.
+
+Aizaz 34:57
+Well, then to remediate this thing, what is the way to do it? You basically have to update the documentation. You need to update
+
+Lien 35:02
+two documentation. So that, like, if we're gonna keep on using STF, you need to update the algo model to see like you actually take that, and you need to update the deep STF model to upgrade that from a decision decision support model to a like a proper PVRM, which might be a lot of work there, and you know, just you need to change the model scope basically, or you just change the algo model from using the like forward-looking STF to the backward. It doesn't matter. Just do that. Yeah, doesn't matter. Yeah,
+
+Aizaz 35:36
+just do that. Just say, hey, we change, fix the code, and now it's done. Yeah,
+
+Lien 35:39
+yeah. Just changing back to the CPR.
+
+Aizaz 35:44
+Who cares, right? Whether they want to take the, they don't want to buy it, don't want to buy it, go fuck off. Yeah, it's like you know, 300k. Yeah, I don't. I don't think it worth the problem. I know Cebu is a bit dramatic, but yeah,
+
+Lien 35:55
+it's meaningful to him. But just he's a sales guy. Yeah, it's fine. Yeah, yeah,
+
+Aizaz 36:00
+it's fine. He doesn't understand these things. He's just a very good salesperson.
+
+Lien 36:02
+Yeah, he is. He's a good. He's a good. He's a good sales. Yeah, and you know, like when Kylie comes back, I'm gonna talk to her and see, like you know, yeah, just trying to move all things. You don't need to talk to anyone. I'm just telling you so you're aware of what's going on. I don't want this to become a surprise if anyone escalate. But I think is
+
+Aizaz 36:22
+calm Janelli down, please. I need I need to talk to her as well if you need to. Yes, I need to calm her down.
+
+Lien 36:27
+Yes, yes. I what the message
+
+Aizaz 36:29
+is, but we need to basically tell her to calm down.
+
+Lien 36:33
+Yeah, it's
+
+Aizaz 36:35
+not going to be beneficial for her for us as a team long term because she's just creating noise because she did the build branch, the beginning of like Yeah, Rudranch, James
+
+Lien 36:44
+Wells, and yeah, James Wells, and
+
+Aizaz 36:46
+others.
+
+Lien 36:47
+Yeah, like each one of these, I can't. It's very hard to see whose fault it is. It could be like 50-50 for each one of these, but like you can't have three of these in profit. No, but you
+
+Aizaz 36:57
+don't look. You, you. It's okay. I she she changes the status quo. I understand that she can make the people. She feel, you know, you can still make people feel okay and get you get your way, right?
+
+Lien 37:12
+Yeah,
+
+Aizaz 37:12
+she she has to make people feel bad.
+
+Lien 37:18
+Yeah, yeah. Sometimes I I get it. I get it. She wants to push the progress, and she's doing it her way. But look, like you need to learn how to work with people, so people are happy working with you in the future. Otherwise, you know, a lot of time you need to go to other teams and ask for resources, ask for helps. Like it just like you don't want people just to, you know, hate you going forward. I don't know. I I'll try to, as I said, like after Kelly comes back, me and Siebel gonna take them out and just you know grab a dinner or something like lunch or dinner and just like smooth it out.
+
+Aizaz 37:57
+Look, Kelly is also weak. Okay, that's Cebu's problem.
+
+Lien 38:02
+Yeah,
+
+Aizaz 38:02
+he didn't do anything here for two years.
+
+Lien 38:04
+Yeah, yes, yes, I, I hear, I hear. You know, like
+
+Aizaz 38:07
+honestly speaking, like Dan, like I was like Dan, why did you keep her around?
+
+Lien 38:12
+Yeah,
+
+Aizaz 38:13
+he didn't even realize that automatically becomes associate.
+
+Lien 38:16
+Yeah,
+
+Aizaz 38:17
+she didn't have. He didn't have to do anything. Just say no. I don't want her to promote to associate, and HR will take care of him.
+
+Lien 38:25
+Yeah, it's a head come, right? Yes, yes. So like for him, rural ranch is that not probably not that strong either. But like, look, it's like just too much noise. Like other people don't have problems with cats. Yeah,
+
+Aizaz 38:39
+it's okay.
+
+Lien 38:40
+Yeah, Ruranja did. Did he mention like Victoria is good
+
+Aizaz 38:44
+and she wants to leave? I don't know how why how we can stop it. Jesse Jesse was very unhappy about it. Yesterday I spoke to her. She's a trader. I know Jesse. She's like, oh, I want her to be. I want her to stay. And she's like, oh, I can make her a trader. I'm like, go for it. If you make her a trader and keep it. That's fine. I don't mind.
+
+Lien 39:03
+Yeah,
+
+Aizaz 39:03
+keep her.
+
+Lien 39:04
+Yeah, it's a big loss for the team.
+
+Aizaz 39:06
+Yeah, I want her to stay, but she's told me.
+
+Lien 39:12
+Like for what? I don't know how he did it, but you know, like she just liked to work with. I think she just
+
+Aizaz 39:21
+she just like to work with him, and I understand that, but it's not a good air path.
+
+Lien 39:24
+No, like what would you? I I talked to her too. It's like you know. I think a little bit, like deep in her heart. She she didn't tell me that, but I I'm trying to understand the situation, right? The fact that, like after Fuwa left, like she's the one doing everything on the desk, basically. Yeah. And you know we are trying to tell everyone like Etienne is great. You know he she he's gonna take care of the desk while Victoria is doing all the work, and to be fair, Etienne has like kind of officially taken over the team for like I don't know like 345 months.
+
+Aizaz 40:10
+Not even
+
+Lien 40:11
+like you know three months.
+
+Aizaz 40:12
+August. August.
+
+Lien 40:13
+Three months, right? The amount of focus that he spent on the non-agency team, you know, just like two weeks of here, and he doesn't ask anything while he's in Linden, right? He's not working on it. He's not like touching anything remotely, which to Victoria may cause her. She's not like saying like okay I deserve better scope or because you guys already told her that she's gonna get a platform but she hasn't feel like anything is getting to her way rather than like you know all the senior people are telling her oh ETN is great but she just don't feel ETN is like doing anything with her or for her. That can be one of the things that didn't spell out. I'm look. I'm maybe like like extrapolating too much into like what other people are thinking.
+
+Aizaz 41:15
+But look, I think she she said. I said I told her like I'm fully supportive of her.
+
+Lien 41:22
+Yeah, like she's just a little bit too junior. If it's like if all all the things happen two three years later than today, we would feel like you know confident of like pushing her to that position to take over. But she's like the first year VP. It's just very hard for you guys to, like, put her on the head of non-agency position. But she would be right. Yeah, she would be like down the road.
+
+Aizaz 41:48
+Not just down the road. Like next year when the chen is here, he actually is going to sit here upstairs.
+
+Lien 41:52
+Yeah,
+
+Aizaz 41:53
+and and Victoria would do non-agency QSET stuff all across.
+
+Lien 41:56
+Yeah,
+
+Aizaz 41:58
+that was the role.
+
+Lien 41:59
+Yeah, it's like a clear ED role down the road. What's she gonna do like on CCN?
+
+Aizaz 42:04
+You can talk to her tomorrow. Like it really is an ED role. Like she'll get promoted in a year or two maximum to do non-agency QSET trading, all of it. Yeah. Like everybody will report down there to her, and he will just have her loan here mostly.
+
+Lien 42:18
+Yeah, I can try to talk to her, but look, I don't have the. I I can't guarantee anything to her, and but I can draw kind of the potentials to her, then then work on it. I don't. I mean, like you know.
+
+Aizaz 42:33
+Look, I I'm. I've said it to her again and again. I'm like, look, you know, I'm very focused. I told her I'm very focused on her career. You're you know your significant contributor, you make sure your you know everything is on radar for senior people for you. Like there's no problem to take care of everything, and and I still hold my my you know I'm still holding to that.
+
+Lien 42:58
+Yeah,
+
+Aizaz 42:59
+if she wants to just like not do that, then there's a real path for her to grow here. Yeah.
+
+Lien 43:03
+Yeah, I don't see any. I I don't see a clear path on GCM to be honest. I know, but
+
+Aizaz 43:10
+and there is a clear path here. Yeah, like she will be in ED in a year or two. I will be trying to push it next year. Yeah,
+
+Lien 43:15
+yeah. Like she probably need two years from like you know, like two years. She was VP
+
+Aizaz 43:22
+last year, and then she yeah last year yeah
+
+Lien 43:24
+yeah
+
+Aizaz 43:25
+maybe two to three to three year yeah yeah
+
+Lien 43:27
+whenever it becomes a you know eligible like she will definitely two year
+
+Aizaz 43:32
+eligible VP
+
+Lien 43:33
+oh really yeah two year promotion yeah we can try and it's hard yeah you have to be
+
+Aizaz 43:40
+real outperformer
+
+Lien 43:41
+I mean, like if she decides to stay, it will make a sheesh a lot more comfortable. To be honest, to to have better, you know, confidence level about non-engine history.
+
+Aizaz 43:54
+Yeah, I agree with you. I mean, ashish kind of reached out to me and said, you know, I have the STR.
+
+Lien 44:05
+Do you want me to hop on that call or
+
+Aizaz 44:08
+RMBS TRS?
+
+Lien 44:09
+Yeah, I feel like you know the folks don't know where things are. I don't know what.
+
+Aizaz 44:20
+I'll join.
+
+Lien 44:22
+Okay, then let me go back and just join. Like I'll tell you.
+
+Aizaz 44:25
+It's okay. Yeah. Okay.
+
+Lien 44:29
+I'll wait for you. Like if you you just ping me if you should be on the call. And let me talk to Victoria. She's sick at home, so when she comes back, I'll talk to her.
+
+Aizaz 44:43
+Bogdan.
+
+Lien 44:46
+Okay, let me know.

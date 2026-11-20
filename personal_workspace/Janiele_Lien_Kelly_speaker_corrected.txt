@@ -1,0 +1,365 @@
+Janiele & Lien — Interpersonal Conflict with Kelly
+Speaker mapping and turn-boundary correction
+
+说明：Janiele / Lien 两人对话；全文保留，未作内容删减。修正讲话人标签及跨段句首、句尾归属，并合并同一人的连续碎片。
+时间戳为近似位置；少量短应答或重叠发言仍有归属不确定性。原转录中的疑似听写错误未擅自改写，本版不是重新逐字转录。
+
+Janiele 0:00
+For a while now, checked before actually, so I know it did it too well. Anytime we have a new process with a different client, different expectations, so there's always a little bit of a how they say maybe friction is the word, and then you kind of have to adjust, right? So the client is trying to understand like if they send us a question, they want a response immediately. If something is quick or something takes too long, they want to know why. This client in particular, QRT, they do expect us to be very much on top of things. They want to know everything. So literally, like if we say we go to FGP and we tell them, okay, we have a median data point. This takes too long. Their reply is like, why does take a full day? What, what, like, why exactly does it include it? And like, it's a client. If they want to know, I feel like it's fair to try to understand those things. But anyway, so in this concept, the process is we deliver data. If they are not happy, if there if there's any issues, we have to do it on delivery. If they flag anything, we make adjustments for them. They are very specific about the things that they want, which is for me. It's fine. This is the process. We're gonna do whatever the client wants to do. In my interactions with the data team, we have now Kelly who is working with them, and she's the new genre in the team. Everybody else, it says we're working together for a little bit, for quite a you know a bit more time. But even just questions about the process or things that she didn't take super well. So, for example, when we started doing this, the client had a question about the FTP process and why it was taking so long. So I was following up and trying to understand. I said, okay, so what is the process? Because I don't even, I didn't even realize. Because what they do is they, which I don't know. There's an API which the client can access directly, but they also offer to do a one-shot FTP, where basically Morgan Stanley creates these files, zips them, and then ships this to the client. But this is basically us doing the same process twice, so that the client receives a bunch of stuff in one shot instead of us just saying, okay, the the API is updated, so if you want, just query from it. But anyway, so I was just trying to understand how this process works. But even questions just about this would come back with, she's saying just like, I'm doing the very best I can. This is just how it works. We're juggling multiple responsibilities to reach. I would say, well, this is not information I can relate to the client. I need to like understand what is the process. It's not even because people do things for whatever reason. Because people like a response, a response can be, it's gonna take this long because I have to go home in one hour and I'm the person doing this, so it's gonna have to wait until Monday. That's a response, and this is something that I can convey to a client. But if I don't know how the process works, this is harder to do. Wait, wait. So this happens, and I will say there was a little bit of friction in general. I felt like.
+
+Lien 2:45
+Is there any specific? I you know I I have no clue of what exactly happened in that chat, or is like between you two. Is there any specific things that happened or like?
+
+Janiele 2:58
+I'm telling you this. I'm gonna get you. I'm backing you up to what's gonna come.
+
+Lien 3:03
+Sure.
+
+Janiele 3:04
+Because it seems very small, right? It's just. Yeah.
+
+Lien 3:06
+I don't know. Is I.
+
+Janiele 3:07
+It seems really small, right? I'm telling you this because of what's gonna come next. But for me, this is very small. Uh huh. And I honestly even forgot about these things until what happened on Tuesday, which I'm gonna get. Wow.
+
+Lien 3:18
+So these things happened way before Tuesday.
+
+Janiele 3:21
+Yeah, these things are. I'm telling you three things. This is one of them. Okay. Okay. How to say? Help me understand. Yeah. So how to say these things have been out taking time here. So these things like I've noticed this, but usually, especially when someone is new.
+
+Lien 3:34
+Yeah.
+
+Janiele 3:34
+I don't take things very personally, and I just feel like with time people adjust, and then eventually just they just see that this is how it works. So, I didn't really put too much weight on these things or even these types of responses. I just figured, well, I'm just gonna tell her that we need something else. But then eventually, everybody kind of gets into the same agreement of what has to happen.
+
+Lien 3:55
+Sure.
+
+Janiele 3:55
+Communication-wise, because this is how it's been in different projects, and you, I'm sure, if you know, you're more senior than me, so I'm sure like sometimes the conversation when you start working on something else can be a bit rough and it may feel like this. But then you talk again and you're like, oh, actually no, it's fine. And so that's usually the way I think about things. So anyway, fine. This happens.
+
+Lien 4:13
+When did that happen? The specific in like
+
+Janiele 4:16
+this is about three weeks ago. So she was too far. Okay. Because it happened. So anyway, so this happened, and then we, in between, she asked me for a, for a meeting. She said, "I want to shadow you from one to two hours on a Friday. When can I come?" She texted me. I think it was a Wednesday or Thursday.
+
+Lien 4:36
+Okay.
+
+Janiele 4:36
+So I told her that my Fridays just happened to be very busy. I have literally been back to back. I don't know what happened or what I've done on my schedule.
+
+Lien 4:43
+So you can't do it on Friday.
+
+Janiele 4:44
+So what I told her, I said my Fridays are usually very busy, but I can do Tuesday. Yeah. She told me I cannot. I only do this on Fridays. This was something that even Mike was shocked. But I told her, and so she was like, "When is the next Friday you're available?" I said, "My Fridays are typically very busy because I always have this meeting, so I cannot guarantee you that's going to be open.
+
+Lien 5:02
+Sure.
+
+Janiele 5:02
+So she said she was going to reach out to me. She never did. Then another thing.
+
+Lien 5:08
+That's also three weeks ago.
+
+Janiele 5:10
+This is about two weeks ago.
+
+Lien 5:11
+Two weeks ago.
+
+Janiele 5:12
+And then she never did. And then this week we had an issue. So it took them a long time to set the clients up on the live API. Okay. And then once they did, there was a little issue with the the live API. The data quality checks were not in place, so we fixed this, and then we did a, and then but it was only five days that were affected because they were ready for the the large FTP and some of the big fixes. We fixed that, then they were ready for these five days worth of data, and then I continued to ask questions because I was like, do we still need to FTP? Because I know FTP is a huge process because you need to backfill, and then you run analysis, and then you do the FTP. And I was like, but is this really necessary? Because if the API becomes available right away, maybe you don't need to do this.
+
+Lien 5:50
+So you asked her that question.
+
+Janiele 5:53
+Yes. So which is the question I had asked before, but I asked again to say like, so when is this available and this? And then she said, I think we do like on a weekly basis. I didn't know if he was right away or not, and then I wrote the data. I was a little late because I was running a few more checks, and I had found some discrepancies, and I just wanted to make sure they were fine. They were fine, so I told them. I said the data is ready. It was already 2pm. on a Friday, so I was like, I don't want anybody staying late. So what? And Kelly was like, I want to run some availability checks, which you can do based on the interactions that we had with clients, and she said, "I'm going to do now." Again, I'm only telling this you because these things are informative. Sorry, I'm going to max. So I'm sorry about this. I'm honestly I hate this, but but you need to know the context. So this happened. So I told her, I say, "Why don't you do the checks?" And Ashley does the backfill. Do so. You both work at the same time. The client is already aware that there is something wrong with the API, so they are not querying the API, and this is the API only for this client. So you can do the data validity checks. Ashley runs the backfill. You do this concomitantly, and then if you find any issues, we fix the issues before we send to clients. But like, why wait for one thing to happen and the other? Because if the answer is no, at least this is not. We think about this all the time this way, I guess, on the SPG side. Kelly got very upset, and her response was, "I'm still trying to do the best I can, and this is just the way the process works, and blah blah blah." So say whatever, not gonna fight. She checks, but she forgot to check one day. There was still an issue, so then we got a response that was quickly fixed, and then I just told them. I say, guys, let's just talk about synapse because I was still waiting for Kelly to possibly Kelly. She never did. So I say I'm just gonna set something up for everybody. And her reply was, Oh, I'm actually already gonna talk about this with Antoine in December after we both back from vacation. And I told her, I say, Kelly, like Synapse is me. This is wrong. It should not just be me, but today it's just me. It's wrong, so which is why I have Adam now, which I told you about. Antoine, I'm also training them because I think the model is high touch. Right now, we have a client that cares about every single QC we've rice, not just with liquid, which is what most of our clients care about. They actually care about everything. So I do feel like Synapse needs more eyes on it, and people that are asking it different questions and trying to do different things about it, which is why I've been also exposing the data more to traders so that they can on their run analysis or whatever. Yeah. Anyway.
+
+Lien 8:10
+Yeah.
+
+Janiele 8:11
+But I told her, I said like, you just like you you have to talk to me and like I just like it's me anytime we can talk. And then she said, but you say you're busy. I was like, Kelly, that's not what I said. I just told you that I cannot on Friday, blah blah, and then she never replied again. And I say, look, it's very important to you know keep a growth mindset and be flexible. There are data checks you can implement just from what the clients have said, or like if I cannot do it on a day, just ping me again, and it's fine. So this is all happening in the chat that we have. It you know the Chinese is not a big chat, but it's people replying whatever. Yeah. Again, to me, this is a normal conversation.
+
+Lien 8:44
+So that conversation happened in a group chat, not a private chat between you two.
+
+Janiele 8:49
+All of my conversations with her happened primarily. So only the conversation about her pinging me happened in a private chat. Yeah. But everything else happened in the chat that we have now with like not with everybody. I will say, I guess like on my side, she is less defensive when we are in a chat with Sibo, which is what I've noticed before. Because then, like worst case scenario, she she won't reply. But I think if she, but but if he's not there in the chat, then it's a little harder for her. So anyway, whatever. So then on Tuesday, she comes to me. She brought me. It was a seven-page document that she wrote from ChatGPT.
+
+Lien 9:27
+Okay.
+
+Janiele 9:28
+She was crying a lot, a lot. She told me that I come across as very aggressive. That she thought I was asking her too many questions. That she said that I wasn't valuing the work that she did because, for example, when I told them that she could do the test and Ashley could do the backfill, and then in the end we could deliver the things. It's just going to shorten the amount of time. She says, "I'm here doing the best I can, and I'm working really hard." And I was like, "Ali, this is fine. I'm not saying you're not supposed to do the data checks. I'm just saying that people can work in parallel, and then whenever you are done, we're gonna take your input and we're gonna go forward with it. She she started saying like, I know you used to work with Jack, and I don't even know why she raised this because like don't compare people in general. That's not even something I do. Like that's definitely not something that I've done before. She also what did she also say? She was also like, sometimes I just feel more comfortable learning from other people in the team, and I want to talk to them. And I was like, Kelly, you can still do this. That's not what I'm saying. All I'm saying is that for Synapse today, it has to be because it's the model. Like I deliver this to you. I write the code. I fix the problems. We are, you know, getting more backup and things like this. I was also like, I just tend to ask a lot of questions in general, and she she said like, anytime you ask a question, it just seems like you don't trust me, and I was like, but I just wanna you know clarify things like that. So I was to be honest, I was very shocked because, first of all, I don't think she should have come to me directly. I think she should have come. She had gone to her manager first and got his insight. Second of all, imagine I'm just here doing my job in this early. Someone comes to you, hands off a gigantic letter, tells you that the way and the number of messages you send them is excessive, and that she's very upset and crying copiously about this. I have found out now that this is not the first time that she has done something like this before. So apparently, she has done something like this in a previous team. So because I was like, oh my god, what has happened? Because even like even you know sometimes you get your I got my conversation to ChatGPT. I changed the names a little bit so that it knows like I guess it can figure out just to even understand. And it's like no, this is a respectful conversation, but whatever. So so I was very shocked at her reaction, and I don't think it's appropriate. So I raised this with Mike. She hasn't really told him anything. She said that he was also a little bit surprised because he talks to her very often, and on the same day, again, she was crying a lot.
+
+Lien 12:08
+What do you think like drives her to like crying so so hard? Is that the fact that her work wasn't being appreciated, or like what? Yeah, from what you're telling me, I haven't feel like anything as a clash or anything that would cause anybody to be like you know emotionally reacting so like you know strongly crying a lot. I don't. Is there any clashing point that you would see like what makes, like, she feel like so upset or so like frustrated? Like, any points?
+
+Janiele 12:48
+To be very honest, what I have gotten from her and the things that I said, again, I was quite shocked because if I ask you to do something and you say no, let's not do this. Fine, we don't do it. I'm not gonna come to you and say I don't think you value my work, and I think you actually you you see what I mean. Like there is what's being said, and there is what people, the stories that people tell about what's being said. If I tell her, Snacks is me, so you have to talk to me, and her answer is, but I want to talk to other people because I want to learn from them. She's not getting the message, which is, of course, obviously talk to whoever you want. But Synapse is me. So I think, from my conversation with her, there was a lot of things that went. There were she was filling in gaps with not with concrete information, but with the way she perceived things were again from what I've heard, something similar has happened in the past. I don't know if it's the fact that you know she's been to my house. I wouldn't say we are super close friends, but you know.
+
+Lien 13:54
+Yeah, I thought that you guys are pretty like you know hang out all all the time. Like you.
+
+Janiele 14:00
+Yeah, I I wouldn't say all the time, honestly. But she, you know, she came to the analyst class, so I've so I've seen her around, and she's friends with some of my other friends. But she actually apparently clashed with some.
+
+Lien 14:10
+And you like when when when you see like this happen before, it's more like, what type of things happened before? Like, is like the part that I give you a write up and starting a conversation there.
+
+Janiele 14:23
+The whole write up and crying. I don't know if I don't know exactly. I don't know. I don't know precisely the whole if the whole write up and crying has happened before. But I do know that she had a she had a job where she wasn't performing super well and she was taking a little too long to do things. And then someone just told her, like Kelly, I I really need you to do X Y and Z for me. And then she took it very personally, said that she wasn't going to talk to the other person anymore. Well, you know, it's like it's working. There are certain things that she don't have to do, you know. So I haven't got. I'm I'm going to talk to the person that I know was on the other side of this interaction on Monday, so I'll know a little bit more about this. But honestly, it's just for me personally, so that I I know. But I don't know. But but in terms of like the firm, I don't know if this is something I should just take to HR right away, or if this is like if this is something that should be handled immediately. I went to Mike first just because he's her boss, and I appreciate you come here because that was the second thing that I was going to do. But I don't know if I should go to HR directly because honestly, I just don't think this is even like a professional way to work. I was, for me, it just was because imagine if she's like how to say it, we I only work with her, you know, professionally like this just for a couple of weeks, and then if you ask somebody, can you do this for me? And the answer is, I'm doing the best I can, and I just got here. This is just not a constructive way to work in general because it doesn't give any information. It's okay for you to say, "Let me take a look. Let me find out." And this is usually how we do things. So I think anytime somebody deviates from this behavior, especially because she's been here, I think that's her third or fourth year in the firm. That is a little weird, but the fact that she is creating these narratives, even when this is not what's written in the chat. Like you can't tell me I am.
+
+Lien 16:09
+So the the part that makes her the most emotional or defensive part or whatever the for the lack of the correct word is the fact that she said I. I'm trying very hard already. That part is
+
+Janiele 16:24
+she. She seems very overwhelmed, and she says that you know I don't have a lot of people traveling. The team is very short-staffed.
+
+Lien 16:32
+Yeah, which is true. Just her and Sibo. Yeah,
+
+Janiele 16:36
+Lien. But I would say this is her, Sibo, Ashley, and then two people in India. Again, I haven't told this to her because she cried a lot.
+
+Lien 16:45
+Yeah.
+
+Janiele 16:45
+But when Jack started, the situation was a lot more dire. I have not had a single day with him, and even like we've had clients screaming, "Hey!" Like he just was very professional about this. And what frightened me about her reaction is that one, it was not based on concrete evidence. It was a lot of this based on how she interpreted the situation because of how she was feeling. And two, what happened this week is not really that hard. This is just the business, and this is just how the business is going to operate. This is data solutions. Every day there's going to be a new data set, a new client, and then you're going to have to interact with the different people. So even from like a firm level perspective, for me it is worrisome. That's just been yeah, like business is
+
+Lien 17:36
+business. Like for that conversation on Tuesday, where you feel like you two left the room via like any like meaning like yeah like after that conversation feel like he start she started as crying and are you guys getting some like common ground after that conversation or you feel like you know what do you I just want to see where things are
+
+Janiele 18:02
+so there were a couple things. So she asked me for something. She say she say things such as, if a client complains about something, or if the client is following up with me, she doesn't want me to message her too often because she gets very overwhelmed by it, I told her that this is not always going to be possible. Because if there is a demand and we need a response, I'm gonna have to follow up with people. And even if she doesn't reply, I still need to follow up. That's my job to follow up and understood her. I just don't want you to feel like this is like call me if you have any problems and try to clarify things with me before jumping to conclusions? Because she's like, "Oh, we're gonna we we have to work very late, and we feel like you're doing this." I say, "No, you can always just hop on a call with me and get some clarification." That's what I told her. Then she was also asking about like again, I told her about this that like if I cannot guarantee that I'm gonna have two hours on one day just for her to shadow me, but we can do this in smaller batches. So I'm gonna actually have some meetings with everybody, like Antoine and and Ashley together, and Kelly, so that we can go over like the SG business and all the things that are important for Synapse and the delivery that I provide the clients. So those are the two things that I say. I will say she, like she didn't even look me in the eye after this. So, but I feel like people can't do this in a personal life. But at least she's she's joining the calls and she's being responsive. Ashley has been picking this up, but I guess just more naturally because also Ashley has been doing this for a little longer. So I guess from the Snap side, we I don't I'm not sure we're gonna have any issues. But I've seen like this.
+
+Lien 19:43
+I like. I think you guys can handle it well. Like it's more for, you know, I just want to evaluate if like we need to do anything about this. Yes, Tuesday feel like YouTube hasn't. Is it fair to see like you know? Did I really find too much of the, you know, common understanding that day, or like still like emotional level?
+
+Janiele 20:14
+I was very shocked to be very honest with you, and I don't think her reaction is appropriate in general. I don't think her reaction is professional, and I think that's going to be a problem for the firm if we don't address this.
+
+Lien 20:25
+Yeah,
+
+Janiele 20:25
+because yeah, and she is someone I know. The fact that she thought those things about me to me is just completely shocking, completely shocking. So because this is someone I know, so she's seen me before, and the fact that she wasn't able to even just come to a reasonable answer for me. This is shocking, and again, the fact that I have known now is not the first time that is happening. That she's taking something professional as a personal attack on her character. For me, this is actually a problem for the firm, which is why, which is why I want to ask. I didn't. I didn't tell this to Mike. I wanted to talk to you first. I don't know if what. But look, I
+
+Lien 21:01
+didn't like Mike told me. This is another thing. I, I'm here. My job, my job is like to, to kind of supporting you, like in some sense, like like. You know, it, you know, if something get to a point that you need to talk to a manager in a different team, you would
+
+Janiele 21:21
+like me to go first.
+
+Lien 21:23
+You you. It's better to loop me in first because I I know what's going on rather than someone come to me. You know, I'm not saying that because you don't need my permission to talk to anyone. That's not the point. It's like I you know it just for me to understand where the agency stress are so that I don't get caught in, you know. That's fine. I don't know what's going on. Yeah, yeah, it's fine. You know, just and I don't. I haven't heard like the version from Kelly. I would try to calm down things, but like you know, I need to talk to her next week. I think maybe like you know, after vacation things gonna get quiet up a little bit. But like our own end, right? Like again, not to blame anyone. It's more like you you are senior enough, right? You know what's going on within him. Like just recently, we this is not the the first like or the only kind of like little bit of a difficult conversation, right? Like we need to like you know kind of like pushing things. Okay, I'm not blaming. I know what you are doing, and you are doing great. You are you know providing a lot of good stuff, and people appreciate it. Not just from me, but also like you know, the team all know that you are producing a lot of things. But like, we need to pushing the results without letting the people feeling to be pushed around. Like finding out, like kind of a you know, you call it a middle ground, or like a slightly different way of like driving things, right? And it's like we we just have you know different different like difficult situation. Yeah, like with different people. Like you know, like yeah, we just like need to tweak the things a little bit. I mean, you are getting to the senior level of things. You are driving bigger projects. You know you're gonna have so many of similar situation down the road. We have to like you know if he's showing up, even if he's like, I'm not here in a position to see all of this like her problem or your problem or it's like it just.
+
+Janiele 23:46
+But it seems like it doesn't matter. There is a problem, right? At the end of the day, it doesn't matter. It doesn't matter.
+
+Lien 23:51
+Like just make it smoother and just like you know, I know that you are trying to make sure that client what whatever client asks for that we delivered in a high quality, timely, deliver like process, whatever. Like I, I understand that. I'm just saying, like for the communication part, like let's try a slightly different approach, right? Like yeah.
+
+Janiele 24:15
+To be honest, what I'm probably gonna have to do now, because I was also debating this with Mike, is that like I just have to kind of like I'm I'm just gonna have to ask. I mean, she's in the chat and everybody and everything else because I also don't want to just corner her.
+
+Lien 24:32
+Yeah,
+
+Janiele 24:32
+but it does seem like she she because she was basically just telling me that she just feels extremely overwhelmed in general and that she's being pulled in a bunch of different brushes. I don't know if she came to me because she thought I'm someone who would understand and that she knew me before this. But the situation, like the how do I say it, the the problems will keep existing, and this is still her responsibility. Her responsibility is solved, and which is what I also told her is that you don't have to have the answer for everything, but you do have to be responsive to clients, and they have to know what's going on. And even if we don't know, because sometimes it's okay to say this, and this is still the expectation of her role, and this is what Mike would expect her to do. Now, I won't be able to get this through her as quickly as some other people will, and because that's basically what she was asking me to. It's just like don't ask me too many questions and don't follow up all the time. I just feel very overwhelmed by these things. So, but yeah, but I I am honestly again, my concern. I don't think her reaction was appropriate, and I don't think this is how she should have handled the situation. I think she should have gone to our manager first, just to understand her responsibilities and like timelines and all those things for delivery.
+
+Lien 25:52
+Yeah,
+
+Janiele 25:53
+she should definitely not just put me somewhere and cry in front of me for 30 minutes and hand me over a seven-page like ChatGPT text, so and I just think like she's done this with me. I know, not not at like and I'm not sure exactly the details of this, but I know this is not the first time that's happening. I know she's had some some issues with her previous team, and if the problem is the work itself, then this is when things get a little trickier. So that's why I think no. I want to talk to you first before proceeding any further, just to see what you think. If you want to wait a little bit, talk to her too, or if you want to like do HR and then you do these things up to you.
+
+Lien 26:32
+Yeah, like for me, like my plan was to learn a little bit from her too and see like where Things are, you know, like if you guys feel like there's a need to involve HR, whether that's like more, you know, involving HR can have like different ways to do right. It can be like a more like a. It could. It doesn't have to be like an escalation. It could be like maybe shall we set up a consultation process where you know like a employee relationship consultant type of role of HR can talk to both of you and maybe like also talk to me and Mike so that you know, four of us can have a more standardized, you know, best approach down the road. Not about like performance or talking to client. That part is a separate topic. Like HR probably don't know, but more related to like you know communication or cross team collaboration. How how we gonna? What's the best practice and that fits into the firm culture or whatever? Like we can we can we can have a conversation without too much of like one of the two person has to be wrong. It could be you know it's more than this, but
+
+Janiele 28:01
+I definitely look, and like like you said, I am definitely a lot more mindful than I am than I was before in terms of how I communicate with her. Not how I communicate in general, but how I communicate with her. Honestly, because I actually felt like how they say it. you're just trying to do your job, like I said, like imagine you're just asking questions about something, and then my response to you is, "What don't you trust me that I'm using SCF appropriately? Why are you asking me to escalate things?" It's just not how you know. So if you have to, if you as my manager, and if I cannot trust you, or even someone else that I collaborate in other tune, I cannot trust you to tell me things for what they are. Am I truly doing a good job, or am I just trying to protect myself from seeing the actual true and doing things in a survey? And of course, always talk respectfully, always be kind to people, which I am. The fact that even the fact that I am asking a question to her is something that she takes as a as an as an attack, which is what she told me. Is for me very difficult, and I don't know. Like the only way for me to protect myself is just not to ask her these questions directly.
+
+Lien 29:13
+Yeah, which is not the right thing, right? Because like yeah, because like you two, you know, for the project itself, like naturally, like you, like that two team need to talk to each other. We can't,
+
+Janiele 29:27
+and even if we don't know, like even in the past, like I just mentioned, Jack, cause he's the one that I've worked with closest. But for a long time, we do not have answers or we didn't know what was going on. The questions itself would lead the way because then if you have the question, you can say I don't know, let me call somebody else, or I don't know, there's only someone in India, and then the follow up is, is there anybody else anywhere in the U.S. that can do this for us? And then these would kind of lead the way. It's just the way we work, and this is, I guess, the way most stress team work. But she specifically needs a different type of communication, and you know, and even like there are certain things that I cannot ask of her because she would just feel overwhelmed and do this. And these are things that she has told me, which affect directly the work that she was supposed to be doing. If I cannot ask her and if I cannot pass her, that's to her, you know, client concerns or questions that we need to do is affect the work, and this is a lot.
+
+Lien 30:24
+conclusion shouldn't be like you two stop talking to each other. That's not the solution. Yeah,
+
+Janiele 30:32
+on that side, I don't think that would be optimal. But basically, what she has told me is that she would appreciate if I did not ask too many questions. You know, along those lines, which I, which will basically effectively just prevent me from working with her because these are things that she needs to do.
+
+Lien 30:48
+Yeah.
+
+Janiele 30:48
+So that's why I don't know which is why these are not ideal.
+
+Lien 30:51
+Like we need to find out a better way, or like you know, make you two feel like you know, you two can work together, like down the road.
+
+Janiele 31:03
+For my side, this is like work-wise, it's work. Like I don't, I don't know. It's not just the kind of personality. I just want to do the work. For someone to come to me the way she came to me, it's just is. I am shocked, shocked that the fact that she thought that this.
+
+Lien 31:18
+Let me talk to her and also find out, you know, where where she's coming from. Like for for that Tuesday afternoon conversation, right? Like I don't want to guess around, but like if if I have a junior person like handing me like seven pages write up, it it could be, like you know, they are just like trying to take him seriously. Of like, okay, this is really a thing that bothers that person. Like, so that these, it takes some effort to prepare seven pages documentation for for things. It's not like, okay, let's grab a call. I'm not. I'm not saying who's like, this is like awkward or. I I agree with you. Like you know, if you feel like, you know, you know, ask Clete or like your let let your manager to handle it. There's a way to handle it, but maybe I I don't know. I need to talk to her and figure out, you know, where all these things coming from, and you know, talking to you is also I want to, you know, hear from you, like from your perspective, like where we are, and then I can talk to Kelly and Mike again and see like if there's anything need to be addressed, whether you feel like okay, I actually feel more comfortable talking to HR of like get some guidance. Like it doesn't, as I said, it doesn't have to be escalating. Someone is doing the wrong thing. It could be like, okay, look, I need some help. I don't know what's the best practice here, and like, tell me how I should handle that person I need to work with, but you know, feels like he does. Like you know, there's some. I don't know whether do you want to work with me or I I I I don't know how to talk to that person anymore because I they're gonna just react right. Like, how should I like you know how should we just like work with Mike's team or Kelly or you know yeah
+
+Janiele 33:19
+I mean he's a great friend, and and I mean Mike and I we talk a lot about several things, and the reason why I spoke to him versus because we had another meeting about something else.
+
+Lien 33:27
+Yeah,
+
+Janiele 33:27
+but the like I am absolutely not happy with the way she came to me. I don't think it was the proper reaction, and I don't think this is correct. Even irrespective of what happened, I think if I had, I don't know, if what had happened was something truly serious. It was like I don't know, you know, like something that is.
+
+Lien 33:50
+I don't like from what you told me, the thing that actually drive her to to crying that hardly was the fact that you asked her, you're following up on the client deliverable,
+
+Janiele 34:03
+and true thing. So she said she was upset that she because I told her like Synapse is me, and I did make this very clear. I was like, I don't think of this, but I just I sent some messages and said, look, Snaps is me. We're gonna train more people, but Synapse is me, blah blah blah, and it has to come to me because it's I'm responsible for the delivery. She said also like I don't want you to think that I am crossing you, and then she cried a lot about this. Look, Lien, I don't have a problem with people crossing because if you can get to the finish, like I don't have to be involved in everything. I'm not the owner of whatever. You can go around if this is the way that's going to lead to more some delivery when you actually leverage the client first. This is fine, but for CNEPS, I just happen to be the one that was. It's like, can I go around you for SDF? I cannot. You own SDF, and and and as much as you train other people, and other people know, there is no way. And then if I ask you a question about SDF, and then you don't answer, and then I go around everybody else, I am still going around you, but I won't get what I need. So I didn't tell this to her, but she was well. She was crying copiously, saying, "Oh, I don't want you to think like I'm going around you." Where she was,
+
+Lien 35:06
+like, why? I I didn't get that part. It's like, why you're saying like, "Oh, your synapse that drives her feel badly." Like, what? What do you?
+
+Janiele 35:15
+She felt bad about the fact that when she told me she was going to talk to somebody else, I told her, "Oh, there's no someone else. You have
+
+Lien 35:21
+to talk to me.
+
+Janiele 35:22
+Yeah, I just say no one else knows. And then she said, "But you said you were busy." And then I told her, "Kelly, this is not what I said, but I actually said that I was busy that Friday. But I can talk to you about things that's important for the desk." She felt upset about that interaction. She specifically told me that she could not sleep past, like she she was awake until 1 a.m. That it was very difficult for her to handle this local lien.
+
+Lien 35:45
+Okay, I hear you. Like,
+
+Janiele 35:47
+so I don't. And this is what this is why on my side, I will I will wait for you to talk to her because maybe you're gonna bring a different perspective based on your also history and your experience with other people. You might have something different to say, but for me, I honestly don't feel good. From my like, literally, I don't feel like how to say. This is just not the way people should be talking to each other in general. And specifically, there was no reason for her to talk to me like that. And for her to think that this is okay, I think it's a problem for the firm. This is not the proper way to react to a difficult conversation. Even if that's, I don't see this as a difficult conversation. I'm just telling her one thing, but she sees it as a difficult conversation. There is a proper way to have a difficult conversation. That is not the proper way to have a difficult conversation. She actually made me very embarrassed. I don't want to be there seeing someone just crying because of what they think I've meant when I say something very technical or very just you know, pragmatic about something, and then have her make this judgment about the way I feel or think about her. It's just not something that made me very comfortable. She made me extremely uncomfortable. So, which is, and I don't think this. And look, for me to be uncomfortable, it has to be very weird. That was weird and out of the line. And you can talk to her. Maybe you're gonna think.
+
+Lien 37:02
+Yeah, I need to. I need to. I need to like talk to her. Maybe like visa Mac together, so that her manager is also there. Is not like I try to to yeah to to to to get to any direction. But like you know, both me and Sibo together, just to you know listen to her and see like if anything that drives her to that point of like you know kind of like mentally get so stressful, and then if like both of you or either of you feel like okay there's a need of handling like in what way then we can we can figure out some resources for you guys to to just you know
+
+Janiele 37:40
+look I am happy to do the work, but whatever it is, but I just, but the reaction itself, I think for me is problem. I see, I see. And I don't. Yeah, I'm pretty sure.
+
+Lien 37:51
+Like, if you ask her, there's something that she's not feeling comfortable. It's a part of things. Like, you know, you're saying there might be
+
+Janiele 37:58
+something about like. I think I definitely don't do the sandwiching very well sometimes, which is like, hello, I'm sorry to bother you. I know I just followed up. Can I do this? Can I do that? So, and I know, thank you very much. I don't do this all the time. Maybe I just should do this. And I know with some people that's very important. Eventually, they figure out they understand that it's not personal. She has a job, but maybe with her, I'm gonna have to do more sandwiching around things, I don't mind doing that, but I don't want somebody who just to come to me and have this big judgment call out of nowhere. Because anytime you read between the lines, you're not reading.
+
+Lien 38:32
+You mean the the judgment call? You mean like to see that I am aggressive?
+
+Janiele 38:36
+That I am telling her not to talk to anybody else on the desk, or that you know.
+
+Lien 38:42
+That's that's what she told you on the Tuesday afternoon conversation, basically.
+
+Janiele 38:45
+Exactly, and then this is coming out of line because that's not something that was written. That's not something that I have said. They would not have been proper. And then anytime somebody does this, they are not actually really looking.
+
+Lien 38:56
+In the seven pages write up or the the chat, right? Is there anything you think I I should be aware of? Like you know, you think my I you know better that I know.
+
+Janiele 39:10
+For I don't know if you want to have the seven page documents. If you want to maybe if you want to read it before.
+
+Lien 39:15
+No, I was like I don't want to read it.
+
+Janiele 39:16
+I told her I do not want that document, and she's like, it's very important to me that you read it and that you understand. I didn't read the whole thing.
+
+Lien 39:24
+Is it the the transcript or the chat? Basically,
+
+Janiele 39:28
+she I think she gave the transcript to ChatGPT and told it she was very upset about the situation. And then he wrote her a word document with like a script of how she wanted the conversation to come. And then it's like starts by saying, "Oh, I just want to come to a common ground." And then there were specific instances or conversations that, you know, she reacted this time. She's like, "Oh, I don't want you to think that I am defensive." Like when she's defensive, but she's saying that she doesn't want me to think this way because blah blah. She wants me to understand the situation. She raises some things when I say like it's important to be flexible. Blah blah.
+
+Lien 39:59
+It's not just a transcript, but like
+
+Janiele 40:02
+it's a commented. Commented. It's like it's how to say it's a guide. It's a guide of. It's not a transcript of conversation. It's a guideline of how to say it's a it's a script of how she would like the conversation to to go. Like the conversation
+
+Lien 40:16
+for Tuesday afternoon. Yeah,
+
+Janiele 40:18
+the the Tuesday afternoon conversation.
+
+Lien 40:20
+Oh, she's like kind of like reading the the the guided transcript.
+
+Janiele 40:24
+She's going through it and like because it has it has a few situations. Some of there, I think most of them are the the ones I've mentioned to you. I think the only thing maybe is that she said that when I told her that it was important to keep you know a growth mindset and be flexible about things, she says that that seemed like a judgment, and that's why she couldn't sleep that day. Because I told her after she told me that she could only do things on a Friday, and that she could not do something about the daily quality checks. And I told her, actually, you can't. So just you know, it's important to keep a growth mindset and be flexible because you actually can do those things. She says that this is actually that she felt offended by that because I see a call. So maybe that's the one I remember.
+
+Lien 41:02
+Okay, this doesn't feel like you need to quiet them. But like,
+
+Janiele 41:08
+but we have a different culture in the team. Okay, I don't know.
+
+Lien 41:11
+But she told you that's like AI generated.
+
+Janiele 41:15
+It's clearly AI generated. It's very obvious. It's clearly AI writing.
+
+Lien 41:19
+Yeah, we we think is AI generated. Now that she told us,
+
+Janiele 41:23
+she didn't tell me. But but it's it's clearly AI generated. But like you just you know how you see sometimes it's clearly AI. She didn't say anything to you, but it was clearly AI generated. It was a little bit of a kindness. Yeah.
+
+Lien 41:34
+I see. I see. Okay. I I will talk to her on Monday. Like, but you let me know how you feel like you need you need any like you know HR resources before that or you yeah just let me know if from your side if you need you need support I can ask for but you know if you wait for Monday I'll talk to her and see where things are. That works too. Like for me, I need to like my next step has to be like you know talk to her and talk to her manager again and just to.
+
+Janiele 42:12
+Are you interested in seeing like trans like I can add you to chat like do you want or do you want to have a?
+
+Lien 42:17
+I don't need to read the full transcript of what the whole conversation is, but if if there are lines that you think I should be aware of, definitely let me know. What I mean by that is either the ones that you know when when you two have that conversation, right? There might be some like something that she
+
+Janiele 42:42
+picked on, and then
+
+Lien 42:43
+yeah, kind of like you know, really means a lot to her in whatever good way, but bad way. Those kind of like you know highlighted sentences. I think it would be helpful for me to be aware rather than like you know the like throw it out later, or but look, you know we are two very closely like collaborating teams, so I think it's probably fine. It's just like we need to figure out.
+
+Janiele 43:11
+I am again very, I am very concerned that she thinks that this is the proper way to behave, and I am honestly very concerned with even the mindset that she has about this job and the role that she has, I don't think what I've asked from her is very different from what anybody like. It's not even as if we don't understand that she's new. There was never anybody telling her you have to know this right away, and I I think her reaction is absolutely out of proportion. Absolutely out of proportion. There is is not proper for her to behave the way she did, and she was she put me in a very embarrassing situation, and I do not feel good about what she did to me. I don't think that was proper.
+
+Lien 43:53
+Let me talk to her too, and hopefully, like we can find some common ground, like you know, like
+
+Janiele 44:02
+for my, I just don't want her talking. But if she has, how do I say it? For me, I just want to do the work and be happy about it, and you know. But I definitely don't want her handing me out anything and just sitting to me crying because she doesn't want me to send her messages when the clients, you know, is telling me things too hard. Yeah. But anyway, and I and I also of course I still want to be able to have a team that can handle situations. So like one of the issues that happen is that because sometimes the client sends a message if Mike is out, no response gets out, even if it's a technical response. Kelly sending emails. I'm like Kelly. The client is not very pleased because she is not like me saying anything. The client is following up with us several times because it doesn't get a response. The client is not pleased. We have to do something about this, and then she gets very startled because it's like it's not my fault, and I'm just here, and it's not like I understand. But at the same time, Lien, it's all our fault. Full responsibility for everything. So I feel very bad, even though it's not my side of the business is more recently the franchise, and I don't think she really has these. But she's been here for a while, so it's a little shocking to me that she doesn't have these in her culture yet. Because eventually we kind of get there, right? It's not we don't work in silos. We are all representing the firm to our clients and having these mindset of being collaborative or like we make mistakes together, we do things right together, and we're doing this. And I don't think this is from a hunting perspective. And I definitely don't like the way she spoke to me, which is why. But I wait for you. I won't go like right away. In terms of, I don't need any support. I'm fine. But it's just what she did. I don't think is appropriate, and I don't think she should do this with anybody ever. And she should maybe get guidance, and especially because I know she's had, like sometimes she's a little too slow, and then people get whatever. And maybe this is something that is informing also the way she's perceiving the situation because of what has happened to her in the past, and because she's also more junior, right? This is her like her third year of work ever for us is probably the 10th, 15th year that we are working somewhere. So we we see things in a different light. So I understand that maybe for her things are different, but I definitely do not think her her reaction was.
+
+Lien 46:13
+Yeah, I hear you. I hear you. Yeah, let's like there are things that we just need to handle. Yeah, and I'm sorry about this. We could just also like you know if just next time just let me know.
+
+Janiele 46:27
+I'll let you know for that. I ended up I had to leave a little earlier on Sunday, and I just like I just ended up having to use people. But thank you very much.
+
+Lien 46:35
+Sure, sure, sure. Yeah, yeah. See you.
