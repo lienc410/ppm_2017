@@ -1,0 +1,824 @@
+Speaker 1 0:14
+We were all man. This is like, this is like incredible.
+
+Speaker 2 0:33
+A difference in like F 20 using F 20 for pay ups versus I guess what is or if you haven't done the work we can do the work and come back to James.
+
+Speaker 3 0:55
+What's the question from?
+
+Speaker 2 0:58
+The question is current. what are we sending to MRD?
+
+Speaker 3 1:02
+Yeah, it's against 20 F 20 F 20.
+
+Speaker 2 1:06
+Is that what is written in the model documentation? The model
+
+Speaker 3 1:10
+documentation is not written in a way that's very clearly defined for 20 year. So the payoff risk in documentation says it's a price difference to the corresponding TBA.
+
+Speaker 4 1:24
+Oh, it just said corresponding, not not didn't specify. Didn't specify
+
+Speaker 3 1:29
+20 year corresponding is 30 year or 20 year, where I think we should like make it more like more clear of like spelling out either a table to see okay 20 year collateral should run 20 year or 30 year, whichever way that you know desk feel like the most reasonable, right?
+
+Speaker 2 1:51
+Okay.
+
+Speaker 3 1:52
+Yeah, and we can call it today. We are feeding risk one using F 20 to against F 20. But if we decide, okay, this is a chance that we make it the best way, the the most accurate way of showing our pay up risk. If that, that if we decide like you know 30 year is actually the most liquid one, and we want to calculate pay up against 30 year, then in the documentation we write it that way and change the feed. You know, either way. Currently the size is very small. We have almost like you know close to zero. Which is why we never really seriously. Yeah. So so documentation is just
+
+Speaker 5 2:30
+ambiguous. Is like you know, like
+
+Speaker 2 2:32
+DBA, and we have a like DBA in our system called F 20.
+
+Speaker 3 2:36
+Yeah. Yeah. Yeah.
+
+Speaker 2 2:37
+Okay.
+
+Speaker 1 2:38
+So, because like the F, because the desk assigns a CTD to an F 20 pool.
+
+Speaker 2 2:46
+We we don't assign a TTD. We assign just a pay up to
+
+Speaker 1 2:51
+it. Oh, okay. You just okay.
+
+Speaker 2 2:53
+We just assign a pay up, like that's like correct. We just assign a pay up. We don't even assign a TBA. We just say that F 20 should trade at make it a five points above. Right. Okay. The the
+
+Speaker 1 3:05
+pay up is just there. The pay up is marked. We
+
+Speaker 2 3:07
+just code it into a
+
+Speaker 6 3:08
+mark.
+
+Speaker 1 3:08
+Right. Okay. And then
+
+Speaker 2 3:10
+risk is run on the underliers, right? Like risk is run on pools. It's not. Yeah. Right. Correct. Yes. It's
+
+Speaker 3 3:15
+running on pools. Yeah.
+
+Speaker 2 3:19
+So what is the? We will do more actual reading of the doc and research. But like, should we? What's the path forward? I guess defer to you guys on.
+
+Speaker 1 3:28
+I mean, like if it's ambiguous, it's a separate discussion of like how do like disambiguate the the the model the model documentation, right? I think like the you know like the SR 11 dash seven and like what MRM would say is like a it has to be a the standard is a reasonable practitioner should be able to kind of like infer as to as to what it is now like if you want to make it idiot proof and and put like tables and stuff I'm not really sure that's necessarily I guess like
+
+Speaker 2 4:07
+maybe we'll start from the better answer. What? How? Maybe we can. This is a good exercise for us to all agree about how we want to see the risk, and then we will model. We'll figure out the model later. Right. Okay. Let's like let's like let's agree on the concept. Sure. That's what we care about. Right. Yeah. Of course. That would be us making money, losing money. Right. Like. Right. That's how what we should care about. So. You've done some work. I don't know. Like, do we want to take that away? Do we want to? I think that the right thing is. I think
+
+Speaker 7 4:34
+that there are several ways. Two that come to mind. One would be we formalize a way to analyze like the 15 s 30 s relationship,
+
+Speaker 2 4:48
+okay,
+
+Speaker 7 4:49
+and try to find like I don't know some
+
+Speaker 2 4:53
+ratio, some
+
+Speaker 7 4:54
+ratio. But then it seems like we're getting to some subjective ratio. Yeah. Another is we have the CTD selection algorithm. I guess that's from the sorting, but can we look at the universe of existing 20s and compare different pricing services to do a CTD selection with some systematic approach, and do it that way. I like those are the the issue. I think we all agree, or I think you and I agree that it would overstate the amount of pay up risk in a simple 20-year trade to market versus 30-year TBA, given the level of discount of the 30-year TBA. Correct. So, like, if you ran the 20-year TBA at the 30-year TBA price, it would be like 350 OAS. Like,
+
+Speaker 2 5:50
+it would be wider than wider than
+
+Speaker 7 5:51
+the Derib book, and so like that's a. I don't want to use the term nonsensical, but like it's bordering on nonsensical place to start. The question is, how do we get to a documentable place where we can all feel comfortable that like we're not understating pay of risk. We are doing it in a rigorous way to define a discount, a deep discount asset class. That like, frankly, when the systems were built,
+
+Speaker 2 6:20
+yeah, everything was.
+
+Speaker 7 6:22
+We didn't like. I was here when we added Fanny Twos to PT Marketing. Like it's so we just built it based on what it was, and so it's it's been this way for some
+
+Speaker 1 6:32
+time. Okay, so like from my like my own like experience, like like with this, in the topic of like pay up, you know, marking. I think you guys still have it, but there was a like neural network model or something that was what was it? What is it called? Synapse. That's right. Then that was only supposed to be on like new issue bonds, correct? Not. No, we haven't. We sell
+
+Speaker 2 7:04
+our secondary data to clients now. Yeah, it's pretty. Oh, okay. Oh, okay. So okay, so
+
+Speaker 1 7:08
+even okay, so that was like, I don't remember any of the principles behind it, but like, I remember that was like one approach of how do you like price you know price price pay up. Then obviously there's you know like the textbook way of if it's like a you just compare it to like to, you know, same coupon, same agency, same you know, same same same whatever, but then I guess like the question, I mean, is the question before us now? How does the desk mark pay up on like these particular pools, or or I think these
+
+Speaker 2 7:48
+particular pools, we can. I think my my my thought would be on these particular pools, we we have we have a write like if the trade goes live again, we have a write up. We'll show you all the stuff, and I think like from a risk perspective, I think I'm comfortable. We'll get you comfortable with this trade. Okay. I think my the question before is like, maybe we can take this away, and Lien, maybe I'm going to ask you the work that you don't want to do, but like, can we just maybe have can just strats take it away and come back with what does an enhanced 20 year and 10 year marking framework look like?
+
+Speaker 1 8:20
+Right,
+
+Speaker 2 8:20
+and then we can like that can be a project for the next few months. Is that okay? Is that like like I don't want to like like let's let let let the smart people do the smart things, and then like come back with what that framework would look like. Because like I like there's 15 series, there's synapse, there's a bunch of different ways we can approach
+
+Speaker 1 8:38
+it. Right. Synapse
+
+Speaker 3 8:39
+is currently not synapse. It's not a PRM model.
+
+Speaker 2 8:44
+So I like the idea though. Other people pay for it, but we can use it. But what does
+
+Speaker 4 8:51
+he actually do? But Synapse has been around like for
+
+Speaker 1 8:54
+10 years at this point. No, cannot
+
+Speaker 6 8:56
+get it. What does he do? He
+
+Speaker 3 9:00
+calculates. So, the basic idea is if you trade the Longbao story pools, Longbow six and a half pools yesterday. No marking move. You got a new pool comes in where it trade the same as yesterday. That's a basic idea. It ingests. It
+
+Speaker 7 9:17
+ingests color and learns from trade prints and color that's stored in our system to then then
+
+Speaker 4 9:23
+tell you where to mark everything.
+
+Speaker 8 9:25
+Not where to mark. No, no, it's it's a it's a it's our
+
+Speaker 7 9:29
+auto-generated system talk. It's a
+
+Speaker 2 9:31
+system talk.
+
+Speaker 1 9:32
+Yeah,
+
+Speaker 2 9:32
+and like clients use it as a price we send to them, not as a mark.
+
+Speaker 1 9:36
+Yeah,
+
+Speaker 2 9:36
+because we're not allowed to give marks. It's just a price, but it is often a sharper price than what is in the market.
+
+Speaker 1 9:42
+Yeah,
+
+Speaker 9 9:42
+by just
+
+Speaker 4 9:43
+learning from the features, it learns from our trades. It learns from our trades,
+
+Speaker 2 9:47
+from primary and secondary trades, and it just does a good job of interpolating everything. So it like it uses a Fanny three trade, and it will be like this is similar. There's a correlation between this Fanny three and this Fanny two, and then it will like
+
+Speaker 7 9:58
+it's good and it knows and it knows every small trade we do and how to like convert off the run servicer to on the run larger block. Yeah, and we keep feeding
+
+Speaker 2 10:08
+every trade we do into it, and it's actually really smart. Yeah. Anyway, we'll come. We'll come to you. So for right now, if it's okay, we'll continue marking F 20 year pools the way we have for this big trade. We will come to you and we'll break down what the different components are. So you, if make sure you're comfortable.
+
+Speaker 1 10:25
+Right. And just just to be clear, like like like, and I guess this was sort of my expectation that the you know I know everything gets put into buckets, and there's also like there's like these like cohorts of you know of um of bonds that effectively inherit the same you know like the same like like like pay at mark, but like the desk is marking like you know like the category like F 20
+
+Speaker 2 10:54
+right yes and it's checked externally every month yeah yeah so like that at the end of the day pay up or not our price all in price is checked again external vendors yes right and we and our prices and in that stuff is very very tight, so I'm comfortable. Like that's the whole. There's a whole VC function for that reason. Correct. And so we can like think about the construct of how we get to that price. But at the end of the month, they don't care what F 20 is and all that stuff. They just this is 88 and a half, and that's what's checked against the external vendor, which is 88 and a half.
+
+Speaker 1 11:25
+Right.
+
+Speaker 2 11:26
+So right. It's
+
+Speaker 4 11:27
+risk only modeling, right? And I think the fundamental question is: What do we want to? How do we want to see the risk? Is the question here? Like, what is pay up, and how do we want to see it? Yeah,
+
+Speaker 2 11:40
+yeah.
+
+Speaker 4 11:41
+So I love the existential question. I think we
+
+Speaker 2 11:46
+have a lot of fires between now. It's like Lien. Can we like maybe you and Lou and Jimmy think about this over the next? Can we like come back to you like early days? Is that okay?
+
+Speaker 1 11:55
+Yeah. Sure.
+
+Speaker 2 11:56
+Yeah, like give them a week or two to think about what the right construct should be.
+
+Speaker 1 12:01
+Do you want to tackle the question of pay up duration and when what that is while you're at
+
+Speaker 6 12:06
+it? Or save that for save
+
+Speaker 1 12:09
+that for another day. Pay up duration, pay down duration, pay down
+
+Speaker 10 12:13
+duration. Yes,
+
+Speaker 2 12:14
+pay up duration. Yeah, we yeah. I know both
+
+Speaker 7 12:20
+intimately. You know, we
+
+Speaker 2 12:21
+spend a lot of time thinking. How
+
+Speaker 4 12:24
+annoyed do you think your management is going to be when we throw so many terminologies in front of them? Let's. not let's not make her love agency less, please.
+
+Speaker 2 12:33
+No, we'll we'll like we we this this is we're well. It starts with us
+
+Speaker 1 12:38
+first. Let's get to
+
+Speaker 2 12:39
+the right place. Let's understand what they are trying to like. Let's just solve to the right place. Yeah,
+
+Speaker 3 12:43
+one thing at a time. One thing at a time. So we'll think about
+
+Speaker 2 12:46
+what the right representation should
+
+Speaker 1 12:47
+be. Right.
+
+Speaker 2 12:48
+I think maybe
+
+Speaker 1 12:51
+because I mean, like one one thing I just I actually just reminded the team, you know the when we first introduced pay up as even like a you know a limit, right? And and Jared was slapping me around during the entire discussion, you know the the one principle that we agree to is you know pay up in is a is a rate dependent right and level of rate dependent concept from you know like when we were selling them they were up
+
+Speaker 7 13:26
+even in 2023 these bonds traded at a three-point pad. Yes. Now they're
+
+Speaker 2 13:31
+at an eight-point pad. Yeah. So and it's from the seasoning. It's from the seasoning. It's not even
+
+Speaker 7 13:35
+like they're they're at a tighter spread level. Yes. Probably not that dissimilar of a yield level. Correct.
+
+Speaker 2 13:41
+If you bought them, I don't think you made five points on them. It's I think that's what Jimmy's trying to say.
+
+Speaker 1 13:45
+Right.
+
+Speaker 2 13:46
+It's the fact that they are just short ones,
+
+Speaker 1 13:49
+right?
+
+Speaker 2 13:50
+Right.
+
+Speaker 1 13:53
+Right, but the place where okay, the fair. But the place where I was going with this is like, and we have done this in the past. Is depending on the level of rates, we've adjusted the pay up limit.
+
+Speaker 2 14:02
+Yeah, yeah. Up
+
+Speaker 1 14:02
+and up and down, right? Because you know, like you know, like 250 of of of pay up when 10s are at whatever versus he is is is something different and one of the things that we've and we did do that through the years like the limit has moved up and down
+
+Speaker 2 14:21
+300 was a toxic I think and we brought it down to did we
+
+Speaker 4 14:24
+ever get to 300 maybe 275 maybe 275 was the highest. But I think like the other part is like
+
+Speaker 2 14:31
+now the other thing to think about is that there are so many bonds at a discount that a lot of these discount bonds are starting to get a lot of pay up. Yeah, right. So that's the other part. It's like it's not it's uniquely it's not uniquely rally means higher pay ups. No, exactly. So I
+
+Speaker 4 14:46
+asked the team that question. It's no longer trading long duration. When you have a pay up, depends on what you want. Depends on how the pay up it came about. Like what drove the pay up? Is it the discount because of the seasonality, or is it because of the features of the pool for prepayment protection? So right, right, right. So
+
+Speaker 1 15:05
+like a nominal Number as like the sole expression of the appetite is is something we've never like gotten beyond, and so you know I think it is like probably worth it for us, maybe we end up in the same place. But then, if we of of our construct that we that we have now, but then we would, you know, we also have to have like a way of of saying, okay, we've like we've agreed that if 10s are at, you know, five and a half or or or whatever the circumstances, then then the limit has to be like has to be re has to be recalibrated, and the question is well then what do you recalib like what do you like recalibrate it to and and whatnot so it it all kind of comes circles back to what is the pay up and what is the risk of of a pay up
+
+Speaker 11 16:07
+yeah right so
+
+Speaker 1 16:09
+if we can start to maybe more analytically chip, you know, chip away at that, then is there any
+
+Speaker 7 16:13
+value in looking at like a not to make limits within limits, but like a buy coupon limit because like you got to
+
+Speaker 2 16:24
+do by dollar price and things. I think or a buy
+
+Speaker 7 16:26
+like buy moneyness or something because like your your point, I feel like if we looked at like every Fannie Two, the pay ups are all high and incredibly stable. So like, I would argue that a 40 tick pay up season bond is a lot less risk than a 40 tick pay up production coupon bond because the season bond trades with effectively between zero or between 97 and 103% hedge ratio in a given 150 basis point rate range, and we have a lot of data now of trading these discounts. Whereas the 40 tick New York bond can go to 10 if we sell off by 70 basis points. So like the the velocity with which each pay up can move is much different. Yeah, and and moneyness probably defines that. Like it may be overcomplicating things, but like
+
+Speaker 3 17:22
+is it that's not being captured from convexity? That part of the
+
+Speaker 7 17:30
+convexity has nothing to do with like a fixed pay up risk.
+
+Speaker 2 17:33
+Let us think about it. We'll take it. But like for now, for for this specific trade, we'll give you a write up if it comes back live.
+
+Speaker 1 17:40
+Sure. Yeah.
+
+Speaker 2 17:40
+And then we'll go from there. Yeah. It sounds like
+
+Speaker 1 17:42
+in terms of the that's that's what the specific question of what is in the model documentation. It's where it sounds like we're fine. Maybe take a screenshot of it and just send it around, or send us what the MCS number is so we could see it. But then, but yeah, I mean, the like the the ambiguity is. I wouldn't call it
+
+Speaker 3 18:01
+ambiguity. Like I mean, like it's a you know 15 pages of documentation trying to capture everything within mortgage. I mean, yeah, each of these concept can be like a textbook of like 200
+
+Speaker 9 18:12
+200 pages. I mean, I mean, you know, it's
+
+Speaker 1 18:14
+like Fabozzi did it in a couple of textbooks, right?
+
+Speaker 5 18:17
+Rand and I need
+
+Speaker 10 18:18
+to cross ourselves on the bank because you mentioned the bank's name at the beginning. It's fine. I just I want to make sure. I didn't hear
+
+Speaker 6 18:28
+it.
+
+Speaker 10 18:28
+I did hear it. Yeah, I will add.
+
+Speaker 2 18:31
+But they're not doing anything now. No, but
+
+Speaker 10 18:33
+still, it's just I'd rather be safe than.
+
+Speaker 4 18:35
+Yeah. But it's fine. Did I say the name? You did.
+
+Speaker 1 18:39
+You did.
+
+Speaker 10 18:42
+Ran wins because she wasn't paying attention to what you were saying. I was. I didn't get your concept
+
+Speaker 7 18:47
+of like the 500s calculation. Which one? I'm just saying, if you ran 20 or two, no, no, we're gonna do TV. No, no, I'll have the. What do you do wrong with everything? We had 200 million 20s. That's going to take up 15 million of our payables. So it's like for something that their effectively the six points is quite better. pay up doesn't isn't capturing what the actual numbers. Like obviously the pamperis is supposed to capture. What's the loss if you deliver the entire position to the fourth one? But like the 20s are so out of the money that they're so far from being delivered.
+
+Speaker 8 19:50
+We should be okay documentation-wise, but we're going to have to talk about creative ways to define what a 20-year TDA is. Probably, okay. This is open some eyes for. I think we have a small position now, so it's probably
+
+Speaker 5 20:07
+yes.
+
+Speaker 7 20:13
+Does that make sense? Like, you see what I'm saying?
+
+Speaker 3 20:16
+Yeah, I see what you're saying. Basically, you're saying like the if I count it towards like a 30-year TBA, the payoff number is too
+
+Speaker 7 20:24
+big. Like the risk is getting too big. We should just never trade the product because you can't specify any A and L for the product. It's not capturing. It's not capturing the full aggressive loss that we take. Oh yeah. So for that specific coupon that you show me, in your mind, that bond actually has two point rather than six. You got a five and five. You think it's two? I mean, I think that the five, if anything, I think that the two points actually, if anything, overstates what the paper is considered twice because the cheapest ones don't trade
+
+Speaker 8 21:12
+at 540. Probably no, no. Let's think about it. I think maybe.
+
+Speaker 3 21:37
+Let's just talk about it. Yeah, tomorrow morning I'll be on it, but otherwise I'll be there.
+
+Speaker 7 21:43
+We have a couple. We have a little bit.
+
+Speaker 3 21:46
+How much time do we have? September mid December.
+
+Speaker 8 21:49
+You said early December.
+
+Speaker 7 21:52
+you
+
+Speaker 3 22:04
+have one minute? Let me show you like what information you want to share with them. So okay. So under this model, there are two paragraphs that's relevant, right? One is pay up risk. I was asking like what information we want to share with with those folks. So there are two paragraphs that's relevant to this. So in the path through risk measure, documentation like pay up risk is just defined as to the corresponding TB. That's it. It doesn't see whatever I. But in the prepayment model documentation, this is to define the risk. How you calculate OED and stuff. There's like a prepayment model mapping where we map the prepayment model 20 to 30. year model. This is just to see if I have a 20 year collateral, I'm running 30 year model. If I just look at the documentation, but then you also map the
+
+Speaker 7 23:21
+PMMS to some combination of 15s and 30s. So I think like you have documentation of doing multiple different
+
+Speaker 3 23:29
+things to map. right? And we didn't have the table have a separate column to see payoff risk is how how we handle this. Maybe we should.
+
+Speaker 2 23:38
+I think we share both of them for now. But then I think we should just take a step back and just think about how we want to compute 20-year risk generally, right? I think you're supposed to.
+
+Speaker 3 23:53
+risk, you mean like other than payout risk? You have IR risk and
+
+Speaker 6 23:57
+just just pay up. I think are you supposed
+
+Speaker 2 24:00
+to have a different component that just says F 20? You can just call it other payout, which is f10 and f20 as a function of 30, and see how much of that we expect. F10 versus f15, and f might be at 30, and just have a limit or have a clear limit. Does that make
+
+Speaker 7 24:27
+sense? As in calculated, but it won't go to the main payable numbers. Yeah, I
+
+Speaker 10 24:34
+think that that's probably a better way. It's a
+
+Speaker 11 24:36
+simpler trade, but like yeah, but then like what do they
+
+Speaker 7 24:44
+not? It's going to be some asset nine number,
+
+Speaker 9 24:47
+so maybe
+
+Speaker 8 24:48
+like I don't know what.
+
+Speaker 2 24:52
+but like, is that one? I'm trying to think of simple math. We don't want to. I don't want to do like these ratios and so
+
+Speaker 3 24:58
+like you guys are 20 today. Or I don't know. You have a big trade coming up, but like today you have that much. Like just very little. The 15
+
+Speaker 7 25:08
+is the pay up to what? 15 is the pay up. This page
+
+Speaker 3 25:15
+calculates it incorrect. 15 is the pay up. Yeah, this
+
+Speaker 2 25:21
+is everything. So Kyle, maybe you have a view. As we looked at this 20-year trade, basically we found out that in the model documentation, it says that there's no definition of how 20 years
+
+Speaker 12 25:35
+or how 20 years are created mapped
+
+Speaker 7 25:36
+to the corresponding TBA TVs, which is violated. We
+
+Speaker 6 25:45
+haven't violated any violations. No violations.
+
+Speaker 12 25:49
+Right. That's good.
+
+Speaker 7 25:51
+So, as we want to improve the documentation, such that we are in compliance with SR 11 seven A. I don't think I don't think
+
+Speaker 2 26:07
+we have to update the model documentation. All we're talking about is what is the best way to change this so that we capture the right 20 exposures that we put.
+
+Speaker 12 26:17
+I mean, I think step one is 20-year TVA equals 30-year TBA, and then at some point,
+
+Speaker 2 26:25
+no, no, but like I don't think it's capturing the
+
+Speaker 12 26:28
+right. I'm saying 20-year TVA equals 30. two, same duration, same price. But like,
+
+Speaker 2 26:34
+like if you do the big 20 and three, it would
+
+Speaker 7 26:38
+basically make it would make 20s tradable.
+
+Speaker 6 26:49
+What? What do you think the floor is on $28?
+
+Speaker 10 27:02
+I
+
+Speaker 2 27:07
+think your Jimmy coins. If you run them to a PBA tool, right? They pay at 200 days.
+
+Speaker 13 27:13
+30 years.
+
+Speaker 7 27:31
+I think that
+
+Speaker 12 27:32
+coming up with. super well. I mean, effectively, it's like a high quality.
+
+Speaker 3 27:39
+Yeah, I think
+
+Speaker 7 27:41
+Lou suggested do we try to make them make pools the trade at a pay up that exceeds certain thresholds.
+
+Speaker 12 27:51
+Well, yeah, yeah. I mean, I think if if the non-deliverable, I
+
+Speaker 14 27:56
+mean, I don't think you should have to look at it. I mean, you
+
+Speaker 12 28:03
+could just say something which is like, we have a shock. We shock everything to zero or two.
+
+Speaker 15 28:10
+There was an issue copying it. But
+
+Speaker 6 28:19
+then it sort of like incentivizes people
+
+Speaker 2 28:25
+to buy like super high pay up
+
+Speaker 5 28:30
+shit.
+
+Speaker 6 28:46
+Today,
+
+Speaker 12 28:52
+If you're rallying, I mean, if you're buying a bunch of low-level bonds, four points, and you have some duration on them underperforming two points is probably the 2013 really really thought a scenario. Right? I mean, isn't that the? I mean, if you owned a bunch of all the threes in 2014, situation T. Why? Like, as long as you didn't
+
+Speaker 6 29:22
+mention one thing. I like maybe maybe that's maybe there could be something you mentioned that says that they have to take everything that you're.
+
+Speaker 12 29:32
+Or it's a negative two-point shock.
+
+Speaker 7 29:44
+You're saying create a new another new limit. Is that?
+
+Speaker 12 29:50
+Do we have some way of showing like
+
+Speaker 2 29:55
+yeah, two points is probably like I had a point. Yeah, two points is probably the max.
+
+Speaker 12 30:02
+Yeah, you say it's 2x.
+
+Speaker 6 30:06
+Maybe we're not as an idea.
+
+Speaker 5 30:08
+Hey, Lie, how are you? It's me, man.
+
+Speaker 9 30:12
+Good man. Signing off on Genius, and then I received
+
+Speaker 5 30:15
+an email. They were signing. Let's actually see what
+
+Speaker 2 30:30
+that would be. Let's actually run that back test for like maybe that's an easy way to run everything. We've got like six, but just
+
+Speaker 5 30:47
+separate. Yeah, same. So the last sentence going back
+
+Speaker 6 30:51
+two years. No, I would go back even more than that. I would go back. 10 years.
+
+Speaker 10 30:56
+Okay.
+
+Speaker 3 30:58
+This versus the other one you mentioned. Yeah, I think they're right. It's just like 28.
+
+Speaker 8 31:07
+Can we do? Could we do something with this?
+
+Speaker 9 31:10
+How is your day going? How is yeah? There we go. So I'm saying, look at the
+
+Speaker 7 31:38
+flow of the 20s. Like I don't want to start that
+
+Speaker 9 31:47
+same 20 or 60 years. So like you look at look at look at
+
+Speaker 8 32:02
+the WM of the New York two. Look, I just forwarded to you and John 3:20
+
+Speaker 9 32:11
+and one yellow. The wind that we've decided for is here, and that would have that six points, and then we take 75 different. So you just have mechanical way to widely define what the floor is. Maybe maybe that's not trying
+
+Speaker 3 32:48
+to do it. Like all you said, so like the
+
+Speaker 9 32:59
+reason why I think it has potential is that we have the CTD selection algorithm documented for 15,000.
+
+Speaker 11 33:18
+Which is better than I do? You're not talking about selecting 20 years. You're talking about the intro to get a synthetic. Yeah, synthetic one year, synthetic one year TVF price. I mean, I was doing this and I was like, well, I'm talking about using a similar
+
+Speaker 2 33:39
+similar pool. Sorry, yeah, yeah, similar. Because again, here is.
+
+Speaker 7 33:54
+you interpolate between the CTV 15 years between the losses that take so 30 years straight at 7915 straight at 989, the 20 year because it's 60% win. It's between whatever gets marked at this price, and then if we want, like to incorporate some shock, you could say take some ratio of what that revolution to a 415 surgeon does to his train. 400 OES. It's probably too many documents. We need to choose something that way. We just like you have the 30-year. We don't need to get a specific.
+
+Speaker 13 34:56
+But you need to define what the CD 20. You just get 20-year. It's going to be roughly the same. Yeah, yeah.
+
+Speaker 11 35:11
+15 versus 25 years away. 15
+
+Speaker 10 35:15
+or two is $15. Just think about the time. Simpler is maybe better. The issue with the two-point shock is that then we have to like really redo our entire pay after one. Like I want to go back and like we should maybe can we
+
+Speaker 6 35:45
+back test that and see how that would look. And he was like that might be easier to back test two-point shock.
+
+Speaker 10 35:52
+Because that's like defining a whole other, redefining. Okay, when do
+
+Speaker 3 36:08
+we do this? It's like a this week thing, or next week, when you when we're back,
+
+Speaker 12 36:12
+like you put that limit in, you set it the same level as the whole tail. Yeah, no, I see. And then you increase the whole tail. Yeah, first particular tail.
+
+Speaker 14 36:25
+But I think I would look at. Can
+
+Speaker 16 36:30
+you just want to hear it. Two points.
+
+Speaker 12 36:40
+No,
+
+Speaker 3 36:43
+I know. Oh,
+
+Speaker 12 36:49
+I don't mean well. There's there's a back test on what the exposure is, but there's the back test on. You
+
+Speaker 3 36:56
+go back 10 years. Most of the time, your long ball is going to be somewhere wrong, right? I don't
+
+Speaker 12 37:02
+mean that. Yeah, it's not two points. Like maybe early third January.
+
+Speaker 13 37:08
+Yeah, but I guess
+
+Speaker 16 37:09
+my point is, can we show conventional arms, like what the full spectrum
+
+Speaker 3 37:19
+is? Like
+
+Speaker 12 37:26
+in In in various places. How much of specs went down?
+
+Speaker 17 37:38
+And
+
+Speaker 9 37:40
+sevens.
+
+Speaker 17 37:42
+I only have six.
+
+Speaker 9 37:44
+Yes.
+
+Speaker 2 37:44
+Okay. I just want to make sure I wasn't like doing this wrong.
+
+Speaker 12 37:47
+Yeah, I mean, but you know, like just yeah. Can we show that two points? No, we book more
+
+Speaker 14 38:00
+pubs, right? So it's like two
+
+Speaker 12 38:03
+points and not. Super super stressed.
+
+Speaker 3 38:10
+What kind of result do you show?
+
+Speaker 14 38:14
+Like the simplest one would be with the nominal payout drawdown.
+
+Speaker 18 38:28
+Why do these speeds seem crazy different? It's saying 182. Well, let's just see. But yeah, the point is like how often I think the jaw down. This is saying like 182
+
+Speaker 6 38:42
+was the speed for the 615. Yeah, it's all. I'm seeing 100.
+
+Speaker 14 38:50
+It was a long Friday. They might have just made him. Non-zero probability. Yeah.
+
+Speaker 16 39:00
+Oh yeah. Cash window spec. We just think about.
+
+Speaker 12 39:23
+Because there might be some random coupon that's like there's no attention being made to the right when you look at like the three most pleased
+
+Speaker 1 39:35
+coupons. How large is
+
+Speaker 13 39:37
+this? Three months forward after. Yeah, yeah. Trading
+
+Speaker 12 39:43
+here. Something like that.
+
+Speaker 3 39:47
+Oh, so any given time, three months later, yeah, what's the difference? But this trade is like no people, so just production people.
+
+Speaker 12 40:02
+But it's like a general. I mean, I hear you. It's like a super season short land bond. You should trade tighter.
+
+Speaker 3 40:17
+Yeah, or the D can be used value 1.0 yeah, yeah. And it's
+
+Speaker 12 40:25
+only against six.
+
+Speaker 5 40:26
+Oh, nice. So. I think in 13 John Allen's one or two points.
+
+Speaker 12 40:46
+But I think I mean, pay ups got well. That's the thing. So it was like pay ups got specs got really cheap, but to some extent it was more like we rallied massively and the pay ups went down somewhat. Not like the pay ups. And she doesn't know. we sold off as a day, but everything was so
+
+Speaker 14 41:37
+cheap. Yes, relays. We had the 2022 sell-off. Yeah, I think the recent one might be the way the
+
+Speaker 3 42:00
+recent few months had bigger drop on.
+
+Speaker 14 42:03
+I don't think things went.
+
+Speaker 3 42:10
+We can run some numbers. Let me see. So we're talking about just running. What should I run? Like our inventory or the new production, all the new production pools running synapse, right?
+
+Speaker 12 42:28
+Well, in terms of far back, you can go. I just mean we actually might just use marks because yeah. If
+
+Speaker 3 42:34
+we if I look at the marks or inventory, I can't go as far as we have. Yeah, for
+
+Speaker 12 42:41
+sure. Yeah, I mean you can just look at inventory for any positions where you have more than 100 million or something. I just don't want like I just don't want positions. Or just gets remarked because it's being used for some other some other. There's a collateral change. Even if that's the case, we can
+
+Speaker 3 43:06
+show like a percentage of only zero. 0.01 percent. Well, I think the other thing
+
+Speaker 12 43:13
+I think is we should only use like the. We should just avoid using like 05 fraud or something. Like some of these ones are like a little like.
+
+Speaker 3 43:36
+Do you want to filter all super old stuff? That's later.
+
+Speaker 5 43:48
+I don't know. Is that too weird of a?
+
+Speaker 3 43:53
+I don't know. Like if
+
+Speaker 5 43:55
+how far back how far back the same OAS one
+
+Speaker 3 44:00
+OC change
+
+Speaker 16 44:03
+one
+
+Speaker 3 44:06
+using option because like when I synapse, my
+
+Speaker 5 44:11
+worry about marks is like random shit. Maybe
+
+Speaker 13 44:15
+not. If we see it, we can switch. I mean, it's probably synapse is like Dinsdale is not a PRM model. I
+
+Unknown 44:28
+can't.
