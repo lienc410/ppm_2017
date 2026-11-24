@@ -1,0 +1,654 @@
+CMO Structuring and Sales Automation — Lien / Noe / Jimmy
+Speaker mapping and turn-boundary correction
+
+说明：主标签 Speaker 1 = Noe，Speaker 2 = Lien，Speaker 3 = Jimmy。保留原转录措辞，修正讲话人及跨段句首句尾，合并同一人的连续碎片。
+保留项目规划主段及 43:36 开始的 20 年期风险后续讨论，至约 48 分钟的告别处结束；后续无关对话未收录。时间戳为近似位置。
+少量短应答和重叠发言归属仍有不确定性（如 5:22、19:48、26:47、37:39、38:49、42:45）；这些位置按声学特征与上下文暂定。原稿疑似听写错误未擅自改写，本版不是重新逐字转录。
+
+Noe 0:00
+A lot of projects with Drew. We have Ginny and conventional now, and so I guess two quick projects. I want to get your your thoughts, both you guys' thoughts on what the next step is. One one is, so one is for Strew, and there's also this this tool that Alex is building, Palmer. That's called Scope. That's like basically it's in text, but on a website, and it's totally customizable. So you could say run these 10 pools, run it through. It's similar to a spreadsheet we had built, where it's like optimize, run a pack structure, a sequential structure, and and it's totally flexible. Whereas the Strew is like nightly jobs, we tell it what to run, and then it stores in database and runs like hundreds of things. This other thing will be like kind of like in text but flexible, and you can. I see that more as like optimizing. Okay, we have this structure works. Run 10 different bands and then figure out which one is best, something like that.
+
+Lien 1:06
+Like, yeah, the way I look at it is more, it's way way cheaper than running Intex because it like we build our own cash flow engine rather. So you don't need to go to Intex anymore. As a result, if you think about the current structures, like how Noya and the structures work, to create one deal, to from the point that you start to think about one structure to the point that you can run your book, the whole thing probably take you like anywhere from 40 minutes to an hour, like to run through everything, being able to run.
+
+Jimmy 1:40
+Seems like longer than.
+
+Noe 1:41
+I'd say, well, that what we do right now is like we well we leverage Budapest a lot, where we say, here's a pool list, model this up, then Budapest takes like five minutes to put it on, yeah, and then we'll take for each deal five minutes for each deal, and then then we'll take a few minutes to run it, yeah. Then we'll ask the ribs, and then you
+
+Lien 2:01
+call it 10 minutes for each deal, each structure. Yeah, and now you can
+
+Jimmy 2:05
+15 minutes to get the deriv desk's attention. That's yeah, that's that's so okay.
+
+Lien 2:11
+Look, so that thing just like two seconds, like yes, like it takes about 45 minutes to run 10 different structures on 10 pools, basically you can consider like a you know 100 deals in 45 seconds. So potentially it can save the team maybe like two people like call it two hours per day every day.
+
+Jimmy 2:38
+So then what are we going to do with that time saving, and how are we going to make better decisions and print more profitable deals?
+
+Lien 2:45
+Yeah, that's the objective. Yeah, okay.
+
+Jimmy 2:48
+Let's keep everything. Let's keep everything in check. Is like we can fucking analyze every pool in 100 different iterations of the structure. Yeah, somebody needs to make and like I was just yelling at my ChatGPT for this because I'm like I talk to you all fucking day, and I don't think you've saved me a goddamn dollar of costs and added $1 of revenue. So like, what do we do? How are we going to make it help us? Yeah, I think.
+
+Noe 3:14
+Well, I think this stuff, both Strew and the Scope thing, will just
+
+Jimmy 3:19
+Strew and love. To be clear, true because it can systematically identify which collateral stories work, and then we can retailer where our focus is on origination. is a fantastic like, and we store it. We store it. We execute some different plan by doing it. That is a that is the best use case of any AI that I can really think of that we've developed on the desk, and I think it's fantastic. So, how is scope? Like, is scope gonna allow us to like? Feebrant sends out a FICO six and a half BWIC. Can we plug it in scope and then run it with that, like, but how are we going to then incorporate all of the trading color that we get, and have it not need to be predicated on potentially stale bids on the? So, like, my thought is like we have the deriv color, so it should auto suggest a derive. It should be smart enough to figure that out.
+
+Noe 4:23
+Yeah,
+
+Jimmy 4:24
+and then we'll have all the fixed rate assumptions or color from some other sources, and so incorporate that, and then be like, based on this, we think it should do this, and like the next next level is to then be like, look at the inventory that we have, exactly, and be like
+
+Lien 4:43
+the pool inventory, dude. Yeah, just plugging
+
+Jimmy 4:45
+and our CMO inventory someday, where it's like you don't want to have 7 billion strip downs. This deal works if you and it makes a gargantuan amount of strip downs, yeah. But that'll put you over your threshold. So like, have it start to think about the constraints in the way that we think about the constraints in our business as well.
+
+Lien 5:05
+That part I haven't thought about. I was thinking about to connect to the upstreams of like listening to the cash window bidding, and since the the scope tool is so fast, we can dynamically run through all the bill list, yeah, and tell Lou, okay, Noe would want that pool, or tell Noe like Lou just bought a pool, yeah, which would work, buy from them, because it's so fast we can just automatically scan every bill list that they they got also like I mean
+
+Jimmy 5:43
+that fits very well into what the Budapest AI squad is doing on the super side yes yes the the heat
+
+Lien 5:53
+map right it's
+
+Jimmy 5:54
+just another lens of what they're building but like we'll feed it different constraints and we'll identify things this one has
+
+Lien 6:00
+structure in it. Has structuring in it because it can spell out like okay. I talked about this with no yesterday. Like the way I look at it is like how you can make more money is you either make more trade or you make more money on each trade, right? We're talking about making like more money on this trade, which is one thing that we have been struggled with. Is like running a new structure is a little bit expensive, so we have been playing a little bit defense here. Which is like other people tell us, okay, there's a new trade structure. Like people are trading mountain bond. Let's try mountain bound too, but we have been long due of like being offensive or being creative on this front of what like we haven't told clients okay there's a new structure like you should look at support Z at some point type of this thing like because we don't really have the redundant bandwidth to run so many different structures, but with these two, since it's so fast, you can potentially use like 20% of your bandwidth running the things haven't really come to your mind. We're like just like exploring the the other structures. Yeah, maybe like 99% chance it doesn't work, but you know if we don't explore, like we won't, we'll never be the the first like mountain bomb seller.
+
+Noe 7:27
+Yeah, I think I view it more as like we do run more things and it will flag. Like Strew Tool is, it's going to flag a few different stories. We're going to gravitate. I think Scope it will be more. We know something works. Let's optimize the hell out of it, and then also run all our inventory, run all different structures, and then we could find a new thing. Finding new structures.
+
+Jimmy 7:52
+I think finding new things is going to be way harder than you think. Yeah,
+
+Lien 7:55
+it is harder. I mean, like 99%.
+
+Jimmy 7:57
+Like a mountain bond is going to be assumption on assumption on assumption on assumption. Yeah. On who can we convince about this fucking mountain?
+
+Noe 8:06
+But I think once we identify collateral that we like and we own it, and this base case structure works, then we can say worst case we have that. Maybe we throw a few ideas at the wall. Yeah,
+
+Lien 8:18
+yeah. Like you got a base case of you know this is a working structure. Yes, you can work on others. Okay, so I like scope.
+
+Jimmy 8:28
+I like scope. I like the combination of the two to help us solve the problem of sourcing collateral as it comes into the creation window, I also would love to press on the ability to think about what is not yet on the in the window. But like we have live LAS on TBA, we have all this data and stuff. So half of what we're constrained by is we can get as good at identifying the collateral as it works and it doesn't, but there's still the element of like what basis level makes it work, what ball level makes it work, what what are we waiting for, and like how can we get smarter at buying collateral that doesn't necessarily work right now? Like I would love to see your new business plan be like we're going to run 50% increase or 100% increase in spec balance sheet because I think as a desk we're really good at trading specs, yeah, and we're going to view this increase in spec balance sheet to carry and level dependent under the view of if X, Y, and Z happens, we're going to have collateral already that fits. So like, that's a big that's a big ephemeral question. But the point is like knowing what works now is going to make us zero in on what everyone else is zeroing in on, i.e., when Ginny Lombels go into the window and out of the window, the prices go up by 12 ticks. And so, like, what can we learn from the data that we gather as we go forward, that will help inform and identify ways to hedge the collateral or what to look for in the macro market that might change what works in the collateral. Because like you can be the best at buying it with the best sales, we're not the we don't have the best calls on Jenny Customs because we haven't bought them for three years. Like we're 5% market share in customs, so we don't get the first call. You can have, or you can be identifying it the fastest, or you can take a bunch of fucking yos on bases. Like I don't want to do the yo's on basis. We can work towards the second, but if we can identify it a step before other people, then maybe we can either, even if we don't print the deal, we capture the 10 takes of appreciation and smack the bulls out. That's
+
+Noe 11:13
+that's definitely true because when once an arb is there, it goes away like very quickly.
+
+Lien 11:19
+What is a key step of being a step behind, like a step before?
+
+Noe 11:25
+So basically, I think what will be helpful, like like historically, say historically the CMO model was you buy a bunch of loan balance or season, or you you buy a bunch of loan balance bonds, and then you have some seasoned and jumbo bonds, and then like in a rally you print the loan balance. In a sell-off, you print the jumbo and the season. But your book is balanced.
+
+Jimmy 11:47
+Yes.
+
+Noe 11:48
+What the issue? The issue the CMO book has had is that there's no jumbo.
+
+Jimmy 11:54
+There's no balance. There's no
+
+Noe 11:55
+seasoned. But so it's just like you're all loan balance.
+
+Jimmy 11:59
+But the smarter that we get at figuring out deal durations and et cetera, et cetera. Then, like the deal duration information and creation duration relative to empiricals is itself a tradable signal. Yeah, that then we can be like we have our Genie Two Sixes hedged to the deal duration. If we sell off to the empirical durations, those deals are going to work. If we have our Junie Two six and a halves hedged super short, and if we rally, we'll be able to print them cheaper than other people. So, like, let's think about the the vol like the surface of rates, and see how we can attach what we're learning from the automated structuring to inform better passenger trading or like better pool trading.
+
+Noe 12:54
+Yes, because
+
+Jimmy 12:54
+I think like pool trading is where we can like you can take the biggest implicit duration risk, yeah. At least as long as you know it and can identify it, like we can we can take aggressive, intentional risk informed by what we're talking about. Yep. Because otherwise, we're still going to be running lists after everyone else has already run them, and like the pools are out, and then everyone's gonna run it. It's like a race to who can do it, and then it becomes a food fight. So like, if I think
+
+Noe 13:29
+that's very fair.
+
+Lien 13:29
+Your point being like we prepare before the window opens up, or or just know
+
+Noe 13:35
+like hey, if this happens, yes, in this in a rally scenario where basis does this? Where here the collateral that works in a sell-off scenario, the basis does this collateral. Here's the collateral.
+
+Lien 13:47
+Are we saying to create? Sorry, like you, you guys are talking about like you know trader language. I'm trying to translate that into a system system design where you know it can be built, right? So like, are we talking about create some some sort of like a scenario of like if base is tightened, this is going to be triggered?
+
+Jimmy 14:09
+I think we're talking about every like you're you're the systems architect. I'm the asshole who says a bunch of ideas every night if we run some universe of pools, we can identify ones that work now, probably 10%, and then we can identify ideally an additional 10%. One that works if we rally to the deal hedge ratio, one that works if we sell off to the deal hedge ratio, and we can try to identify before the next day. So then, like, if last week happens and we sell off 15 basis points, we know where we're going because we've already done the work and we have the map of what's going to work. So it's almost like we run all of these structures in the static market, and then we pick a mild shock, and we run the deals and the arbs in those.
+
+Lien 15:11
+You might have a few of these scenarios. The shock I call shock scenarios. Yeah, you know you have a few these scenarios. For example, it could be you know the tech stocks off kind of scenario. What would happen if you see the news and then we just
+
+Jimmy 15:27
+switch to that? It's like vol vol unchanged rates 10 basis points higher. Like like if we could have a if we could have a 20 basis point higher or lower collar of how we think our deal creation duration evolves the collateral relative to our empiricals, and we do a 10 basis point in either direction band and a 25 basis point in either direction band. We probably get a hell of a lot smarter about what is going to work over time, and that can help us learn how to better hedge our pools, and how to better and like it's not going to be perfect, right? Like the basis correlation is imperfect and shifts all the time, but like we can look at then like
+
+Lien 16:14
+your hedge ratio need to change to each of these things, and then we can decide.
+
+Jimmy 16:17
+All right, we have this collateral, and like 80% of our book doesn't work, but like the way that we're hedging it, like the final step is then to take it, or like maybe the step before what I'm talking about is to take our book and be like, in these shock scenarios, where does the inventory work relative to the actual way that we're hedging it?
+
+Noe 16:40
+Yeah,
+
+Lien 16:40
+like we need to
+
+Jimmy 16:41
+change our hedges when that lien gets too aggressive. Yeah,
+
+Noe 16:45
+or like look at different stories to balance that out a little bit.
+
+Lien 16:49
+Or like in the morning, just I agree. And the next step I'm thinking about is in the morning before the event start. Let's say like you know FOMC in the afternoon. Then in the morning you can assign some sort of probability on the two outcomes, and you already pre-run these two, and you think it's a 7030. Then you can change your head ratio and your positioning beforehand, and just I think I think
+
+Noe 17:16
+yeah, if we could get this right, this is where you make more most of the money. That's where you make the
+
+Jimmy 17:21
+money. Like we, we
+
+Lien 17:22
+okay.
+
+Jimmy 17:22
+Like the CMO market has given us an opportunity in that it's shifted away from generics to some sort of story. Like three years ago, it was all generics and there was no collateral diversification you could do. We could be smarter and pick better collateral. And like we've interviewed enough to read people to know that the ones that seem to make money are good at picking collateral.
+
+Noe 17:46
+And and related to that too, anything we could like. So for example, this year we said Quicken first time home buyer. Yeah, we gave Quicken illicit steps. Said these S curves work. Make us these pools. They came back, made us pools, and we made more money in those deals than any other deal. Okay. So, and just from a prepayment perspective, yes. If we can carve deals out, if we could carve out pools and go to originators proactively, and and pay it for it, that's not a broad B Wick where we're in 20 way comp. Like that's like
+
+Jimmy 18:19
+that's actual extraction of value. So I think I think that for me the priorities like we have we have really good structuring capabilities, and we've automated more than just about anyone on the street. A large emphasis in the first half of next year should be on stepping back and finding the like derivative information we can gain from it before we like press forward and we're like we built another thing that's going to automate and run like we're just going to get analysis paralysis and we're going to have a website that has 100,000 structures under all our different pools
+
+Lien 18:59
+and running through different time like back then, and find out oh these are the ones that has a combination. Like each day you have a wall change of that day, curve change of that day, and map to these 1000 of structures performance relative performance for that day. Then you can ask your AI to choose. Oh, today is another day of that move. I mean, we can get there,
+
+Jimmy 19:24
+but I'm saying let's start more simply. Yeah. Yeah. Let's do the shock and awe approach to try to get smarter at identifying collateral.
+
+Noe 19:34
+Yes.
+
+Jimmy 19:35
+Because like the other thing, you've done this. You've run. No, he's filled the Strew Rolodex many, many, many times over. Deals either work or they don't.
+
+Noe 19:48
+Yep.
+
+Jimmy 19:48
+So like we don't like we can optimize and iterate on structures, and it's worth doing, and it's a very automatable AI solution. But I don't know that it's going to make us the incremental amount of money that we want to make, but I think if we can trade the collateral better than other people systematically with our analytics, that's our best case for having a serious edge. Yeah,
+
+Lien 20:15
+if you get what you want, see mid year of 2027, then
+
+Jimmy 20:22
+we can automate it.
+
+Lien 20:23
+Like how how how much incremental that you think is realistic for for us, assuming that you got the balance sheet that you want, right? So like,
+
+Jimmy 20:32
+sheet's not a problem. Yeah, I mean, I think that the ability to make even two more ticks on a deal per month is what buck and a half almost yeah
+
+Lien 20:45
+per month
+
+Noe 20:46
+yeah
+
+Jimmy 20:47
+like it's real it's like 20 20
+
+Lien 20:48
+million kind of yeah yeah
+
+Noe 20:50
+I think that I think that's fair that plus sort if we're able to source any collateral stories like these two things to make an extra few takes is basically if a deal works, the R is zero. If the deal works and people know about it, okay, it's zero. If we can either identify it first or or start a new story, I think there's there's just in general that's where you make more money than I think optimizing it. If we put on big trades, that could get us an extra plus or something, but this is where I think most of the money is.
+
+Lien 21:25
+Yeah, agree. I think I described my thought in a slightly different way, but kind of similar to like you have to be the first one to act on something. Yes,
+
+Noe 21:35
+100%.
+
+Lien 21:35
+Yeah, you have to be the first one. No, maybe like the mountain bond example is not the right example, but like identifying
+
+Noe 21:42
+the collateral. The collateral, yeah, yeah. I think there'll be won't be structures here and there, but I think that's lower probability than identifying, or basically like if you own if you own say the universe, and then or you own a certain story that does well. We sold off 25 base points. Then you're going to be the first one to print it, and then you're going to make make the most money. And then someone else is going to see you printed it and chase it and drive the pay ups up.
+
+Lien 22:10
+Okay, okay, this is great. Like for this one, I probably need one or two to follow up with you two on what is missing in building this, I know like the the shocks, and we need to come up with a reasonable shock. We need to do assumptions like
+
+Noe 22:26
+where TBA is and all that stuff. What do you think the best way to run? Just we'll think about it. Yeah, we have like we have a head ratio.
+
+Jimmy 22:34
+Beautiful thing is we have a ton of backwards looking TBA data. Yeah, and like you could use the 10-day look-back rolling hedge ratio in a sell-off and a rally to like determine what the TBA shock prices are. Yeah, like we could do a lot of yeah very informed things.
+
+Noe 22:55
+Yeah, and then we'll just we'll keep it same. I think if we do all we ask for deriv and strip towns that'll be close enough, and yeah, yeah,
+
+Lien 23:03
+yeah. Like, I think like very cool.
+
+Noe 23:06
+This will be very cool.
+
+Lien 23:07
+I think I'm possibly we can probably get it before. I would think that I would think that's
+
+Jimmy 23:13
+yeah, that's like tweaking existing infrastructure. And we have a lot of building
+
+Lien 23:18
+building blocks on yeah on things. So we just like you know find out maybe like there's one or two missing pieces and just connect them.
+
+Jimmy 23:25
+And I guess before like, what's the best way to have the data presented to us? Uh,
+
+Noe 23:31
+like, like basically what flywheel is working now? Yeah, like
+
+Jimmy 23:35
+how are we? How are we going to? Like, should we just run yield book cohorts, like yield book spec cohorts, instead of like, like every day
+
+Noe 23:48
+finding pool, yeah,
+
+Jimmy 23:49
+and then it's like at least it'll give us a, at least it'll identify some baseline, for what we're trying to do.
+
+Lien 23:57
+Yeah, yeah, that works. Or if you want to create your own, like I just think that I think like
+
+Jimmy 24:06
+what we're trying
+
+Noe 24:11
+to basically we want to be something like we want
+
+Jimmy 24:13
+to be we want to be presented with like current model these six descriptions of pools work like low balance Genie two sixes these cuts, low balance Genie two six and a halfs these cuts, teens walla low bell conventional six and a halfs, teens walla FICO six and abs like those work right now
+
+Noe 24:35
+yeah
+
+Jimmy 24:36
+30 wall of 30 walla generic six and a halfs
+
+Lien 24:39
+that's kind of the the heat map does it is yeah it is
+
+Jimmy 24:42
+so then the heat map. So the heat map is cash window. Yeah. But if we had, if like that, all the outside of like bigger scopes, like everything from just cash window. Okay. And then the like sell off shocks. This this is worth looking at. Comes into the window. Yeah, this is working at, and then
+
+Noe 25:04
+yeah, these are here are the additive marginal stories that
+
+Jimmy 25:07
+and seeing and comparing what the deal duration we estimate to be is yeah to what the OAD is currently and what our empirical duration is based on our TBA edge ratios, yeah, where it applies. Like, is that kind of those are the things that we care about?
+
+Noe 25:30
+Yes,
+
+Jimmy 25:34
+and like again, it's like identifying. It doesn't have to be like specific pools, but like broad broad like strokes of cohorts. Yeah. 2023 Florida sixes. Yeah. You could get them at this pay up. Work really well in the sell.
+
+Noe 25:48
+Yeah. Yes. Because then
+
+Jimmy 25:51
+we and then it's like and then it's like you then go to your city and you say, who did I sell fucking 30 wall of Florida six two. Who can we go buy it from? Yeah, like who has bewicked similar bonds? Yeah, yeah.
+
+Lien 26:07
+You can automatically suggest that you don't need to go to city anymore. If we got this step telling you 2023,
+
+Jimmy 26:14
+it'll tell you who to go source.
+
+Lien 26:16
+Yeah, it's automatically telling you that. That's cool.
+
+Noe 26:18
+Yeah, 100%,
+
+Lien 26:22
+exciting. Yeah, yeah. So we can start from there to expand the heat map to cover the yoga like cohort, like the universe definition of things. And yeah,
+
+Jimmy 26:35
+you don't have to run everything all at once. You have to run five and a halfs through six and a halfs, or real realistically, like sixes, sixes through sevens right now. Yes, and
+
+Noe 26:45
+yeah, yeah. Choose a coupon that's
+
+Jimmy 26:47
+yeah
+
+Lien 26:47
+yeah
+
+Noe 26:48
+close, and then yeah,
+
+Lien 26:49
+yeah. We can we can try like how heavy that job is, and just you know periodically running.
+
+Noe 26:55
+Yeah, and yeah,
+
+Jimmy 26:56
+honestly, that probably can run once a week too. It's not like a yes, it doesn't have to start as a daily. Like before, I guess before we spend more time building it, let's see what a hypothetical output would be. Yeah,
+
+Lien 27:09
+we can we can pick one coupon. Yeah, all the stories and just like you know near current coupon, like where things are.
+
+Noe 27:16
+Yeah, pick six and like you know play around with you.
+
+Lien 27:18
+Yeah, that'll be great. Yeah, because then
+
+Jimmy 27:21
+it's then it'll tell you too. Like, we'll have an intraday rally day someday, and we'll be like, well, the deal is gonna stop working, but maybe BMO is still a fucking bid for the collateral because for the last for the last X amount of time they've been a bid every time. So like then you go stick them in the street and you punt them before you know before everyone is refreshed
+
+Noe 27:47
+yes yeah
+
+Jimmy 27:48
+and like I think we're better we're very good analytically at like running the live OAS knowing what the day every day OAS changes are going to be
+
+Noe 27:56
+yeah
+
+Jimmy 27:56
+actually to the model yeah so like we have that advantage as well
+
+Noe 28:00
+yes
+
+Lien 28:01
+yeah by the way, the live OS also have live OED to it. I know, like you know, yeah. Just like on the top, you can switch OED, OAS. Yeah.
+
+Noe 28:12
+One one quick thing. This smaller thing, but we run Strew and we know the OAS. Or or one quick thing is like we run all these we run all these strews, and basically what it tells us is like, okay, low mall and shiny g6 navs. We run every single story, it works at 33 OAS. That's basically what it's telling us. But then like that 33 OAS, we could feed it into like oh if conventional OASs work at 33, we could feed into Pool Viewer that Lou knows here's the deal at here's the deal that would run it at that OAS and like here's where the deal roughly works or or with Genie Pool bidding sorry Ginny Pool bidding that's something we can get more efficient at. I talked to Lien about this. Is like we have something that suggests a pool because we have all these fucking steps and there's so much dispersion. But if we we have Strew, it tells us the OAS where things work. We get better at matching up the pools, and it automatically runs it at that OAS, and then it suggests a bid that then we could submit. Sure. That like that takes a that takes several hours a day. That's like Bob's
+
+Jimmy 29:23
+entire day. Yeah, that
+
+Noe 29:25
+like that that's something I would like to automate because when Bob was out or one of us is traveling, there's too much of the day is sucked into that.
+
+Lien 29:32
+Yes, yes. That talked about it yesterday. Yeah, yeah. This is one of the efforts to save more time. That goes back to, like my initial thought about how to make more money is like you know you you can do more trade yeah it's like you can just stick with this like then it fits into another ask that Ashish had, which is like you know the SPG Town Hall mentioning like you know how do we expand from a client 75 to client 400 right so uh, the like we started to look at a project called Client 360. The background being, we have the client interaction data. So basically, how many IM chat that you have or call that you have with certain client, we have it in record, where we can suggest, you know, these kind of clients that trade with you two quarters ago, but in the recent half year you never talk to them and they never trade with you, but they trade with other people. Probably need a call. This is one and two is we can help the salespeople a little bit there too. Of like, look at their calendar and prepare the notes of if they have a call with a money manager and other money managers buying certain type of bond, like either low cap or something. Just tell them, okay, similar clients buy these, and I feel like they have a hard time to understand some of the derivative or CMO selling points because it's a little bit complicated, right? So AI, like we can help them to prepare the notes of talk about these things on on the client call, and just to help them to reach out more of the smaller clients and hopefully if we can get to our spec for each one of them. They can call like maybe like one or two clients every day.
+
+Jimmy 31:27
+I I respect Tashish's wishes. That doesn't seem like the most like I don't think it's the
+
+Lien 31:44
+amount the the cost efficiency
+
+Jimmy 31:47
+or trading strats time to be honest. I think that it's worth pursuing, but like we've built the fucking bank page of who buys what and who wins the last time they trade. People, it's not really doesn't do anything. It hasn't done anything. Yeah, that's fair. Yeah. So like, I I don't know. We can lead a horse to water, but we can't make them drink. And like, the we tend to trade. I would love to see some analysis in the CMO book of like what volume in a given month goes to the top 10 clients that we trade with. Like I would guess it's a disproportionately large amount of our volume. 100%. And so like to focus on banks we haven't traded with in six quarters, and like turn them into consistent 10 million buyers, like is worth pursuing because it was asked of us. But I don't think is the best use of our time. What I think, while I have you both in this room, is the best sales angle-aligned use of our time, and this is a much broader project, probably desk wide. But instead of suggesting talking points to salespeople and bubbling up to the top people we've ignored, the biggest time saver, I think, is somehow mapping the desk's output in terms of offers, sales's output in terms of client inquiries, our BWIC data, our trade data. Organizing those by some broader product type, and finding a way to map all of those things into one, and making sure so like Ari Sussman says wear seven cab floaters, that gets triggered as Ari Sussman needs to receive the seven cab floater run when the seven cab floater run comes out. If we don't put it in the Sussman chat, or if he doesn't see it, then there's something that Ari Sussman can go on that's like AGY inquiries, and it has already been logged that he has seven cap inquiry because he set it in a chat, and here's the seven cap offers for the day. Yep. So like that is my baby.
+
+Noe 34:18
+Yeah.
+
+Jimmy 34:18
+That I think is the best thing that we could do,
+
+Noe 34:20
+or also if like if you get targets from him or something, that would be like, hey, we're five bips from whatever targeted you.
+
+Jimmy 34:26
+What inspired me is that Asia CMO dashboard, because there we get we have one thread. So I don't know mechanically how to do this, and I don't know what the Bloomberg chat scraping of internal chats. I know we're not scraping internal chats at the moment, but like the Asia CMO email is one thread, and so we know we get color like, hey, they saw five basis points away. It tracks like we were offering here that day. The street was offering five basis points away. So like, if we could incorporate that color domestically, like that is a huge, that is a huge lift or like relief of everyone's time. Because then it's not like, all right, refresh the seven cab floater room. Who do we need to make sure sees it? Like, oh fuck, we forgot to do it that day, or like Sussman's like, oh, I got tied up on a call, and then we can follow up and be like, hey, did you see this photo? He's like, oh, I missed it. Thanks. So like, maybe tell Ashish that like we have some other things percolating too for from a sales standpoint when he comes back with
+
+Lien 35:38
+yeah, like does that
+
+Jimmy 35:40
+make sense? Yeah, yeah. Like my my reason I haven't. I think it works for CMOs fantastically well, but it works for everything that we do. Like, client salesperson talks to client, gets information. They would look at this, this, and this. Like Rob Dunn does it fantastically. Regions not looking at this, looking at this, looking at this, and then if as soon as we get all of that information loaded, then Rob Dunn can log in and be like, "Hey, your last update was Regions isn't looking at CMBS. He hasn't been looking at it in two weeks, but spreads are wider now. So should in my next conversation with Rob Dunn, should I talk about CBS spreads being wider? Like those are the dots. Like that's the broader sales, trading, inventory, client solution that needs to be architected and put together in some sort of automated form.
+
+Lien 36:35
+In your mind, where this interaction happening is like a, like a I know like you can you can you can track the Bloomberg chat or which is currently not not there yet but like is there like what's what's in your mind of ideal way of having that interaction? It's like we can have a page up and let them just like send a chat there. So we mark down all e sales person
+
+Jimmy 37:07
+gets logged. Like yeah, you could have yeah,
+
+Noe 37:10
+or maybe it's something like have an easy way for them to write it somewhere and sends an email that then just send an email to us to or Teams chat too. We can chat send
+
+Jimmy 37:19
+a Teams chat to AGI inquiry,
+
+Noe 37:21
+yeah,
+
+Jimmy 37:22
+and it auto feeds into this or whatever something like that. So, like for initially, it will need to be an intermediate step, but like as soon as we can ingest even 25% of that color, yeah, I think it would snowball and become a tremendous help.
+
+Noe 37:39
+I think that'll be very helpful. Yeah,
+
+Jimmy 37:42
+and like and like someday it can be have the pool offer sheet and be like my client's looking for Fanny six hole pools, subject to these pay up constraints, and it'll suggest those and like maybe the trading desk suggest
+
+Lien 37:59
+to whom you mean?
+
+Jimmy 38:00
+Well, it should suggest to the trading desk first to be like, are these offers good to show, and then it should get auto sent to that salesperson as this is the this is the offers that have been vetted by the desk. Like Lou has a similar ask, but I think it's a broader Agency cash ax handling system.
+
+Lien 38:25
+Yeah, this is like a bigger scope, but I think is doable in a way that we are like. I feel like we are not missing too much of the information. There is just like not connecting the dots, like the the inquiry,
+
+Jimmy 38:44
+capture of the inquiry.
+
+Lien 38:45
+Yes,
+
+Jimmy 38:45
+but if we captured the inquiry, yeah, then the follow up color,
+
+Lien 38:49
+yeah,
+
+Jimmy 38:49
+we would be fucking dead.
+
+Lien 38:51
+Yeah, yeah. Just give them like a easy to use way, either in Teams chat, email, or I give you a website. Just send there.
+
+Jimmy 39:00
+Honestly, being able to just copy and paste a Bloomberg transcript and pasting it into there and having that dissect like oh seven cap the first which we have all the
+
+Lien 39:09
+parsers we understand it yes like we don't need to go through the echo project if they feel like that's relevant just throw it into the parser
+
+Jimmy 39:17
+yes map it to map it to a client, boom, done. Yeah,
+
+Lien 39:22
+yeah.
+
+Jimmy 39:24
+Like that's that's the thing that fires me up the most from a like
+
+Lien 39:28
+client, and that that'll be helpful too.
+
+Jimmy 39:31
+Franchise distribution standpoint,
+
+Noe 39:33
+CMOs wise, as well. It's one of the one of the things that's tough to to parse at the end of the month is like, hey, we saw all these inquiries. Yes, we decided to print or not to print. Yes, and here's why. This would help us. Well, also, oh, you just tag like those.
+
+Jimmy 39:49
+Also, it's a fucking skew in your structuring automation because it's like, let's focus on seven caps because we have all this. All the inquiries. Yeah, yeah,
+
+Lien 40:01
+yeah. This demand is going. Yeah, you need to. Yeah,
+
+Jimmy 40:04
+whereas like then you can track the fucking inquiry shift. Like the the Asia thing was amazing because it's like, oh, into the sell off, the inquiries shifted from six caps to six and a half caps. Yeah, it's crazy.
+
+Noe 40:17
+Yeah,
+
+Jimmy 40:18
+like if you have the history, we like the sky's the limit in terms of what we can do. Yeah.
+
+Lien 40:23
+Do you think we can use the Asia CMO inquiries as like a calibration of the the history for the CMO market at all?
+
+Noe 40:31
+Or do you want to show them that? Have you shown them the dashboard you made? Yeah, I saw it. Yeah, yeah, yeah. He put it on the host. Yes, I saw it.
+
+Jimmy 40:39
+What I wanted to do, and I didn't do yet. But I wanted to look at in from like this. Like I wanted to look at this the coalition wallets, and this isn't going to work perfectly. But like I wanted to look at the coalition wallets and Morgan Stanley trading volume mapping to those clients,
+
+Noe 41:01
+yep,
+
+Jimmy 41:02
+and see if there's a pattern of like, we sold X amount of bonds to this client. It mapped to this amount of revenue from the wallet. That, then, just do simple extrapolation and be like, we sold 10%, and we sold them a billion bonds. Then they bought 10 billion bonds, and so then you could estimate which clients buy and trade sell the most CMOs.
+
+Noe 41:29
+Yeah.
+
+Lien 41:31
+A lot of them have the reportings or the filings. You can get that.
+
+Jimmy 41:38
+And yeah, we can map it to That too, yeah.
+
+Lien 41:41
+Quarterly, whatever,
+
+Noe 41:42
+yeah.
+
+Lien 41:43
+Filling. Sounds like. Did we miss?
+
+Jimmy 41:46
+Did we miss anything else that you had written down?
+
+Noe 41:48
+No,
+
+Lien 41:49
+I think this.
+
+Noe 41:50
+I think this is pretty. Yeah.
+
+Jimmy 41:52
+Can we strategize on the inquiry thing? Yeah. Yes. Or like, let's figure out how to get a dry run. Definitely. Even if we get like one sales pod, or like we can have Ali log it for CMOs, and we could have Emily log it for specs, and we could have Anis log it for CMBS, yep. The inquiries, the inquiries.
+
+Lien 42:14
+Do you think like traders need to mark these, or more for salespeople, or we can we can
+
+Jimmy 42:18
+it should be yeah should either one should be able to right.
+
+Lien 42:22
+Okay, so two bigger efforts that I write on is one of the inquiry agency inquiry, like franchise workflow. The other one is you know using the different shocks and using the you know cohort definition. You know trying to map what collateral would work better,
+
+Jimmy 42:41
+yep.
+
+Lien 42:41
+Kind of projects and
+
+Noe 42:43
+exactly
+
+Lien 42:44
+two direction,
+
+Noe 42:45
+yeah.
+
+Lien 42:45
+Make more money in one direction.
+
+Jimmy 42:47
+Skate, skating to to the puck where the puck is going.
+
+Lien 42:52
+Okay.
+
+Noe 42:55
+Yeah, and then the other stuff like secondary maps.
+
+Lien 42:58
+Yeah, there's smaller custom bidding. That's more
+
+Noe 43:00
+like efficiency things.
+
+Lien 43:02
+Yeah. So like when I like when you do your planning, you can mention everything that you want. Like when I do the strat version, I'll probably just mention the the bigger ones that we talk about, and I have a appendix of you know for each desk. This you know for example your your secondary list will be like one of the appendix that we we also gonna do, but the flagship project for this year gonna be these two, for example. Yeah,
+
+Noe 43:31
+right. Same page. Cool. That's awesome. All right.
+
+Lien 43:34
+Okay. Thank you.
+
+Jimmy 43:35
+Thank you, guys. Great.
+
+Lien 43:36
+I have been thinking about the 20 year thing. I had a version of it. I know that you're gonna need to leave, but I
+
+Jimmy 43:43
+oh yeah I will.
+
+Lien 43:45
+But you know it's it's probably like a 30 seconds to give you like yeah like a higher level. Yeah. What do I mean by that? And then tomorrow we can go over the details.
+
+Jimmy 43:57
+Yeah. Okay, you got seven minutes.
+
+Lien 44:00
+So this is oh, have you here? Have you are hosting? Okay, so I got two ways of doing like a synthetic 20-year coupon stack price. The first methodology is the naive way, which is a very stupid like you know coupon three and 15-year, 30-year doing a linear interpolation between the distance of 20 years to them, a third to 2/3, you got this price on coupon three. You can get the full coupon stack and you know get the payoff versus 30 year. Same coupon is basically this coupon have $5. Right, this is the first way. The second way is more comprehensive, which is a relative coupon way. So you first look at the coupon stack original price, and then align where the current coupon is. This is where the current coupon is for 30 year and 50 years. Align them and create anchor for 20 years, which is Yeah. Yep. And then coupon three is 2.7 percent down. Then you calculate 2.3 percent down on these two sides. Get interpolation one more time. Then the next step is trying to do the when waiting, right? Then first you look at the wall out being you know these two doing the interpolation. You got average wala of 30 for the synthetic. Then the wham is 240 minus you got the wham. Then you look at using the wham to do the interpolation between the between the two again to get you the the WAM weight. So the weight is not 1/3, 2/3 anymore. It's based on the WAM, and then you blend the price of the two relevant coupons rather than coupon three, and then you got the relevant relative coupon interpolated price filling the coupon stack, and that way you got two payoffs from the 20 year to 30 year. One is using the relevant coupon, which is $3 or $5 for kind of like in line with what you marked. This is the same coupon. If I mark three to coupon three, it's like $6.
+
+Jimmy 47:05
+So yeah, I mean, I I like this. Yeah, like do you think this will hold up in the court of law?
+
+Lien 47:11
+I need to test that. I'm just like like playing around with the best dollar.
+
+Jimmy 47:15
+I like it. I would say your goal, your goal in as a show of good faith between us and MRV and MRM is to we want to come up with a number that is probably like the lowest, the lowest number we can get. Like we don't want the 20-year pay-up to ever show up and be like, oh, it's eight points. Like we want like five is five is great, but I would think like like we don't we don't want to be trying to make the pay up risks viewed as like
+
+Lien 47:51
+yeah. This is like only one coupon is one out five.
+
+Jimmy 47:55
+No, I know. I think it's great because like there's no 20 or two that trades yeah below six points. Yeah,
+
+Lien 48:00
+yeah. Let me send you these, and tomorrow we can read it like a little bit more and go from there. Thank you. Yeah. Chen Lien Bible, Jan.
